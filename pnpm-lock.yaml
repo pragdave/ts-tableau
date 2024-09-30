@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+dependencies:
+  peggy:
+    specifier: ^4.0.3
+    version: 4.0.3
+
 devDependencies:
   '@types/jest':
     specifier: ^29.5.13
@@ -11,6 +16,9 @@ devDependencies:
   jest:
     specifier: ^29.7.0
     version: 29.7.0
+  peggy-tracks:
+    specifier: ^3.2.0
+    version: 3.2.0
   ts-jest:
     specifier: ^29.2.5
     version: 29.2.5(@babel/core@7.25.2)(jest@29.7.0)(typescript@5.6.2)
@@ -622,6 +630,12 @@ packages:
       '@jridgewell/sourcemap-codec': 1.5.0
     dev: true
 
+  /@peggyjs/from-mem@1.3.0:
+    resolution: {integrity: sha512-kzGoIRJjkg3KuGI4bopz9UvF3KguzfxalHRDEIdqEZUe45xezsQ6cx30e0RKuxPUexojQRBfu89Okn7f4/QXsw==}
+    engines: {node: '>=18'}
+    dependencies:
+      semver: 7.6.0
+
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
     dev: true
@@ -980,6 +994,10 @@ packages:
   /color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
     dev: true
+
+  /commander@12.1.0:
+    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
+    engines: {node: '>=18'}
 
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -1846,6 +1864,12 @@ packages:
       yallist: 3.1.1
     dev: true
 
+  /lru-cache@6.0.0:
+    resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
+    engines: {node: '>=10'}
+    dependencies:
+      yallist: 4.0.0
+
   /make-dir@4.0.0:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
@@ -1989,6 +2013,24 @@ packages:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
     dev: true
 
+  /peggy-tracks@3.2.0:
+    resolution: {integrity: sha512-LBt3kF3G2I4XRn8OAoTPM9uIMNkbQiWT1OEJzy0380ZEiWxb34Ay70KsLlNStyoaD/Op+7hZpMSjUyIiDE3QJw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      commander: 12.1.0
+      peggy: 4.0.3
+    dev: true
+
+  /peggy@4.0.3:
+    resolution: {integrity: sha512-v7/Pt6kGYsfXsCrfb52q7/yg5jaAwiVaUMAPLPvy4DJJU6Wwr72t6nDIqIDkGfzd1B4zeVuTnQT0RGeOhe/uSA==}
+    engines: {node: '>=18'}
+    hasBin: true
+    dependencies:
+      '@peggyjs/from-mem': 1.3.0
+      commander: 12.1.0
+      source-map-generator: 0.8.0
+
   /picocolors@1.1.0:
     resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
     dev: true
@@ -2071,6 +2113,13 @@ packages:
     hasBin: true
     dev: true
 
+  /semver@7.6.0:
+    resolution: {integrity: sha512-EnwXhrlwXMk9gKu5/flx5sv/an57AkRplG3hTK68W7FRDN+k+OWBj65M7719OkA82XLBxrcX0KSHj+X5COhOVg==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+
   /semver@7.6.3:
     resolution: {integrity: sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==}
     engines: {node: '>=10'}
@@ -2101,6 +2150,10 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
     dev: true
+
+  /source-map-generator@0.8.0:
+    resolution: {integrity: sha512-psgxdGMwl5MZM9S3FWee4EgsEaIjahYV5AzGnwUvPhWeITz/j6rKpysQHlQ4USdxvINlb8lKfWGIXwfkrgtqkA==}
+    engines: {node: '>= 10'}
 
   /source-map-support@0.5.13:
     resolution: {integrity: sha512-SHSKFHadjVA5oR4PPqhtAVdcBWwRYVd6g6cAXnIbRiIwc2EhPrTuKUBdSLvlEKyIP3GCf89fltvcZiP9MMFA1w==}
@@ -2336,6 +2389,9 @@ packages:
   /yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
     dev: true
+
+  /yallist@4.0.0:
+    resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
   /yargs-parser@21.1.1:
     resolution: {integrity: sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==}
