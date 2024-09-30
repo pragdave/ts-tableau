@@ -1,0 +1,185 @@
+-- selector = term (',' term)*
+-- term = row_selector : col_selector | row_selector | col_selector
+-- row_selector = 'r' (n | '(' complex_selector ')' )?
+-- col_selector = 'c' (n | '(' complex_selector ')' )?
+-- complex_selector = (n | (n '-' n) ([\\/] skip)?) (',' complex_selector)*
+-- skip = 'odd' | 'even' | integer
+-- integer = [1-9][0-9]*
+-- n = value adjustment?
+-- value = integer | '$r' | '$c' | '%r' | '%c'
+-- adjustment = [-+] integer
+--
+
+import "parser.string_scanner" as { :StringScanner }
+import "parser.util" as { :dump, :expect }
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+-- integer = [1-9][0-9]*
+integer = (state) ->
+  num = state.input\scan("[1-9][0-9]*") 
+  { type: 'integer', value: tonumber(num) } if num
+
+---------------------------------------------------------------------------------
+-- adjustment = [-+] integer
+adjustment = (state) ->
+  sign = state.input\scan("[~+]")
+  return unless sign
+  offset = expect(integer, state, "number expected after +/-")
+  if sign == "~"
+    (n) -> n - offset.value 
+  else
+    (n) -> n + offset.value 
+
+---------------------------------------------------------------------------------
+-- value = integer | '$r' | '$c' | '@r' 
+ast_value_constant = (val) ->
+   (_) -> val
+
+value = (state) ->
+  if     state.input\scan('%$r') then ast_value_constant(state.ast.row_count)
+  elseif state.input\scan('%$c') then ast_value_constant(state.ast.col_count)
+  elseif state.input\scan('@r')  then (pos) -> pos.row 
+  elseif state.input\scan('@c')  then state.input\parse_error("Sorry, '@c' can't be supported, because the row is evaluated before the column")
+  else
+    s = integer(state)
+    if s then (_) -> s.value
+ 
+---------------------------------------------------------------------------------
+-- n = (value adjustment?)
+n = (state) ->
+  val = value(state)
+  return unless val
+  adjust_fn = adjustment(state)
+  if adjust_fn
+    (param) -> adjust_fn(val(param))
+  else
+    val
+
+
+---------------------------------------------------------------------------------
+-- skip = 'odd' | 'even' | integer
+--
+--  /n   absolute
+--  \n   relative
+--
+--  r3-8/even  -> 2, 4, 6, 8  ( absolute = n)
+--  r3-8\even  -> 3, 5, 7     (relative =  n-start)
+
+expect_skip = (state) ->
+  if state.input\scan('odd%f[^%a]')
+    (n) -> n % 2 == 1 
+  elseif state.input\scan('even%f[^%a]')
+    (n) -> n % 2 == 0 
+  else
+    s = expect(integer, state, "expected 'odd', 'even', or a number as a skip value")
+    (n) -> 
+      (n % s.value) == 0
+
+---------------------------------------------------------------------------------
+-- complex_selector = '(' n | (n '-' n) ([\\/] skip)? ')'
+complex_selector = (state, max) ->
+  n1 = n(state)
+  n2 = nil
+  skip = (_pos) => true
+
+  if n1
+    if state.input\skip("-")
+      n2 = expect(n, state, 'second number expected after "-"')
+      if state.input\skip("/")
+        s = expect_skip(state)
+        skip = (pos) -> s(pos.absolute)
+      elseif state.input\skip("\\")
+        s = expect_skip(state)
+        skip = (pos) -> s(pos.relative)
+  else
+    n1 = ast_value_constant(1)
+    n2 = ast_value_constant(max)
+
+  { n1: n1, n2: n2 or n1, :skip }
+
+---------------------------------------------------------------------------------
+-- complex_selector = (n | (n '-' n) ([\\/] skip)?) (',' complex_selector)*
+complex_selectors = (state, max) ->
+  result = {}
+  nxt = complex_selector(state, max)
+  while nxt
+    result[] = nxt
+    nxt = nil
+    if state.input\skip("%s*,%s*")
+      nxt = complex_selector(state, max)
+
+  if #result > 0
+    result
+
+---------------------------------------------------------------------------------
+col_or_row = (state, flag_char, type, max) ->
+  return unless state.input\skip(flag_char) 
+  complex_selectors(state, max)
+
+---------------------------------------------------------------------------------
+-- col_selector = 'c' (n | '(' complex_selector ')' )?
+col_selector = (state) ->
+  col_or_row(state, "c", "col_selector", state.ast.col_count)
+
+---------------------------------------------------------------------------------
+-- row_selector = 'r' (n | '(' complex_selector ')' )?
+row_selector = (state) ->
+  col_or_row(state, "r", "row_selector", state.ast.row_count)
+
+---------------------------------------------------------------------------------
+-- term = row_selector : col_selector | row_selector | col_selector
+term = (state) ->
+  r = c = nil
+  r = row_selector(state)
+  if r
+    if state.input\skip(":")
+      c = col_selector(state)
+  else
+    c = col_selector(state)
+
+  -- a missing selector means we supply all values in that axis
+  unless r
+    r = {{
+      n1: ast_value_constant(1), 
+      n2: ast_value_constant(state.ast.row_count),
+      skip: (_) -> true,
+      defaulted: true,
+    }}
+
+  unless c
+    c = {{
+      n1: ast_value_constant(1), 
+      n2: ast_value_constant(state.ast.col_count),
+      skip: (_) -> true
+    }}
+
+  { row: r, col: c }
+---------------------------------------------------------------------------------
+-- selector = term (';' term)*
+selector = (state) ->
+  sel = {}
+  repeat
+    sel[] = term(state)
+  until not state.input\skip("%s*;%s*")
+  sel
+
+---------------------------------------------------------------------------------
+export parse_selector = (ast, scanner) ->
+  return unless scanner\looking_at("%s*[rc]")
+
+  state = {
+    input: scanner
+    ast: ast
+  }
+
+  state.input\skipws()
+  if state.input\empty()
+    return entries
+
+  selector(state)
+
+export parse_selector_from_string = (ast, str) ->
+  parse_selector(ast, StringScanner(str))
+

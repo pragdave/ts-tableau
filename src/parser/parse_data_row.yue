@@ -1,0 +1,112 @@
+-- import "string_scanner" as { StringScanner }
+import "parser.util" as  { :dump }
+import "parser.string_scanner" as { StringScanner: StringScanner }
+import "parser.util"
+
+
+----------------------------------------------------------------------
+-- housekeeping
+
+FMT_MSG = "A table should contain two or more rows, each starting
+and ending with a pipe character (\"|\").
+"
+
+parse_fail = (msg)->
+  io.stderr\write(msg)
+  false
+
+
+unknown_table_row = (row_source) ->
+   parse_fail("Can't decipher table row: #{row_source}\n#{FMT_MSG}")
+
+----------------------------------------------------------------------
+-- the cells themselves
+
+cell_fragment = (row) ->
+  row\scan("`[^`]+`")    or -- inline code
+    row\scan("$[^$]+%$") or -- inline math
+    row\scan("\\%|")    or -- escaped pipe
+    row\scan("[^`$|]+")     -- regular content
+
+
+
+----------------------------------------------------------------------
+cell_content = (row) ->
+  result = {}
+  fragment = cell_fragment(row)
+
+  while fragment
+      result[] = fragment
+      fragment = cell_fragment(row)
+
+  -- empty cell?
+  if #result == 0 and row\looking_at("|") 
+      result = { "" }
+
+  result 
+
+----------------------------------------------------------------------
+-- ugly hack for testing
+
+pandoc or= {
+  utils: {
+    stringify: (str) -> 
+      str[1]
+  }
+}
+
+----------------------------------------------------------------------
+cell = (row) ->
+  -- skip past opening
+  row\skip("%s*|%s*")
+
+  return false if row\looking_at("\n")
+
+  if row\scan("=empty%s*$")
+    return { width: 0, content: {"&nbsp;"}}
+
+  content = cell_content(row)
+  if not content or #content == 0
+    return false
+
+  local str = pandoc.utils.stringify(content)
+  local width = if str  and str ~= "" then string.len(str) else  1
+
+  { :width, :content }
+
+----------------------------------------------------------------------
+content_row = (row) ->
+  result = {}
+  a_cell = cell(row)
+
+  while a_cell
+    result[] = a_cell
+    a_cell = cell(row)
+
+  if #result == 0
+    { { width: 0, content: {""} }}
+  else
+    result
+
+
+
+----------------------------------------------------------------------
+
+export parse_data_row = (row_source) ->
+  row = row_source |> util.trim() |> StringScanner()
+  content_row(row)     or
+  unknown_table_row(row\peek(100))
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+

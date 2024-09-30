@@ -1,0 +1,184 @@
+import "parser.util"
+import "parser.parse_data_row"   as {:parse_data_row}
+import "parser.parse_layout_row" as {:parse_layout_row}
+
+
+-- we want to use the pandoc versions if we're running inside
+-- pandoc, otherwise use the system installed lpeg
+-- util.dump re, "before"
+-- unless lpeg then import "lpeg"
+-- unless re   then import "re" 
+unless re
+  global re
+  import "re"
+
+const LINE_CONTINUATION = "\\\n"
+const NEWLINE_PATTERN = "\r?\n"
+
+
+dump = util.dump
+
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+class Ast
+  new: () =>
+    @row_count = 0
+    @col_count = 0
+    @rows = {}
+    @caption = nil
+    @colspecs = {}
+    @selector_formats = {}
+    @table_formats = {}
+    @table_flags = {}
+    @font_size = { type: "normal", amount: 0}
+
+  add_row: (row) =>
+    @rows[] = row
+    @row_count += 1
+    @col_count = math.max(@col_count, #row)
+
+  add_layout: (layout) =>
+    switch layout.type
+      when "blank"
+        nil
+
+      when "caption"
+        @caption = layout.caption
+
+      when "selector"
+        @selector_formats[] = { selector: layout.selector, formats: layout.formats }
+
+      when "global"
+        @add_global_formats(layout.formats)
+
+      else
+        error("unknown layout type: #{layout.type}")
+
+  add_global_formats: (formats) =>
+    for fmt in *formats
+      switch fmt.type
+        when "boxed", "hlines", "vlines"
+          @table_flags[fmt.type] = true
+
+        when "small", "normal", "large"
+          @table_font_size = tmp
+
+        when "fg", "bg", "align", "style", "width"
+          @table_formats[] = fmt
+
+        when "cols"
+          @colspecs = fmt.colspec
+
+        else
+          io.stderr\write("Unknown table-level option: #{fmt.type}")
+
+--------------------------------------------------------------------------------
+merge_continuation_lines = (table) ->
+  table\gsub(LINE_CONTINUATION, "")
+
+--------------------------------------------------------------------------------
+split_into_rows = (table) ->
+  table
+  |> util.trim()
+  |> util.split(NEWLINE_PATTERN)
+ 
+--------------------------------------------------------------------------------
+split_into_data_and_layout = (source) ->
+  data = source
+  layout = nil
+
+  s, e = source\find("\n%s*===%s*\n")
+  if s
+    data = source\sub(1, s-1)
+    layout = source\sub(e+1)
+  {data, layout}
+
+--------------------------------------------------------------------------------
+decode_column_number = (c) ->
+  if c\find("^%d+")
+    c |> tonumber()
+  else
+    c\byte(1) - "a"\byte(1) + 1
+
+
+--------------------------------------------------------------------------------
+-- expand tabs (stolen from pl.stringx)
+expandtabs = (str,tabsize=8) ->
+  str\gsub("([^\t\r\n]*)\t", (before_tab) ->
+        before_tab .. (" ")\rep(tabsize - #before_tab % tabsize))
+
+--------------------------------------------------------------------------------
+-- remove leading whitespace
+normalize = (content) ->
+  spaces = 9999
+  for i = 1, #content
+    content[i] = expandtabs(content[i])
+    _, e = content[i]\find("^%s*")
+    spaces = math.min(spaces, e)
+  return [ r\sub(spaces+1) for r in *content ]
+
+--------------------------------------------------------------------------------
+col_text_re = re.compile([[
+  colheader <- prefix  [ \t]* {| colnumber |} [ \t]* '{{'
+  prefix    <- 'column' / 'col'
+  colnumber <- {:col: [1-9][0-9]?  / [a-z] :} 
+]])
+
+
+merge_following_column_blocks = (rows, row_no, callback) ->
+
+  while row_no <= #rows
+    -- check for "col nn:" block
+    next = rows[row_no]\lower()
+    col = col_text_re\match(next)
+    return row_no unless col
+
+    content = {}
+    col_no = decode_column_number(col.col)
+    row_no += 1
+    r = rows[row_no]
+
+    while not r\find("^%s*}}") and row_no < #rows
+      content[] = r
+      row_no += 1
+      r = rows[row_no]
+
+    if row_no > #rows
+      error("Missing terminating '}}' for 'col #{col_no} {{'")
+
+    row_no += 1
+
+    callback(col_no, normalize(content))
+
+  row_no
+
+parse_data = (ast, data) ->
+  rows = split_into_rows(data)
+  row_no = 1
+  while row_no <= #rows
+    last_row = parse_data_row(rows[row_no])
+    row_no = merge_following_column_blocks(rows, row_no+1, (col, content) ->
+      if col <= #last_row
+        last_row[col].content = content
+    )
+    ast\add_row(last_row)
+
+--------------------------------------------------------------------------------
+parse_layout = (ast, layout) ->
+  rows = split_into_rows(layout)
+  return if #rows == 0
+  
+  for i = 1, #rows
+    layout = parse_layout_row(ast, rows[i])
+    ast\add_layout(layout)
+
+--------------------------------------------------------------------------------
+export parse = (source) ->
+  {data,layout} =  source |> merge_continuation_lines() |> split_into_data_and_layout()
+  ast = Ast()
+  parse_data(ast, data)
+  parse_layout(ast, layout) if layout
+  ast
+

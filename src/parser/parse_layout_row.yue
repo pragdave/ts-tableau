@@ -1,0 +1,82 @@
+-- import "string_scanner" as { StringScanner }
+import "parser.parse_selector" as { :parse_selector }
+import "parser.parse_formats" as { :parse_selector_formats, :parse_global_formats }
+import "parser.string_scanner" as { StringScanner: StringScanner }
+import "parser.util"
+import "parser.util" as { :expect, :dump }
+
+
+----------------------------------------------------------------------
+FMT_MSG = [[
+A format line can be:
+
+  * blank
+  * -- a command
+  * # caption or :caption
+  * selector = format
+  * global_format
+
+]]
+parse_error = (row) ->
+    row\parse_error(FMT_MSG)
+
+----------------------------------------------------------------------
+formats_list = (parser, row) ->
+  format = expect(parser, row, "missing a format after 'selector ='")
+  result = { }
+  while format
+    result[] = format
+    row\skip("%s*,")
+    row\skip("%s*")
+    format = parser(row)
+  result
+
+----------------------------------------------------------------------
+blank_or_comment = (row) ->
+  if row\scan("%s*%-%-") or row\scan("%s*$")
+    { type: "blank"}
+
+----------------------------------------------------------------------
+caption = (row) ->
+  if row\skip("#+%s+") or row\skip(":%s+")
+    if row\empty()
+      { type: "error", msg: "missing text for caption"}
+    else
+      { type: "caption", caption: row\scan(".*") }
+
+----------------------------------------------------------------------
+selected = (ast, row) ->
+  selector = parse_selector(ast, row)
+  return unless selector
+  row\expect("%s*=%s*", "expected equals sign between selector and attributes")
+  formats = formats_list(parse_selector_formats, row)
+  row\expect("%s*$", "extra stuff after last attribute")
+  { type: "selector", :selector, :formats }
+
+----------------------------------------------------------------------
+globl = (row) ->
+  formats = formats_list(parse_global_formats, row)
+  row\expect("%s*$", "extra stuff after last attribute")
+  { type: "global", :formats }
+
+----------------------------------------------------------------------
+export parse_layout_row = (ast, row_source) ->
+  row = row_source |> util.trim() |> StringScanner()
+  result = blank_or_comment(row) or
+    caption(row) or
+    selected(ast, row) or
+    globl(row) or
+    parse_error(row)
+  result
+
+
+
+
+
+
+
+
+ 
+
+
+

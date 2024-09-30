@@ -1,0 +1,10 @@
+import "u-test" as test
+
+import 'parser.test_parse_selector'
+import 'parser.test_row_layout'
+import 'parser.test_ast'
+
+import 'test_iterate_selector'
+import 'test_virtual_table'
+
+test.summary!
