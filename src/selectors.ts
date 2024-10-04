@@ -4,6 +4,14 @@ import {TableData} from "../table_data"
 export class Selector {
   constructor(public cell_ranges: SelCellRange[]) {
   }
+
+  *cells(table: TableData) {
+    for (let cell_range of this.cell_ranges) {
+      for (let cell of cell_range.cells()) {
+        yield cell
+      }
+    }
+  }
 }
 
 // ####################################################
@@ -20,26 +28,21 @@ export class SelCellRange {
     this.col = col
   }
 
-  cells(table: TableData) {
-    const result:int[][] = []
+  *cells(table: TableData) {
+    const row_iterator = this.row || Row.all_rows
+    const col_iterator = this.col || Col.all_cols(table)
 
-    if (!this.row)
-      this.row = Row.all_rows(table)
-
-    if (!this.col)
-      this.col = Col.all_cols(table)
-
-    this.row.each_row(table, (row) => {
-      this.col.each_col(table, row, (col) => {
-        result.append([row, col])
-      })
-    })
-    return result
+    for (let row of row_iterator.cells()) {
+      for (let cell of col_iterator(table, row).cells()) {
+        yield cell
+      }
+    }
   }
 
 }
 
 // ####################################################
+//
 export class SelCol {
   constructor(public numbers: Numbers) {
   }
