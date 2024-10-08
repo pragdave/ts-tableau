@@ -1,6 +1,5 @@
 {
     "tspegjs": {
-        "customHeader": "// import lib\nimport { Lib } from 'mylib';"
     },
     "returnTypes": {
         "Integer": "number",

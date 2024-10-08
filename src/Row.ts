@@ -1,12 +1,12 @@
 import { Cell } from "./cell"
-export type RowType = ( Empty | Data )
 
 export class Row {
 
   constructor(
-    readonly public content: Cell[],
-    readonly public is_empty = false)
-  {
+    public readonly content: Cell[],
+    public readonly is_empty = false) {
+    this.content = content
+    this.is_empty = is_empty
   }
 }
 

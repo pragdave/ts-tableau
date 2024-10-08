@@ -1,6 +1,4 @@
 export class Cell {
-
-  constructor(content: string) {
-    this.content = content
+  constructor(public content: string) {
   }
 }

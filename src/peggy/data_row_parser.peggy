@@ -1,6 +1,6 @@
 {{
-  import { Cell } from "./cell"
-  import { Row, EmptyRow } from "./Row"
+  import { Cell } from "./cell.js"
+  import { Row, EmptyRow } from "./row.js"
 }}
 
 /********

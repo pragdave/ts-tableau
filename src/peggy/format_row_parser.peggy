@@ -1,18 +1,17 @@
 {{
-  import { FComment } from '../src/formats/comment'
+  import { FComment } from '../src/format.js'
   import {
   Selector,
-  SelCellRange,
+  SelRowAndOrCol,
   SelCol,
   SelNumberInt,
   SelNumberLastRow,
   SelNumberLastCol,
   SelNumberThisRow,
   SelNumberRange,
-  SelNumbers,
   SelRow,
   SelSkip
-  } from '../src/selectors'
+  } from '../src/selectors.js'
 }}
 
 format_row
@@ -25,29 +24,25 @@ empty_row
   / _ !.               { return new FComment("") }
 
 cells_selector "selector"
-  = selector:cell_range|1.., ( _ ";" _ )| {
-  console.log(new Selector(selector));
-  return new Selector(selector) }
+  = selector:row_and_or_col|1.., ( _ ";" _ )| { return new Selector(selector) }
 
-cell_range
-  = row:row ":" col:col  { return new SelCellRange(row,  col) }
-  / row:row              { return new SelCellRange(row,  null) }
-  / col:col              { return new SelCellRange(null, col) }
+row_and_or_col
+  = row:row ":" col:col  { return new SelRowAndOrCol(row,  col) }
+  / row:row              { return new SelRowAndOrCol(row,  null) }
+  / col:col              { return new SelRowAndOrCol(null, col) }
 
 row
   = "r"i numbers:numbers { return new SelRow(numbers) }
-  / "r\*"                { return SelRow.all_rows()   }
+  / "r\*"                { return null   }
 
 col
   = "c"i numbers:numbers { return new SelCol(numbers) }
-  / "c\*"                { return SelCol.all_rows()   }
+  / "c\*"                { return null }
 
 
 
 numbers
-  = number_range:number_range|1.., ","| {
-      return new SelNumbers(number_range)
-    }
+  = number_range|1.., ","|
 
 number_range
   = n1:adjusted_number "-" n2:adjusted_number skip:skip? {
@@ -61,8 +56,11 @@ number_range
     }
 
 adjusted_number
-  = number:number op:[~+] offset:int   {
-      return new SelAdjustedNumber(number, op, offset)
+  = number:number "~" offset:int   {
+      return new SelAdjustedNumber(number, -offset)
+    }
+  / number:number "+" offset:int   {
+      return new SelAdjustedNumber(number, offset)
     }
   / number:number {
       return number;
