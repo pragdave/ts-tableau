@@ -1,3 +1,3 @@
-export class FormatStyle {
+export class FormatClass {
   constructor(public name: string) { }
 }

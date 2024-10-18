@@ -54,7 +54,6 @@ export class FormatFg {
 
 // and these are helpers used by the parser to generate a format class
 export function GenColorHex(color: string) {
-  console.log("GCH", color)
   let r = 0, g = 0, b = 0
   switch (color.length) {
     case 3:

@@ -4,6 +4,7 @@ import {
   FormatAlign,
   FormatBg,
   FormatBoxed,
+  FormatClass,
   FormatFg,
   FormatFontsize,
   FormatFooter,
@@ -11,7 +12,6 @@ import {
   FormatHlines,
   FormatLines,
   FormatSpan,
-  FormatStyle,
   FormatVlines,
   FormatWidth,
   CssColor,
@@ -22,14 +22,14 @@ import {
 
 import { parse_global_formats, parse_selector_formats } from "../src/parser/parse_formats"
 
-type ParseFunction = ((src: StringScanner) => Formats | null)
+type ParseFunction = ((src: StringScanner) => Formats[])
 
 //////////////////////////////////////////////////////////////// lines 
 
 function align_test(parser: ParseFunction, format: string, halign: string, valign: string) {
   test("align: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(FormatAlign)
     expect((result as FormatAlign).halign).toBe(halign)
@@ -62,7 +62,7 @@ function test_align(parser: ParseFunction) {
 function line_test(parser: ParseFunction, format: string, expected: number) {
   test("line: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(FormatLines)
     expect((result as FormatLines).flags).toBe(expected)
@@ -93,7 +93,7 @@ function test_format_lines(parser: ParseFunction) {
 function bg_test(parser: ParseFunction, format: string, expected: FormatBg) {
   test("line: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(FormatBg)
     expect(result).toEqual(expected)
@@ -125,7 +125,7 @@ function test_bg(parser: ParseFunction) {
 function other_test(parser: ParseFunction, format: string, expectedClass: any) {
   test(format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(expectedClass)
 
@@ -165,7 +165,7 @@ function test_vlines(parser: ParseFunction) {
 function fg_test(parser: ParseFunction, format: string, expected: FormatFg) {
   test("line: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(FormatFg)
     expect(result).toEqual(expected)
@@ -194,7 +194,7 @@ function test_fg(parser: ParseFunction) {
 function fontsize_test(parser: ParseFunction, format: string, expected: number) {
   test("fontsize: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(FormatFontsize)
     expect((result as FormatFontsize).scale).toEqual(expected)
@@ -221,10 +221,10 @@ function test_fontsize(parser: ParseFunction) {
 function style_test(parser: ParseFunction, format: string, expected: string) {
   test("style: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
-    expect(result).toBeInstanceOf(FormatStyle)
-    expect((result as FormatStyle).name).toEqual(expected)
+    expect(result).toBeInstanceOf(FormatClass)
+    expect((result as FormatClass).name).toEqual(expected)
   })
 }
 
@@ -244,7 +244,7 @@ function test_style(parser: ParseFunction) {
 function width_test(parser: ParseFunction, format: string, eValue: number, eType: string) {
   test("width: " + format, () => {
     const src = new StringScanner(format)
-    const result = parser(src)
+    const result = parser(src)[0]
     expect(result).not.toBeNull()
     expect(result).toBeInstanceOf(FormatWidth)
     expect((result as FormatWidth).width).toEqual(eValue)

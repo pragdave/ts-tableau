@@ -43,9 +43,9 @@ describe('data_row_parse', () => {
 function test_one_row(input_string: string, cell_content: string[], is_empty = false) {
   const result = parse_data_row(input_string)
   expect(result).toBeInstanceOf(Row);
-  expect(result.content.length).toBe(cell_content.length);
+  expect(result.cells.length).toBe(cell_content.length);
   cell_content.forEach((content, i) => {
-    expect(result.content[i].content).toBe(content)
+    expect(result.cells[i].content).toBe(content)
   })
   expect(result.is_empty).toBe(is_empty)
 }

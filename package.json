@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "r": "peggy --allowed-start-rules data_row,format_row,cells_selector --format es -o src/parser.js --cache src/peggy/*",
-    "test": "jest --watch"
+    "test": "jest",
+    "wtest": "jest --watch"
   },
   "keywords": [],
   "author": "",

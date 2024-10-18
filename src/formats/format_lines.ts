@@ -2,10 +2,12 @@
 
 export class FormatLines {
   static T = 0x01 & 0xff
-  static B = 0x02 & 0xff
-  static L = 0x04 & 0xff
-  static R = 0x08 & 0xff
+  static R = 0x02 & 0xff
+  static B = 0x04 & 0xff
+  static L = 0x08 & 0xff
   static X = 0x10 & 0xff
+
+  static side_mask = FormatLines.T | FormatLines.B | FormatLines.L | FormatLines.R
 
   flags = 0x00 & 0x00
 
@@ -19,10 +21,21 @@ export class FormatLines {
   right() { return !!(this.flags & FormatLines.R) }
   box() { return !!(this.flags & FormatLines.X) }
 
+  as_string() {
+    if (this.box()) {
+      return "box"
+    }
+    return [FormatLines.T, FormatLines.B, FormatLines.B, FormatLines.L]
+      .map((flag) => {
+        return this.flags & flag ? "1" : "0"
+      })
+      .join("")
+
+  }
+
   private decode(spec: string) {
     let value = 0x00 & 0x00
     for (let c of spec) {
-      console.log("line spec", c)
       switch (c) {
         case "t": value |= FormatLines.T; break
         case "b": value |= FormatLines.B; break
@@ -31,7 +44,6 @@ export class FormatLines {
         case "x": value |= FormatLines.X; break
       }
     }
-    console.log("value", value, FormatLines.T)
     return value
   }
 }

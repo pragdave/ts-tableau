@@ -11,12 +11,14 @@ export class Selector {
   constructor(public cell_ranges: SelTerm[]) {
   }
 
-  cells(table: TableData): CellCoords[] {
+  *cells(table: TableData): Generator<CellCoords> {
     const entries = new Map<CellCoords, boolean>();
     for (let entry of this.cell_coords(table)) {
       entries.set(entry, true);
     }
-    return Array.from(entries.keys());
+    for (const coord of entries.keys()) {
+      yield coord
+    }
   }
 
   *cell_coords(table: TableData): Generator<CellCoords> {

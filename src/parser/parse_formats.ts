@@ -10,7 +10,7 @@ import {
   FormatHlines,
   FormatLines,
   FormatSpan,
-  FormatStyle,
+  FormatClass,
   FormatWidth,
   FormatVlines,
 
@@ -49,28 +49,51 @@ function log(src: StringScanner) {
   console.log("No match", src.peek(10))
   return false
 }
-export function parse_global_formats(src: StringScanner): Formats | null {
+export function parse_global_formats(src: StringScanner): Formats[] {
+  const result: Formats[] = []
+  let fmt: Formats | null
+  while (fmt = parse_global_format(src))
+    result.push(fmt)
+  return result
+}
+
+
+function parse_global_format(src: StringScanner): Formats | null {
   src.skip(/\s+/)
   if (src.hasTerminated())
     return null
 
   return (
-    align(src) || // log(src) ||
-    bg(src) || // log(src) ||
-    boxed(src) || // log(src) ||
+    align(src) ||
+    bg(src) ||
+    boxed(src) ||
     //     cols(src)    ||
+    fclass(src) ||
     fg(src) ||
     font_size(src) ||
     hlines(src) ||
-    style(src) ||
     vlines(src) ||
     width(src) ||
     log(src) ||
     null)
 }
 
+export function parse_selector_formats(src: StringScanner): Formats[] {
+  const result: Formats[] = []
+  let fmt: Formats | null
+
+  while (fmt = parse_selector_format(src)) {
+    console.error("fmt", fmt)
+    result.push(fmt)
+  }
+  if (!src.hasTerminated) {
+    throw `unrecognized format: ${src.peek(30)}`
+  }
+  return result
+}
+
 // --------------------------------------------------------------------------------
-export function parse_selector_formats(src: StringScanner): Formats | null {
+function parse_selector_format(src: StringScanner): Formats | null {
   src.skip(/\s+/)
   if (src.hasTerminated())
     return null
@@ -79,11 +102,11 @@ export function parse_selector_formats(src: StringScanner): Formats | null {
     align(src) ||
     bg(src) ||
     fg(src) ||
+    fclass(src) ||
     font_size(src) ||
     footer(src) ||
     header(src) ||
     span(src) ||
-    style(src) ||
     width(src) ||
     lines(src)      // lines must go at the end, because it swallows single characters
   )
@@ -94,6 +117,7 @@ export function parse_selector_formats(src: StringScanner): Formats | null {
 const SHADE_RE = new RegExp(Array.from(SHADE_NAMES.keys()).join("|"))
 
 function color(src: StringScanner): ColorRepresentations | null {
+  console.error("color ", src.peek(20))
   if (src.scan(/#([0-9a-f]{3}([0-9a-f]{3})?)/)) {
     return GenColorHex(src.getCapture(0))
   }
@@ -136,8 +160,9 @@ function align(src: StringScanner): FormatAlign | null {
 // --------------------------------------------------------------------------------
 // --     bg/fg(color)
 function bg_or_fg(src: StringScanner, match: RegExp): null | ColorRepresentations {
-  if (!src.skip(match))
+  if (!src.scan(match)) {
     return null
+  }
   const result = color(src)
   if (!result)
     throw "expecting a color as an argument to bg()"
@@ -226,7 +251,10 @@ function hlines(src: StringScanner): FormatHlines | null {
 // --------------------------------------------------------------------------------
 // --     lines([tblrx]+) 
 function lines(src: StringScanner): FormatLines | null {
-  if (src.scan(/lines?\(([tbrlx]+)\)/)) {
+  if (src.scan(/lines\(([tbrlx]+)\)/)) {
+    return new FormatLines(src.getCapture(0))
+  }
+  else if (src.scan(/([tbrlx]+)/)) {
     return new FormatLines(src.getCapture(0))
   }
   else {
@@ -243,15 +271,15 @@ function span(src: StringScanner): FormatSpan | null {
 }
 
 // --------------------------------------------------------------------------------
-// --     style = .name | style(name)
+// --     class = .name | class(name)
 
-function style(src: StringScanner): FormatStyle | null {
-  if (src.scan(/style\(\s*\.?([-a-zA-Z0-9_]+)\s*\)/)) {
-    return new FormatStyle(src.getCapture(0))
+function fclass(src: StringScanner): FormatClass | null {
+  if (src.scan(/class\(\s*\.?([-a-zA-Z0-9_]+)\s*\)/)) {
+    return new FormatClass(src.getCapture(0))
   }
 
   if (src.scan(/\.([-a-zA-Z0-9_]+)\b/)) {
-    return new FormatStyle(src.getCapture(0))
+    return new FormatClass(src.getCapture(0))
   }
 
   return null

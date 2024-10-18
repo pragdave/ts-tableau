@@ -2,7 +2,7 @@ import { FormatAlign } from "./formats/format_align"
 import { FormatBg, FormatFg } from "./formats/format_colors"
 import { FormatFontsize } from "./formats/format_fontsize"
 import { FormatLines } from "./formats/format_lines"
-import { FormatStyle } from "./formats/format_style"
+import { FormatClass } from "./formats/format_class"
 import { FormatWidth } from "./formats/format_width"
 
 import {
@@ -18,6 +18,7 @@ export {
   FormatAlign,
   FormatBg,
   FormatBoxed,
+  FormatClass,
   FormatFg,
   FormatFontsize,
   FormatFooter,
@@ -25,7 +26,6 @@ export {
   FormatHlines,
   FormatLines,
   FormatSpan,
-  FormatStyle,
   FormatVlines,
   FormatWidth,
 }
@@ -34,6 +34,7 @@ export type Formats
   = FormatAlign
   | FormatBg
   | FormatBoxed
+  | FormatClass
   | FormatFg
   | FormatFontsize
   | FormatFooter
@@ -41,7 +42,7 @@ export type Formats
   | FormatHlines
   | FormatLines
   | FormatSpan
-  | FormatStyle
+  | FormatClass
   | FormatVlines
   | FormatWidth
 

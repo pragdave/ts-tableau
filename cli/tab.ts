@@ -1,0 +1,143 @@
+import { generate } from "../src/generators/html"
+import { tableau } from "../src/tableau"
+import { readFileSync } from "node:fs"
+
+const template = `
+<html>
+<head><style>
+  .tableau {
+    --tb-border-color: #bbb;
+    --tb-line-color: #ddd;
+  }
+
+  table.tableau {
+    border-collapse: collapse;
+
+    & td {
+      padding: 0.25rem 0.5rem;
+      margin:0;
+    }
+
+    &.halign-l td{
+      text-align: left;
+    }
+
+    &.halign-c td {
+      text-align: center;
+    }
+    &.halign-r td{
+      text-align: right;
+    }
+    &.halign-j td {
+      text-align: justify;
+      text-justify: auto;
+    }
+ 
+    &.valign-t td {
+      vertical-align: top;
+    }
+  
+    &.valign-m td {
+      vertical-align: middle;
+    }
+  
+    &.valign-b td {
+      vertical-align: bottom;
+    }
+
+    &.boxed {
+      border: 1px solid var(--tb-border-color);
+    }
+
+    &.hlines tr:not(:last-child) td {
+      border-bottom: 0.5px solid var(--tb-line-color);
+    }
+
+    &.vlines tr td:not(:last-child) {
+      border-right: 0.5px solid var(--tb-line-color);
+    }
+  }
+
+table.tableau tr td, table.tableau tr th {
+    &.halign-l {
+      text-align: left;
+    }
+
+    &.halign-c {
+      text-align: center;
+    }
+    &.halign-r {
+      text-align: right;
+    }
+    &.halign-j {
+      text-align: justify;
+      text-justify: auto;
+    }
+ 
+    &.valign-t {
+      vertical-align: top;
+    }
+  
+    &.valign-m {
+      vertical-align: middle;
+    }
+  
+    &.valign-b {
+      vertical-align: bottom;
+    }
+
+    &.tb-header {
+      background: #cef;
+    }
+    &.tb-footer {
+      background: #ecf;
+    }
+
+&.tb-boxed  { border: 1px solid #888; }
+&.tb_l_1111 { border: 1px solid #888; }
+/*     TRBL */
+&.tb_l_0001 { border-left: 1px solid #888; }
+&.tb_l_0010 { border-bottom: 1px solid #888; }
+&.tb_l_0011 { border-left top: 1px solid #888; border-bottom: 1px solid #888; }
+&.tb_l_0100 { border-right: 1px solid #888; }
+&.tb_l_0101 { border-left: 1px solid #888; border-right: 1px solid #888; }
+&.tb_l_0110 { border-right: 1px solid #888; border-bottom: 1px solid #888; }
+&.tb_l_0111 { border-right: 1px solid #888; border-left: 1px solid #888; border-bottom: 1px solid #888; }
+&.tb_l_1000 { border-top: 1px solid #888; }
+&.tb_l_1001 { border-top: 1px solid #888; border-left: 1px solid #888;
+&.tb_l_1010 { border-top: 1px solid #888; border-bottom: 1px solid #888; }
+&.tb_l_1011 { border-top: 1px solid #888; border-left: 1px solid #888; border-bottom: 1px solid #888; }
+&.tb_l_1100 { border-top: 1px solid #888; border-right: 1px solid #888; }
+&.tb_l_1101 { border-top: 1px solid #888; border-right: 1px solid #888; border-left: 1px solid #888; }
+&.tb_l_1110 { border-top: 1px solid #888; border-right: 1px solid #888; border-bottom: 1px solid #888; }
+
+}
+
+</style></head>
+<body>
+  !content!
+  <br/><br/>
+  <pre><code>!original!</code></pre>
+  <br/><br/>
+  <pre><code>!tableau!</code></pre>
+</body>
+</html>
+`
+
+const name = process.argv[2]
+const data = readFileSync(name, 'utf-8')
+const lines = data.split("\n")
+const table = tableau(lines)
+//console.error(table)
+//for (let r of table.rows) {
+//console.error(r)
+//}
+const html = generate(table)
+console.log(
+	template
+		.replace('!original!', data)
+		.replace('!tableau!', JSON.stringify(table, null, "    "))
+		.replace('!content!', html.join("\n")))
+
+
+
