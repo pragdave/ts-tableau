@@ -39,6 +39,7 @@ export class TableData {
   readonly rows: Row[] = [];
   readonly formats: FormatRow[] = []
   private longest_row: number = 0
+  private next_span_group = 1
 
   readonly global_attr: GlobalAttributes = {
     boxed: false,
@@ -65,6 +66,9 @@ export class TableData {
     else {
       let cells = format.selectors.cells(this)
       this.apply_selector_format(cells, format.formats)
+      if (format.formats.some((f) => f instanceof FormatSpan)) {
+        this.tag_span_groups(format.selectors)
+      }
     }
   }
 
@@ -113,6 +117,53 @@ export class TableData {
     for (let cell_coord of cells) {
       let cell = this.cell_at(cell_coord)
       cell.add_format(formats)
+    }
+  }
+
+  // Each term of a compound selector (the parts joined by ';') gets its
+  // own span group, guaranteeing every group is exactly rectangular
+  // (a SelTerm is always a single row-range x col-range cross product).
+  private tag_span_groups(selector: Selector) {
+    for (const term of selector.cell_ranges) {
+      const group = this.next_span_group++
+      for (const coord of term.cell_coords(this)) {
+        this.cell_at(coord).span_group = group
+      }
+    }
+  }
+
+  // Called once, after all rows and formats have been processed. Groups
+  // every span-tagged cell by span_group, and for each group sets
+  // row_span/col_span on its top-left cell (the bounding box exactly
+  // equals the group's membership, since every group is rectangular by
+  // construction) and marks the rest of the group hidden.
+  resolve_spans() {
+    const groups = new Map<number, CellCoords[]>()
+
+    for (const coord of this.all_cells()) {
+      const group = this.cell_at(coord).span_group
+      if (group === null) continue
+      const coords = groups.get(group) ?? []
+      coords.push(coord)
+      groups.set(group, coords)
+    }
+
+    for (const coords of groups.values()) {
+      const rows = coords.map((c) => c.row)
+      const cols = coords.map((c) => c.col)
+      const min_row = Math.min(...rows)
+      const max_row = Math.max(...rows)
+      const min_col = Math.min(...cols)
+      const max_col = Math.max(...cols)
+
+      const anchor = this.cell_at({ row: min_row, col: min_col })
+      anchor.row_span = max_row - min_row + 1
+      anchor.col_span = max_col - min_col + 1
+
+      for (const coord of coords) {
+        if (coord.row === min_row && coord.col === min_col) continue
+        this.cell_at(coord).hidden = true
+      }
     }
   }
 

@@ -18,6 +18,8 @@ export function tableau(lines: string[]): TableData {
     table_data.add_format(format)
   }
 
+  table_data.resolve_spans()
+
   return table_data
 }
 

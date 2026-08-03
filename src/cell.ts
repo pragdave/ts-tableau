@@ -34,6 +34,10 @@ export class Cell {
   header = false
   lines: FormatLines | null = null
   span: FormatSpan | null = null
+  span_group: number | null = null
+  row_span = 1
+  col_span = 1
+  hidden = false
   style: FormatClass | null = null
   width: FormatWidth | null = null
 
