@@ -23,10 +23,25 @@ in the range are omitted from output entirely.
 A selector can be compound — multiple `;`-separated range terms in one
 clause (`[r1:c1;r2:c2] span`). Each term gets its own independent span
 group, not one group covering the union. This was an open design question,
-resolved in conversation: guaranteeing one group per `SelTerm` keeps every
-group exactly rectangular by construction (a `SelTerm` is always a single
-row-range × col-range cross product — see `selectors.ts`), which is what
-makes the simplified merge algorithm below correct.
+resolved in conversation, then corrected once during implementation review:
+the original wording claimed a `SelTerm` is always a single row-range ×
+col-range cross product, which is false — a `SelRow`/`SelCol` can itself
+hold a comma-separated *list* of independent ranges (`r1,3`), so a whole
+`SelTerm` is not reliably one rectangle.
+
+The actual rule: each row-range × col-range **pair**, where "range" means
+one comma-separated component of a `SelRow`/`SelCol` (one
+`SelNumberGenerator`), is its own independent rectangle and gets its own
+span group. `[r1,3:c1] span` is therefore two single-cell groups (row 1,
+row 3), not one bogus 3-row span swallowing row 2. A component whose own
+values aren't contiguous (a `%even`/`%odd`/`%n` skip, e.g. `r1-8%even`) has
+no sensible rectangle to draw and combining it with `span` is rejected with
+an error, rather than silently doing something arbitrary.
+
+Two selectors (or two components within one compound selector) are never
+allowed to tag the same cell twice — attempting to `span` a cell that's
+already part of another group is also rejected with an error, rather than
+one group silently overwriting or corrupting the other.
 
 ## Architecture
 
@@ -48,13 +63,16 @@ format object.
 `next_span_group = 1`. In `apply_format(format: FormatRow)`, after the
 existing (unchanged) call to `apply_selector_format` that applies the
 clause's formats to its flattened cell set, check whether
-`format.formats` contains a `FormatSpan`. If so, iterate
-`format.selectors.cell_ranges` (the `SelTerm[]` making up the selector) —
-not the already-flattened `Selector.cells()` generator, since that
-merges all terms into one deduplicated set and would lose per-term
-identity. For each `SelTerm`, claim a fresh id from `next_span_group`,
-and set `span_group` to that id on every cell the term's own
-`cell_coords(table)` yields.
+`format.formats` contains a `FormatSpan`. If so, decompose the selector
+into independent rectangles — one per row-generator × col-generator pair,
+across every `SelTerm` in the selector (`Selector`/`SelTerm` gain a
+`rectangles()` generator in `src/selectors.ts` for this, since it's the
+selector layer's own structure being decomposed, not something
+`TableData` should reach into). For each yielded rectangle, claim a fresh
+id from `next_span_group` and set `span_group` to that id on every cell
+in the rectangle — throwing if a cell is already tagged with a different
+group (overlap) or if a generator's own values aren't contiguous (an
+unsupported skip pattern).
 
 This only applies to selector-scoped formats. `span` was never a
 recognized global-format keyword (`parse_global_format` in
