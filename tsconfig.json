@@ -15,5 +15,5 @@
       "node"
     ]
   },
-  "exclude":         [ "dist/",  "test/" ]
+  "include": [ "src/**/*.ts" ]
 }
