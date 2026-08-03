@@ -124,3 +124,69 @@ test("compound selector with ranges: each term merges independently", () => {
     { row: 4, col: 2, row_span: 1, col_span: 1, hidden: false },
   ])
 })
+
+test("comma-separated ranges in one selector each get their own independent span group", () => {
+  const lines = [
+    "a|b",
+    "c|d",
+    "e|f",
+    "===",
+    "[r1,3:c1] span",
+  ]
+  expect(span_groups(lines)).toEqual([
+    { row: 1, col: 1, row_span: 1, col_span: 1, hidden: false },
+    { row: 1, col: 2, row_span: 1, col_span: 1, hidden: false },
+    { row: 2, col: 1, row_span: 1, col_span: 1, hidden: false },
+    { row: 2, col: 2, row_span: 1, col_span: 1, hidden: false },
+    { row: 3, col: 1, row_span: 1, col_span: 1, hidden: false },
+    { row: 3, col: 2, row_span: 1, col_span: 1, hidden: false },
+  ])
+})
+
+test("comma-separated ranges each merge independently within their own rectangle", () => {
+  const lines = [
+    "a|b",
+    "c|d",
+    "e|f",
+    "g|h",
+    "i|j",
+    "===",
+    "[r1-2,4-5:c1] span",
+  ]
+  expect(span_groups(lines)).toEqual([
+    { row: 1, col: 1, row_span: 2, col_span: 1, hidden: false },
+    { row: 1, col: 2, row_span: 1, col_span: 1, hidden: false },
+    { row: 2, col: 1, row_span: 1, col_span: 1, hidden: true },
+    { row: 2, col: 2, row_span: 1, col_span: 1, hidden: false },
+    { row: 3, col: 1, row_span: 1, col_span: 1, hidden: false },
+    { row: 3, col: 2, row_span: 1, col_span: 1, hidden: false },
+    { row: 4, col: 1, row_span: 2, col_span: 1, hidden: false },
+    { row: 4, col: 2, row_span: 1, col_span: 1, hidden: false },
+    { row: 5, col: 1, row_span: 1, col_span: 1, hidden: true },
+    { row: 5, col: 2, row_span: 1, col_span: 1, hidden: false },
+  ])
+})
+
+test("a skip pattern (non-contiguous generator) combined with span throws", () => {
+  const lines = [
+    "a|b",
+    "c|d",
+    "e|f",
+    "g|h",
+    "===",
+    "[r1-4%even:c1] span",
+  ]
+  expect(() => tableau(lines)).toThrow()
+})
+
+test("overlapping span selectors throw instead of silently corrupting the table", () => {
+  const lines = [
+    "a|b",
+    "c|d",
+    "e|f",
+    "===",
+    "[r1-2:c1] span",
+    "[r2-3:c1] span",
+  ]
+  expect(() => tableau(lines)).toThrow()
+})

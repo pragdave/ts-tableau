@@ -114,3 +114,18 @@ test("compound selector with ranges: each term merges independently", () => {
     "</table>",
   ])
 })
+
+test("span combines correctly with other cell formats", () => {
+  const lines = [
+    "a|b",
+    "c|d",
+    "===",
+    "[r1:c1-2] span bg(red)",
+  ]
+  expect(html_for(lines)).toEqual([
+    `<table class="tableau halign-c valign-m">`,
+    `<tr><td colspan="2" style="background: red">a</td></tr>`,
+    "<tr><td>c</td><td>d</td></tr>",
+    "</table>",
+  ])
+})

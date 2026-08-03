@@ -29,6 +29,12 @@ export class Selector {
     }
   }
 
+  *rectangles(table: TableData): Generator<CellCoords[]> {
+    for (const term of this.cell_ranges) {
+      yield* term.rectangles(table);
+    }
+  }
+
   to_s() {
     return this.cell_ranges.map((cr) => cr.to_s()).join(";");
   }
@@ -72,8 +78,8 @@ export class SelAdjustedNumber {
 //
 export class SelTerm {
   constructor(
-    private row: SelRow | null,
-    private col: SelCol | null,
+    public row: SelRow | null,
+    public col: SelCol | null,
   ) {
   }
 
@@ -94,6 +100,31 @@ export class SelTerm {
     }
   }
 
+  // Yields one contiguous rectangle of coordinates per (row generator x
+  // col generator) pair -- e.g. "r1,3:c1" is two comma-separated row
+  // generators (1) and (3), each forming its own independent rectangle
+  // with column 1. Throws if a single generator's own values aren't
+  // contiguous (e.g. a "%even" skip) -- there's no sensible rectangle to
+  // draw from a non-contiguous set.
+  *rectangles(table: TableData): Generator<CellCoords[]> {
+    const row_groups: (SelNumberGenerator | null)[] = this.row ? this.row.numbers : [null]
+    const col_groups: (SelNumberGenerator | null)[] = this.col ? this.col.numbers : [null]
+
+    for (const row_gen of row_groups) {
+      const rows = row_gen ? contiguous_values(row_gen, table, "row") : Array.from(table.all_row_numbers())
+      for (const col_gen of col_groups) {
+        const cols = col_gen ? contiguous_values(col_gen, table, "column") : Array.from(table.all_col_numbers())
+        const rectangle: CellCoords[] = []
+        for (const row of rows) {
+          for (const col of cols) {
+            rectangle.push({ row, col })
+          }
+        }
+        yield rectangle
+      }
+    }
+  }
+
   to_s() {
     const col_str = this.col ? this.col.to_s() : "*";
     const row_str = this.row ? this.row.to_s() : "*";
@@ -104,6 +135,16 @@ export class SelTerm {
 
     return `${row_str}:${col_str}`;
   }
+}
+
+function contiguous_values(gen: SelNumberGenerator, table: TableData, axis: "row" | "column"): number[] {
+  const values = Array.from(gen.cell_coords(table))
+  const min = Math.min(...values)
+  const max = Math.max(...values)
+  if (values.length !== max - min + 1) {
+    throw `span requires a contiguous ${axis} range; "${gen.to_s()}" is not contiguous`
+  }
+  return values
 }
 
 // ####################################################

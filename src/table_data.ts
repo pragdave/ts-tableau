@@ -120,14 +120,19 @@ export class TableData {
     }
   }
 
-  // Each term of a compound selector (the parts joined by ';') gets its
-  // own span group, guaranteeing every group is exactly rectangular
-  // (a SelTerm is always a single row-range x col-range cross product).
+  // Each (row generator x col generator) rectangle produced by the
+  // selector gets its own span group. Overlapping rectangles are
+  // rejected rather than letting a later tag silently overwrite (and
+  // corrupt) an earlier group.
   private tag_span_groups(selector: Selector) {
-    for (const term of selector.cell_ranges) {
+    for (const rectangle of selector.rectangles(this)) {
       const group = this.next_span_group++
-      for (const coord of term.cell_coords(this)) {
-        this.cell_at(coord).span_group = group
+      for (const coord of rectangle) {
+        const cell = this.cell_at(coord)
+        if (cell.span_group !== null) {
+          throw `cell (row ${coord.row}, col ${coord.col}) is already part of a span group; span selectors cannot overlap`
+        }
+        cell.span_group = group
       }
     }
   }
