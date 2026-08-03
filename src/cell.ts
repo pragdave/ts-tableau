@@ -8,7 +8,6 @@ import {
   FormatFooter,
   FormatHeader,
   FormatLines,
-  FormatSpan,
   FormatClass,
   FormatWidth,
 
@@ -33,7 +32,6 @@ export class Cell {
   footer = false
   header = false
   lines: FormatLines | null = null
-  span: FormatSpan | null = null
   span_group: number | null = null
   row_span = 1
   col_span = 1
@@ -73,9 +71,6 @@ export class Cell {
         break
       case FormatLines:
         this.lines = format as FormatLines
-        break
-      case FormatSpan:
-        this.span = format as FormatSpan
         break
       case FormatClass:
         this.style = format as FormatClass
