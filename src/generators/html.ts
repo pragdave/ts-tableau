@@ -30,7 +30,9 @@ function do_table(table: TableData): string[] {
 function do_row(row: Row): string {
   const result = ["<tr>"]
   row.cells.forEach((cell) => {
-    result.push(do_cell(cell))
+    if (!cell.hidden) {
+      result.push(do_cell(cell))
+    }
   })
   result.push("</tr>")
   //console.log(result)
@@ -92,7 +94,9 @@ function cell_opener(cell: Cell): string {
   const styles = do_cell_styles(cell)
   const cls = classes.length == 0 ? "" : ` class="${classes.join(" ")}"`
   const sty = styles.length == 0 ? "" : ` style="${styles.join("; ")}"`
-  return `${cls}${sty}`
+  const rowspan = cell.row_span > 1 ? ` rowspan="${cell.row_span}"` : ""
+  const colspan = cell.col_span > 1 ? ` colspan="${cell.col_span}"` : ""
+  return `${rowspan}${colspan}${cls}${sty}`
 
 }
 
@@ -166,9 +170,6 @@ function do_color(color: ColorRepresentations) {
 function add_lines(lines: FormatLines): string {
   return `tb_l_${lines.as_string()}`
 }
-
-//span: FormatSpan | null = null
-//style: FormatClass | null = null
 
 function attr_escape(str: string) {
   return str
