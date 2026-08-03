@@ -9,13 +9,14 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./tableau.css": "./dist/tableau.css"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && tsc",
+    "build": "npm run clean && tsc && cp assets/tableau.css dist/tableau.css",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "prepare": "npm run build",
