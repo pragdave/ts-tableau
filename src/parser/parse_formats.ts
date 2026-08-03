@@ -251,7 +251,7 @@ function hlines(src: StringScanner): FormatHlines | null {
 // --------------------------------------------------------------------------------
 // --     lines([tblrx]+) 
 function lines(src: StringScanner): FormatLines | null {
-  if (src.scan(/lines\(([tbrlx]+)\)/)) {
+  if (src.scan(/lines?\(([tbrlx]+)\)/)) {
     return new FormatLines(src.getCapture(0))
   }
   else if (src.scan(/([tbrlx]+)/)) {
@@ -274,7 +274,7 @@ function span(src: StringScanner): FormatSpan | null {
 // --     class = .name | class(name)
 
 function fclass(src: StringScanner): FormatClass | null {
-  if (src.scan(/class\(\s*\.?([-a-zA-Z0-9_]+)\s*\)/)) {
+  if (src.scan(/(?:style|class)\(\s*\.?([-a-zA-Z0-9_]+)\s*\)/)) {
     return new FormatClass(src.getCapture(0))
   }
 

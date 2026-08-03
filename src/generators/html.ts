@@ -84,7 +84,7 @@ function add_classes(table: TableData): string {
 //
 function do_cell(cell: Cell): string {
   const tag = (cell.header || cell.footer) ? "th" : "td"
-  return `<${tag}${cell_opener(cell)}>${cell.content}</tag>`
+  return `<${tag}${cell_opener(cell)}>${cell.content}</${tag}>`
 }
 
 function cell_opener(cell: Cell): string {
@@ -179,7 +179,7 @@ function attr_escape(str: string) {
 
 function format_width_to_css(w: FormatWidth): string {
   if (w.type == "ratio") {
-    return `${w.width * 100}% `
+    return `${w.width * 100}%`
   }
   else {
     return `${w.width}ch`
