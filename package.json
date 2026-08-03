@@ -18,7 +18,7 @@
     "build": "npm run clean && tsc",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build",
+    "prepare": "npm run build",
     "tab": "tsx cli/tab.ts",
     "test": "jest",
     "wtest": "jest --watch"
