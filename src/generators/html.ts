@@ -171,7 +171,7 @@ function do_color(color: ColorRepresentations, kind: "bg" | "fg") {
     return `rgb(${color.r}, ${color.g}, ${color.b})`
   }
   else if (color instanceof ShadeColor) {
-    return `var(--${color.shade}-${kind})`
+    return `var(--tb-${color.shade}-${kind})`
   }
   else if (color instanceof CssColor) {
     return color.name
