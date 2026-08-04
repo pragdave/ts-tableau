@@ -1355,7 +1355,7 @@ Format | Table | Cell |  |  | Format | Table | Cell
 align  | Y     | Y    |  |  | large  | Y     | Y
 bg     | Y     | Y    |  |  | lines  |       | Y
 boxed  | Y     |      |  |  | normal | Y     | Y
-cols   | Y     |      |  |  | small  | Y     | Y
+       |       |      |  |  | small  | Y     | Y
 fg     | Y     | Y    |  |  | span   |       | Y
 footer |       | Y    |  |  | style  | Y     | Y
 header |       | Y    |  |  | vlines | Y     |
@@ -1603,21 +1603,7 @@ boxed
 
 
 
-#### `cols`: Missing
-~~~ tableau
-explicit: | `align(` [lcrj] [tmb] `)`
-implicit: | [lcrj] [tmb]
-===
-l
-[c1] width(10)
-~~~
-
-set horizontal cell alignment (left, center, right, justified) and/or
-vertical cell alignment (top, middle, bottom)
-
-
-
-#### `fg`: Foreground color 
+#### `fg`: Foreground color
 ~~~ tableau
 context:  | table and cells
 explicit: | `fg(` color `)`

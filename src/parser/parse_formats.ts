@@ -40,7 +40,6 @@ import type { Formats } from "../formats"
 // --     footer                      N          Y
 // --     small                       Y          Y
 // --
-// --     cols( colspec, colspec...)  Y          N
 // --     hlines                      Y          N
 // --     vlines                      Y          N
 // --     boxed                       Y          N
@@ -67,7 +66,6 @@ function parse_global_format(src: StringScanner): Formats | null {
     align(src) ||
     bg(src) ||
     boxed(src) ||
-    //     cols(src)    ||
     fclass(src) ||
     fg(src) ||
     font_size(src) ||
@@ -197,10 +195,6 @@ function boxed(src: StringScanner): FormatBoxed | null {
 }
 
 // --------------------------------------------------------------------------------
-// --     cols(colspec, ...)
-
-
-// --------------------------------------------------------------------------------
 // --     font_size: x{0,2}small | normal | x{0,2}large
 
 function font_size(src: StringScanner): FormatFontsize | null {
@@ -323,20 +317,5 @@ function width(src: StringScanner): FormatWidth | null {
 //       spec = { type: "width", spec: wid }
 //   spec
 //
-//
-//
-// --------------------------------------------------------------------------------
-// gather_one_colspec = (text) ->
-//   specs = {}
-//   valid_specs = (text) -> align(text) or width(text) or lines(text) or fg(text) or bg(text)
-//   spec = valid_specs(text)
-//   while spec
-//     specs[] = spec
-//     text\skip("%s*")
-//     spec = valid_specs(text)
-//   specs
-//
-//
-// --------------------------------------------------------------------------------
 //
 //
