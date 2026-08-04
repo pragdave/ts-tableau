@@ -2,14 +2,18 @@ import { Cell } from "./cell"
 import { TableData } from "./table_data"
 import { parse_data_row } from "./parser/parse_data_row"
 import { parse_format_row } from "./parser/parse_format_row"
+import { merge_column_blocks } from "./parser/parse_column_blocks"
 
 export function tableau(lines: string[]): TableData {
 
   const [data, format] = split(lines)
   const table_data = new TableData()
 
-  for (const line of data) {
-    const row = parse_data_row(line)
+  let index = 0
+  while (index < data.length) {
+    const row = parse_data_row(data[index])
+    index++
+    index = merge_column_blocks(data, index, row)
     table_data.add_row(row)
   }
 
@@ -30,7 +34,7 @@ function split(lines: string[]): [string[], string[]] {
   let current = data
   let line: string | null
 
-  while (line = merged_lines.next()) {
+  while ((line = merged_lines.next()) !== null) {
     if (/^\s*===\s*$/.test(line)) {
       if (current == format) {
         throw "Cannot have a format separator ('===') in the format section"
