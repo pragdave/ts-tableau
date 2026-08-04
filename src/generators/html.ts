@@ -137,10 +137,10 @@ function do_cell_styles(cell: Cell): string[] {
   const result: string[] = []
 
   if (cell.bg) {
-    result.push(`background: ${do_color(cell.bg)}`)
+    result.push(`background: ${do_color(cell.bg, "bg")}`)
   }
   if (cell.fg) {
-    result.push(`color: ${do_color(cell.fg)}`)
+    result.push(`color: ${do_color(cell.fg, "fg")}`)
   }
   if (cell.font_size) {
     switch (cell.font_size.scale) {
@@ -166,12 +166,12 @@ function align_cell_class(align: FormatAlign): string {
   return `halign-${align.halign} valign-${align.valign}`
 }
 
-function do_color(color: ColorRepresentations) {
+function do_color(color: ColorRepresentations, kind: "bg" | "fg") {
   if (color instanceof RGBColor) {
     return `rgb(${color.r}, ${color.g}, ${color.b})`
   }
   else if (color instanceof ShadeColor) {
-    return color.shade
+    return `var(--${color.shade}-${kind})`
   }
   else if (color instanceof CssColor) {
     return color.name
