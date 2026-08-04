@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit",
     "prepare": "npm run build",
     "tab": "tsx cli/tab.ts",
+    "md2html": "tsx cli/md2html.mts",
     "test": "jest",
     "wtest": "jest --watch"
   },
@@ -30,9 +31,16 @@
   "devDependencies": {
     "@types/jest": "^29.5.13",
     "jest": "^29.7.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.1",
+    "remark-tableau": "file:../remark-tableau",
     "ts-jest": "^29.2.5",
     "tsx": "^4.23.5",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "unified": "^11.0.5"
   },
   "dependencies": {
     "strscan-ts": "^1.0.0"

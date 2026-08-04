@@ -1487,49 +1487,41 @@ that you can use more complex backgrounds, such as gradients and images.
 ::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
 ~~~~
 ~~~ tableau
-shade1 | shade2 | shade3 | shade4 
-shade5 | shade6 | shade7 | shade8 
-shade9 | #cdf   | #94a8cb | nothing 
-mycolor | yourcolor | warning
+shade1 | shade2 | shade3 | shade4
+shade5 | shade6 | shade7 | shade8
+shade9 | #cdf   | #94a8cb | nothing
 ===
-[r1:c1] bg(shade1)  
-[r1:c2] bg(shade2)  
-[r1:c3] bg(shade3)  
-[r1:c4] bg(shade4)  
-[r2:c1] bg(shade5)  
-[r2:c2] bg(shade6)  
-[r2:c3] bg(shade7)  
-[r2:c4] bg(shade8)  
-[r3:c1] bg(shade9)  
+[r1:c1] bg(shade1)
+[r1:c2] bg(shade2)
+[r1:c3] bg(shade3)
+[r1:c4] bg(shade4)
+[r2:c1] bg(shade5)
+[r2:c2] bg(shade6)
+[r2:c3] bg(shade7)
+[r2:c4] bg(shade8)
+[r3:c1] bg(shade9)
 [r3:c2] bg(#cdf)
 [r3:c3] bg(#94a8cb)
-[r4:c1] bg(mycolor)
-[r4:c2] bg(yourcolor)
-[r4:c3] bg(pulse)
 ~~~
 ~~~~
 :::
 \columnbreak
 ~~~ tableau
-shade1 | shade2 | shade3 | shade4 
-shade5 | shade6 | shade7 | shade8 
-shade9 | #cdf   | #94a8cb | nothing 
-mycolor | yourcolor | warning
+shade1 | shade2 | shade3 | shade4
+shade5 | shade6 | shade7 | shade8
+shade9 | #cdf   | #94a8cb | nothing
 ===
-[r1:c1] bg(shade1)  
-[r1:c2] bg(shade2)  
-[r1:c3] bg(shade3)  
-[r1:c4] bg(shade4)  
-[r2:c1] bg(shade5)  
-[r2:c2] bg(shade6)  
-[r2:c3] bg(shade7)  
-[r2:c4] bg(shade8)  
-[r3:c1] bg(shade9)  
+[r1:c1] bg(shade1)
+[r1:c2] bg(shade2)
+[r1:c3] bg(shade3)
+[r1:c4] bg(shade4)
+[r2:c1] bg(shade5)
+[r2:c2] bg(shade6)
+[r2:c3] bg(shade7)
+[r2:c4] bg(shade8)
+[r3:c1] bg(shade9)
 [r3:c2] bg(#cdf)
 [r3:c3] bg(#94a8cb)
-[r4:c1] bg(mycolor)
-[r4:c2] bg(yourcolor)
-[r4:c3] bg(pulse)
 ~~~
 ::::
 
