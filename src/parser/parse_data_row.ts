@@ -39,13 +39,18 @@ function cell_fragment(src: StringScanner): string | false {
     return false
 
   if (src.scan(/\\(.)/)) {
-    debugger
     return src.getCapture(0)
   }
 
   return (
     src.scan(/`[^`]+`/) ||  // inline code
     src.scan(/\$[^$]+\$/) ||  // inline math
-    src.scan(/[^`$|\\]+/)     // anything else non special
+    src.scan(/[^`$|\\]+/) ||  // anything else non special
+    // An unmatched ` or $ -- treat as a literal character rather than
+    // getting stuck (neither the code/math regexes above nor the
+    // catch-all can consume it, which previously left the scanner
+    // position unchanged and looped parse_cell/parse_data_row forever
+    // on a single unmatched backtick or dollar).
+    src.scan(/[`$]/)
   )
 }

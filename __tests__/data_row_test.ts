@@ -29,6 +29,8 @@ describe('data_row_parse', () => {
     "ignores | in inline code": ["|a`b|c`d|c|", ["a`b|c`d", "c"]],
     "backslash escapes |": ["|ab\\|cd|c|", ["ab|cd", "c"]],
     "backslash ignored before regular": ["|a\\b\\|cd|c|", ["ab|cd", "c"]],
+    "unmatched backtick is treated as a literal character": ["a`b", ["a`b"]],
+    "unmatched dollar sign is treated as a literal character": ["a$b", ["a$b"]],
   })
 
   let name: keyof typeof TESTS & string
