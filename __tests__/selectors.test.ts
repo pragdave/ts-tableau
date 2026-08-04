@@ -33,8 +33,9 @@ describe('selector_parse', () => {
     "last col 2": ["r$lastrow:c$c", cell_list([one_cell(ROWS, COLS)])],
     "last col 3": ["r$lastrow+1:c$c~2", cell_list([one_cell(ROWS + 1, COLS - 2)])],
 
-    // "this row":        ["c$thisrow",           cell_list([ one_cell(1,1), one_cell(2,2), one_cell(3,3), one_cell(4,4), ])]
-
+    "this row (long form)": ["c$thisrow", cell_list([one_cell(1, 1), one_cell(2, 2), one_cell(3, 3), one_cell(4, 4)])],
+    "this row (short form)": ["c$tr", cell_list([one_cell(1, 1), one_cell(2, 2), one_cell(3, 3), one_cell(4, 4)])],
+    "this row with offset": ["c$tr+1", cell_list([one_cell(1, 2), one_cell(2, 3), one_cell(3, 4), one_cell(4, 5)])],
 
     // skips
     "skip even absolute 1": ["r3-8%even:c1", cell_list([one_cell(4, 1), one_cell(6, 1), one_cell(8, 1)])],
@@ -56,6 +57,20 @@ describe('selector_parse', () => {
       test_one_row(input, expected)
     })
   }
+})
+
+describe("$tr / $thisrow degenerate cases", () => {
+  test("$tr in a row spec throws", () => {
+    const src = new StringScanner("r$tr]")
+    const result = parse_selector(src)
+    expect(() => Array.from(result.cells(TABLE))).toThrow()
+  })
+
+  test("$tr combined with span throws", () => {
+    const src = new StringScanner("c$tr]")
+    const result = parse_selector(src)
+    expect(() => Array.from(result.rectangles(TABLE))).toThrow()
+  })
 })
 
 

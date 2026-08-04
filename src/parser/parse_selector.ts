@@ -158,7 +158,7 @@ function maybe_skip(src: StringScanner) {
 //   / "thisrow"   { return new SelNumberThisRow() } //TODO
 
 function number(src: StringScanner): SelNumber {
-  if (src.scan(/\$(lastrow|lastcol|thisrow|c|r|t)/))
+  if (src.scan(/\$(lastrow|lastcol|thisrow|tr|c|r)/))
     switch (src.getMatch()) {
       case "$c":
       case "$lastcol": return new SelNumberLastCol()
@@ -166,8 +166,9 @@ function number(src: StringScanner): SelNumber {
       case "$r":
       case "$lastrow": return new SelNumberLastRow()
 
-      // case "$t":
-      // case "$thisrow": return new SelNumberThisRow()
+      case "$tr":
+      case "$thisrow": return new SelNumberThisRow()
+
       default: throw "Unknown number type"
     }
   else

@@ -49,8 +49,8 @@ export class SelAdjustedNumber {
   ) {
   }
 
-  getValue(table: TableData): number {
-    return this.number.getValue(table) + this.offset;
+  getValue(table: TableData, current_row?: number): number {
+    return this.number.getValue(table, current_row) + this.offset;
   }
 
   sameAs(other: SelAdjustedNumber): boolean {
@@ -87,14 +87,12 @@ export class SelTerm {
     const row_iterator = this.row
       ? this.row.cell_coords(table)
       : table.all_row_numbers();
-    const col_iterator = this.col
-      ? this.col.cell_coords(table)
-      : table.all_col_numbers();
-
-    const persistent_cols = Array.from(col_iterator)
 
     for (let row of row_iterator) {
-      for (let col of persistent_cols) {
+      const col_iterator = this.col
+        ? this.col.cell_coords(table, row)
+        : table.all_col_numbers();
+      for (let col of col_iterator) {
         yield { row: row, col: col };
       }
     }
@@ -160,9 +158,9 @@ function contiguous_values(gen: SelNumberGenerator, table: TableData, axis: "row
 export class SelRowCol {
   constructor(public numbers: SelNumberGenerator[]) { }
 
-  *cell_coords(table: TableData): Generator<number> {
+  *cell_coords(table: TableData, current_row?: number): Generator<number> {
     for (let snr of this.numbers) {
-      for (let index of snr.cell_coords(table)) {
+      for (let index of snr.cell_coords(table, current_row)) {
         yield index;
       }
     }
@@ -193,9 +191,9 @@ export class SelNumberGenerator {
   ) {
   }
 
-  *cell_coords(table: TableData): Generator<number> {
-    const from = this.from.getValue(table);
-    const to = this.to.getValue(table);
+  *cell_coords(table: TableData, current_row?: number): Generator<number> {
+    const from = this.from.getValue(table, current_row);
+    const to = this.to.getValue(table, current_row);
     for (let i = from; i <= to; i++) {
       let n = i
       if (this.skip.is_relative())
@@ -238,7 +236,7 @@ export class SelNumberGenerator {
 //
 // ####################################################
 export abstract class SelNumber {
-  abstract getValue(table: TableData): number;
+  abstract getValue(table: TableData, current_row?: number): number;
   abstract syntax_value(): string;
 
   // sameAs(other: SelNumber): boolean {
@@ -256,7 +254,7 @@ export class SelNumberInt extends SelNumber {
     super();
   }
 
-  getValue(_: TableData) {
+  getValue(_table: TableData, _current_row?: number) {
     return this.value;
   }
 
@@ -269,7 +267,7 @@ export class SelNumberLastRow extends SelNumber {
   constructor() {
     super();
   }
-  getValue(table: TableData) {
+  getValue(table: TableData, _current_row?: number) {
     return table.row_count();
   }
   syntax_value() {
@@ -281,7 +279,7 @@ export class SelNumberLastCol extends SelNumber {
   constructor() {
     super();
   }
-  getValue(table: TableData) {
+  getValue(table: TableData, _current_row?: number) {
     return table.col_count();
   }
   syntax_value() {
@@ -293,8 +291,11 @@ export class SelNumberThisRow extends SelNumber {
   constructor() {
     super();
   }
-  getValue(_table: TableData) {
-    return 7;
+  getValue(_table: TableData, current_row?: number) {
+    if (current_row === undefined) {
+      throw "$thisrow (or $tr) can only be used inside a column spec, resolved per row -- it has no meaning in a row spec or inside a span selector"
+    }
+    return current_row;
   }
   syntax_value() {
     return "thisrow";
