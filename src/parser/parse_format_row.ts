@@ -4,7 +4,13 @@ import { FormatRow } from "../format_row"
 import { parse_global_formats, parse_selector_formats } from "./parse_formats"
 import { parse_selector } from "./parse_selector"
 
+const BLANK_OR_COMMENT_RE = /^\s*(--|$)/
+
 export function parse_format_row(line: string) {
+  if (BLANK_OR_COMMENT_RE.test(line)) {
+    return new FormatRow(null, [])
+  }
+
   const src = new StringScanner(line)
   const selectors = src.scan(/^\s*\[/) ? parse_selector(src) : null
   let result: FormatRow

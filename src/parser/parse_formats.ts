@@ -44,15 +44,14 @@ import type { Formats } from "../formats"
 // --     vlines                      Y          N
 // --     boxed                       Y          N
 
-function log(src: StringScanner) {
-  console.log("No match", src.peek(10))
-  return false
-}
 export function parse_global_formats(src: StringScanner): Formats[] {
   const result: Formats[] = []
   let fmt: Formats | null
   while (fmt = parse_global_format(src))
     result.push(fmt)
+  if (!src.hasTerminated()) {
+    throw `unrecognized format: ${src.peek(30)}`
+  }
   return result
 }
 
@@ -72,7 +71,6 @@ function parse_global_format(src: StringScanner): Formats | null {
     hlines(src) ||
     vlines(src) ||
     width(src) ||
-    log(src) ||
     null)
 }
 
@@ -81,10 +79,9 @@ export function parse_selector_formats(src: StringScanner): Formats[] {
   let fmt: Formats | null
 
   while (fmt = parse_selector_format(src)) {
-    console.error("fmt", fmt)
     result.push(fmt)
   }
-  if (!src.hasTerminated) {
+  if (!src.hasTerminated()) {
     throw `unrecognized format: ${src.peek(30)}`
   }
   return result
