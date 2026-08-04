@@ -66,10 +66,35 @@
   }
 }
 
+/*
+ * Host pages/themes (Docusaurus, MkDocs, etc.) often style bare tables
+ * with zebra striping, borders, and shadows. This resets only what
+ * ts-tableau doesn't always explicitly set itself (background, border,
+ * box-shadow) back to neutral values, using ordinary specificity -- no
+ * !important -- so our own rules below naturally take over from here.
+ * (text-align/vertical-align aren't reset: every cell always gets an
+ * explicit halign/valign rule from us, table-level default or per-cell
+ * override, so there's no gap for a host style to fill there.)
+ *
+ * This beats most host default table styling, but not a host theme that
+ * uses !important or unusually high specificity itself -- for those, a
+ * host-specific integration package is expected to add whatever
+ * override its environment needs.
+ */
+table.tableau,
+table.tableau tr,
+table.tableau th,
+table.tableau td {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
 table.tableau {
   border-collapse: collapse;
+  border-spacing: 0;
 
-  & td {
+  & td, & th {
     padding: 0.25rem 0.5rem;
     margin:0;
   }

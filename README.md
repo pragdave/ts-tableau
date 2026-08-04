@@ -73,6 +73,21 @@ col2 {{
 }}
 ```
 
+## Styling in Host Environments
+
+Host pages and site themes (Docusaurus, MkDocs, etc.) often apply their
+own default table styling -- zebra striping, borders, shadows. The
+shipped stylesheet (`assets/tableau.css`) resets `background`, `border`,
+and `box-shadow` back to neutral values on `table.tableau` and its
+`tr`/`th`/`td` descendants, using ordinary CSS specificity, not
+`!important`. This beats most host default table styling on its own.
+
+It won't beat a host theme that uses `!important` or unusually high
+specificity for its own table styles. For those environments, a
+host-specific integration package is expected to add whatever override
+its environment needs (higher specificity, `!important`, or CSS `@layer`
+ordering, depending on what fits that host).
+
 ## Documentation
 
 A combined guide and reference [is available](https://pragdave.github.io/pandoc-tableau/tableau-guide.html).
