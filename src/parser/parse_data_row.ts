@@ -7,7 +7,7 @@ export function parse_data_row(line: string) {
   const cells: Cell[] = []
   src.scan(/\s*/)
   if (src.hasTerminated()) return new Row([])
-  if (src.scan(/=empty\s*$/)) return EmptyRow
+  if (src.scan(/=empty\s*$/)) return EmptyRow()
 
   src.scan(/\|\s*/)  // first pipe is optional
 

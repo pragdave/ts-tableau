@@ -43,7 +43,7 @@ function decode_column_number(spec: string): number {
 // paragraph-separator line inside the block doesn't force the minimum
 // to zero and defeat dedenting entirely.
 function normalize(content: string[]): string[] {
-  const expanded = content.map(expand_tabs)
+  const expanded = content.map((line) => expand_tabs(line))
   const indents = expanded
     .filter((line) => line.trim().length > 0)
     .map(leading_whitespace)

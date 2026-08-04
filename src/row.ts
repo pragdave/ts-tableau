@@ -18,4 +18,11 @@ export class Row {
   }
 }
 
-export const EmptyRow = new Row([], true)
+// Returns a fresh Row each call -- must not be a shared singleton, since
+// Row instances (and their cells) are mutated in place by pad_to and by
+// column-block content merging. A shared instance would leak state
+// between unrelated =empty rows, including across separate tableau()
+// calls.
+export function EmptyRow(): Row {
+  return new Row([], true)
+}

@@ -46,7 +46,21 @@ function split(lines: string[]): [string[], string[]] {
     }
   }
 
-  return [data, format]
+  return [trim_trailing_blanks(data), trim_trailing_blanks(format)]
+}
+
+// Drops blank lines from the end of `lines`, leaving interior blank lines
+// untouched -- those are meaningful "half-height row" markers. This
+// mirrors the reference implementation, which trims each section before
+// splitting it into rows, so a trailing newline in the source file (the
+// normal case) doesn't produce a spurious empty row at the end of the
+// table.
+function trim_trailing_blanks(lines: string[]): string[] {
+  let end = lines.length
+  while (end > 0 && lines[end - 1].trim() === "") {
+    end--
+  }
+  return lines.slice(0, end)
 }
 
 

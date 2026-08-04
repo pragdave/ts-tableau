@@ -75,6 +75,21 @@ test("table with empty row", () => {
   simple_table(rows, expected)
 })
 
+test("trailing blank lines in the data section do not produce extra rows", () => {
+  const table = tableau(["a|b", "c|d", ""])
+  expect(table.row_count()).toBe(2)
+})
+
+test("multiple trailing blank lines in the data section do not produce extra rows", () => {
+  const table = tableau(["a|b", "c|d", "", ""])
+  expect(table.row_count()).toBe(2)
+})
+
+test("an interior blank line in the data section still produces a row for it", () => {
+  const table = tableau(["a|b", "", "c|d"])
+  expect(table.row_count()).toBe(3)
+})
+
 test("selector coords computed outside the table are skipped, not crashed on", () => {
   // 5 rows, 3 columns: c$tr walks the diagonal (r1c1, r2c2, r3c3, r4c4,
   // r5c5) but the table is only 3 columns wide, so rows 4 and 5 have no

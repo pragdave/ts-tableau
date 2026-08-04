@@ -114,3 +114,27 @@ test("a 'col N {{' line with no preceding data row is just parsed as an ordinary
     ["col2 {{"],
   ])
 })
+
+test("tab characters are expanded before dedenting", () => {
+  const lines = [
+    "a|b",
+    "col2 {{",
+    "\tfirst line",
+    "\tsecond line",
+    "}}",
+  ]
+  expect(rows_of(lines)).toEqual([
+    ["a", "first line\nsecond line"],
+  ])
+})
+
+test("a leak-proof EmptyRow: block content targeting an =empty row in one tableau() call does not leak into another call's =empty rows", () => {
+  tableau(["a|b|c", "=empty"])
+  tableau(["a|b|c", "=empty", "col2 {{", "LEAK", "}}"])
+
+  const result = rows_of(["p|q|r", "=empty"])
+  expect(result).toEqual([
+    ["p", "q", "r"],
+    ["", "", ""],
+  ])
+})

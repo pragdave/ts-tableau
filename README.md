@@ -51,7 +51,27 @@ rendered output.
 
 `<tableau-md>` is a valid custom-element name and is otherwise inert --
 plain HTML viewers will just show its (unescaped, unrendered) text
-content.
+content. An empty cell produces an empty marker, `<tableau-md></tableau-md>`.
+
+## Block Content
+
+A data row can be followed by one or more `col N {{ ... }}` (or
+`column N {{ ... }}`) blocks, each of which replaces the content of one
+column of that row with a multi-line block of text, up to the matching
+`}}`. `N` can be a column number (`col2`) or a letter (`colb`, equivalent
+to column 2). The block's content is dedented by its own minimum common
+leading whitespace, so you can indent it to match the surrounding markup
+without that indentation ending up in the cell. A block that targets a
+column outside the row's range is silently ignored.
+
+```
+Cicero|||
+col2 {{
+  paragraph one
+
+  paragraph two
+}}
+```
 
 ## Documentation
 
