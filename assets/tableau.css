@@ -1,6 +1,61 @@
-.tableau {
+:root {
   --tb-border-color: #bbb;
   --tb-line-color: #ddd;
+  --tb-header-bg: #cef;
+  --tb-footer-bg: #ecf;
+
+  --shade1-bg: hsl(60deg, 66%, 84%);
+  --shade2-bg: hsl(95deg, 61%, 79%);
+  --shade3-bg: hsl(130deg, 61%, 79%);
+  --shade4-bg: hsl(165deg, 61%, 79%);
+  --shade5-bg: hsl(200deg, 61%, 79%);
+  --shade6-bg: hsl(235deg, 61%, 79%);
+  --shade7-bg: hsl(270deg, 61%, 79%);
+  --shade8-bg: hsl(305deg, 61%, 79%);
+  --shade9-bg: hsl(340deg, 61%, 79%);
+  --shade-bg:  var(--shade1-bg);
+
+  --shade1-fg: hsl(60deg, 66%, 44%);
+  --shade2-fg: hsl(95deg, 61%, 39%);
+  --shade3-fg: hsl(130deg, 61%, 39%);
+  --shade4-fg: hsl(165deg, 61%, 39%);
+  --shade5-fg: hsl(200deg, 61%, 39%);
+  --shade6-fg: hsl(235deg, 61%, 39%);
+  --shade7-fg: hsl(270deg, 61%, 39%);
+  --shade8-fg: hsl(305deg, 61%, 39%);
+  --shade9-fg: hsl(340deg, 61%, 39%);
+  --shade-fg:  var(--shade1-fg);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tb-border-color: #666;
+    --tb-line-color: #444;
+    --tb-header-bg: hsl(195, 40%, 20%);
+    --tb-footer-bg: hsl(285, 40%, 20%);
+
+    --shade1-bg: hsl(60deg, 61%, 30%);
+    --shade2-bg: hsl(95deg, 61%, 30%);
+    --shade3-bg: hsl(130deg, 61%, 30%);
+    --shade4-bg: hsl(165deg, 61%, 30%);
+    --shade5-bg: hsl(200deg, 61%, 30%);
+    --shade6-bg: hsl(235deg, 61%, 30%);
+    --shade7-bg: hsl(270deg, 61%, 30%);
+    --shade8-bg: hsl(305deg, 61%, 30%);
+    --shade9-bg: hsl(340deg, 61%, 30%);
+    --shade-bg:  var(--shade1-bg);
+
+    --shade1-fg: hsl(60deg, 61%, 75%);
+    --shade2-fg: hsl(95deg, 61%, 75%);
+    --shade3-fg: hsl(130deg, 61%, 75%);
+    --shade4-fg: hsl(165deg, 61%, 75%);
+    --shade5-fg: hsl(200deg, 61%, 75%);
+    --shade6-fg: hsl(235deg, 61%, 75%);
+    --shade7-fg: hsl(270deg, 61%, 75%);
+    --shade8-fg: hsl(305deg, 61%, 75%);
+    --shade9-fg: hsl(340deg, 61%, 75%);
+    --shade-fg:  var(--shade1-fg);
+  }
 }
 
 table.tableau {
@@ -80,27 +135,27 @@ table.tableau tr td, table.tableau tr th {
   }
 
   &.tb-header {
-    background: #cef;
+    background: var(--tb-header-bg);
   }
   &.tb-footer {
-    background: #ecf;
+    background: var(--tb-footer-bg);
   }
 
-  &.tb-boxed  { border: 1px solid #888; }
-  &.tb_l_1111 { border: 1px solid #888; }
+  &.tb-boxed  { border: 1px solid var(--tb-border-color); }
+  &.tb_l_1111 { border: 1px solid var(--tb-border-color); }
   /*     TRBL */
-  &.tb_l_0001 { border-left: 1px solid #888; }
-  &.tb_l_0010 { border-bottom: 1px solid #888; }
-  &.tb_l_0011 { border-left top: 1px solid #888; border-bottom: 1px solid #888; }
-  &.tb_l_0100 { border-right: 1px solid #888; }
-  &.tb_l_0101 { border-left: 1px solid #888; border-right: 1px solid #888; }
-  &.tb_l_0110 { border-right: 1px solid #888; border-bottom: 1px solid #888; }
-  &.tb_l_0111 { border-right: 1px solid #888; border-left: 1px solid #888; border-bottom: 1px solid #888; }
-  &.tb_l_1000 { border-top: 1px solid #888; }
-  &.tb_l_1001 { border-top: 1px solid #888; border-left: 1px solid #888; }
-  &.tb_l_1010 { border-top: 1px solid #888; border-bottom: 1px solid #888; }
-  &.tb_l_1011 { border-top: 1px solid #888; border-left: 1px solid #888; border-bottom: 1px solid #888; }
-  &.tb_l_1100 { border-top: 1px solid #888; border-right: 1px solid #888; }
-  &.tb_l_1101 { border-top: 1px solid #888; border-right: 1px solid #888; border-left: 1px solid #888; }
-  &.tb_l_1110 { border-top: 1px solid #888; border-right: 1px solid #888; border-bottom: 1px solid #888; }
+  &.tb_l_0001 { border-left: 1px solid var(--tb-border-color); }
+  &.tb_l_0010 { border-bottom: 1px solid var(--tb-border-color); }
+  &.tb_l_0011 { border-left: 1px solid var(--tb-border-color); border-bottom: 1px solid var(--tb-border-color); }
+  &.tb_l_0100 { border-right: 1px solid var(--tb-border-color); }
+  &.tb_l_0101 { border-left: 1px solid var(--tb-border-color); border-right: 1px solid var(--tb-border-color); }
+  &.tb_l_0110 { border-right: 1px solid var(--tb-border-color); border-bottom: 1px solid var(--tb-border-color); }
+  &.tb_l_0111 { border-right: 1px solid var(--tb-border-color); border-left: 1px solid var(--tb-border-color); border-bottom: 1px solid var(--tb-border-color); }
+  &.tb_l_1000 { border-top: 1px solid var(--tb-border-color); }
+  &.tb_l_1001 { border-top: 1px solid var(--tb-border-color); border-left: 1px solid var(--tb-border-color); }
+  &.tb_l_1010 { border-top: 1px solid var(--tb-border-color); border-bottom: 1px solid var(--tb-border-color); }
+  &.tb_l_1011 { border-top: 1px solid var(--tb-border-color); border-left: 1px solid var(--tb-border-color); border-bottom: 1px solid var(--tb-border-color); }
+  &.tb_l_1100 { border-top: 1px solid var(--tb-border-color); border-right: 1px solid var(--tb-border-color); }
+  &.tb_l_1101 { border-top: 1px solid var(--tb-border-color); border-right: 1px solid var(--tb-border-color); border-left: 1px solid var(--tb-border-color); }
+  &.tb_l_1110 { border-top: 1px solid var(--tb-border-color); border-right: 1px solid var(--tb-border-color); border-bottom: 1px solid var(--tb-border-color); }
 }
