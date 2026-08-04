@@ -7,6 +7,7 @@ import { FormatWidth } from "./formats/format_width"
 
 import {
   FormatBoxed,
+  FormatCaption,
   FormatFooter,
   FormatHeader,
   FormatHlines,
@@ -18,6 +19,7 @@ export {
   FormatAlign,
   FormatBg,
   FormatBoxed,
+  FormatCaption,
   FormatClass,
   FormatFg,
   FormatFontsize,
@@ -34,6 +36,7 @@ export type Formats
   = FormatAlign
   | FormatBg
   | FormatBoxed
+  | FormatCaption
   | FormatClass
   | FormatFg
   | FormatFontsize

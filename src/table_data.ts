@@ -8,6 +8,7 @@ import {
   FormatAlign,
   FormatBg,
   FormatBoxed,
+  FormatCaption,
   FormatFg,
   FormatFontsize,
   FormatFooter,
@@ -27,6 +28,7 @@ import type { ColorRepresentations } from "./formats/format_colors"
 
 type GlobalAttributes = {
   boxed: boolean,
+  caption: string | null,
   halign: HALIGN,
   hlines: boolean,
   style: string,
@@ -43,6 +45,7 @@ export class TableData {
 
   readonly global_attr: GlobalAttributes = {
     boxed: false,
+    caption: null,
     halign: "c",
     hlines: false,
     style: "",
@@ -93,6 +96,10 @@ export class TableData {
 
       case FormatBoxed:
         this.global_attr.boxed = true
+        break
+
+      case FormatCaption:
+        this.global_attr.caption = (format as FormatCaption).text
         break
 
       case FormatHlines:

@@ -18,6 +18,9 @@ export function generate(table: TableData): string[] {
 
 function do_table(table: TableData): string[] {
   let result = [table_opener(table)]
+  if (table.global_attr.caption !== null) {
+    result.push(`<caption><tableau-md>${escape_markdown(table.global_attr.caption)}</tableau-md></caption>`)
+  }
   table.rows.forEach((row) => {
     result = result.concat(do_row(row))
   })
