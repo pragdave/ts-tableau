@@ -27,8 +27,8 @@ For example, here's a multiplication table:
 ===
 # Times table 
 [r1;c1] header
-[r2-$r:c@r] line(lb)
-[r2-$r:c2-@r~1] small bg(shade6)
+[r2-$r:c$tr] line(lb)
+[r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
 ~~~~
 :::
@@ -43,8 +43,8 @@ For example, here's a multiplication table:
 ===
 # Times table 
 [r1;c1] header
-[r2-$r:c@r] line(lb)
-[r2-$r:c2-@r~1] small bg(shade6)
+[r2-$r:c$tr] line(lb)
+[r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
 ::::
 
@@ -56,11 +56,11 @@ The text before the three equals signs is the table data; the stuff after is the
 `[r1;c1] header`
 : row 1 and column 1 are headers
 
-`[r2-$r:c@r] line(lb)`
+`[r2-$r:c$tr] line(lb)`
 : for rows two through the last row in the table, select the cell whose column
 number is the same as the row number and draw a line on its left and below it.
 
-`[r2-$r:c2-@r~1] small bg(shade6)`
+`[r2-$r:c2-$tr~1] small bg(shade6)`
 : for rows two through six, select cells from column two through the column one less than the row number. 
 Make the text small, and shade the background.
 
@@ -118,11 +118,10 @@ align(l)
 [c1] width(0.1)
 [c3] align(r)
 
-[r1] large .bold align(c) span 
+[r1] large .bold align(c) span
 [r1-3] bg(shade4)
 [r4-$r] bg(shade1)
 
-[r1] span
 [r2] span
 [r3] span 
 [r4] span xsmall line(t) 
@@ -158,12 +157,12 @@ xlarge
  21 | 22 | 23 | 24 | 25
  ===
 [r1-3:c1] span
-[r1:c1] shade1
+[r1:c1] bg(shade1)
 
-[r3:c4-5] span shade2
+[r3:c4-5] span bg(shade2)
 
 [r2-4:c2-3] span
-[r2:c2] shade3
+[r2:c2] bg(shade3)
 
 ```
 :::
@@ -733,7 +732,7 @@ align(l)
 |  5 |  5 | 10 | 15 | 20 | 25 |
 ===
 [r1;c1] header
-[r2-6:c@r] line(lb)
+[r2-6:c$tr] line(lb)
 ~~~
 ~~~~
 :::
@@ -747,15 +746,15 @@ align(l)
 |  5 |  5 | 10 | 15 | 20 | 25 |
 ===
 [r1;c1] header
-[r2-6:c@r] line(lb)
+[r2-6:c$tr] line(lb)
 ~~~
 ::::
 
 * `[r1;c1] header` uses the `;` to separate distinct selectors: the
   result selects all the cells in row one and in column one.
 
-* `r2-6:c@r` selects rows two through six. In each row, it then selects
-  the cell whose column equals the row number (that's the `@r`
+* `r2-6:c$tr` selects rows two through six. In each row, it then selects
+  the cell whose column equals the row number (that's the `$tr`
   notation).
 
 * For each selected sell, we draw a line on the left and the bottom.
@@ -774,8 +773,8 @@ align(l)
 |  5 |  5 | 10 | 15 | 20 | 25 |
 ===
 [r1;c1] header
-[r2-6:c@r] line(lb)
-[r2-6:c2-@r~1] small bg(shade6)
+[r2-6:c$tr] line(lb)
+[r2-6:c2-$tr~1] small bg(shade6)
 ~~~
 ~~~~
 :::
@@ -789,18 +788,18 @@ align(l)
 |  5 |  5 | 10 | 15 | 20 | 25 |
 ===
 [r1;c1] header
-[r2-6:c@r] line(lb)
-[r2-6:c2-@r~1] small bg(shade6)
+[r2-6:c$tr] line(lb)
+[r2-6:c2-$tr~1] small bg(shade6)
 ~~~
 ::::
 
-* `r2-6:c2-@r~1` is probably the most complex selector so far. Let's
+* `r2-6:c2-$tr~1` is probably the most complex selector so far. Let's
   disect it:
 
   * `r2-6` selects rows two through six
   * `:` then selects some cells within that row
-  * `c2-@r~1` selects the cells starting in column two and 
-    ending at the current now number (`@r`) minus one (`~1`). 
+  * `c2-$tr~1` selects the cells starting in column two and 
+    ending at the current now number (`$tr`) minus one (`~1`). 
   * Note that we use `~` (tilde) for minus, because we already use the
     minus sign to denote a range.
 
@@ -1141,7 +1140,7 @@ version.
 
 <number>          := <integer>
                   | '$c'
-                  | '$r' | '@r'
+                  | '$r' | '$tr'
 
 <skip>          := ( "%" | "%%" ) ( "odd" | "even" | <integer> )
 ~~~
@@ -1225,7 +1224,7 @@ starting with the definition of a number
 * ``` bnf
   <number>          := <integer>
                     | '$c' 
-                    | '$r' | '@r'
+                    | '$r' | '$tr'
   ```
 
   A number represents a particular row or column. Both are numbered
@@ -1233,22 +1232,17 @@ starting with the definition of a number
 
   The values `$c` and `$r` represent the maximum column and row values.
 
-  The value `@r` represents the current row. For example, the selector
-  `r1,3,5:c@r` represents the three cells `r1:c1`, `r3:c3`, and `r5:c5`.
+  The value `$tr` represents the current row. For example, the selector
+  `r1,3,5:c$tr` represents the three cells `r1:c1`, `r3:c3`, and `r5:c5`.
 
   This will be more useful when we look at ranges.
-
-  ::: {.callout-note}
-  `@r` is not yet implemented in ts-tableau — see the differences summary.
-  :::
-
 
 * ``` bnf
   <adjusted number> := <number> ( [~+] <integer> )
   ```
 
   You can add or subtract a fixed amount from a number. This is typically
-  only used when  using the special values `@r`1, `$c`, and `$r`.
+  only used when  using the special values `$tr`, `$c`, and `$r`.
 
   ~~~ lua
   -- select the second to last row
@@ -1256,7 +1250,7 @@ starting with the definition of a number
 
   -- select the cell whose cvolumn numberr is two more than the current row
   number.
-  c@r+2
+  c$tr+2
   ~~~
 
   Note that we use a tidle (`~`) to represent subtraction.
@@ -1284,8 +1278,8 @@ starting with the definition of a number
   ===
   # Times table 
   [r1;c1] header
-  [r2-$r:c@r] line(lb)
-  [r2-$r:c2-@r~1] small bg(shade6)
+  [r2-$r:c$tr] line(lb)
+  [r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
 ~~~~
 :::
@@ -1300,15 +1294,15 @@ starting with the definition of a number
   ===
   # Times table 
   [r1;c1] header
-  [r2-$r:c@r] line(lb)
-  [r2-$r:c2-@r~1] small bg(shade6)
+  [r2-$r:c$tr] line(lb)
+  [r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
 ::::
 
-  The selector `r2-6:c@r` selects cells in rowes 2 through the end of the
+  The selector `r2-6:c$tr` selects cells in rowes 2 through the end of the
   table whose column number is the same as the row number.
 
-  `r2-$r:c2-@r~1` looks at rows 2 through 6. In each row, it selects the
+  `r2-$r:c2-$tr~1` looks at rows 2 through 6. In each row, it selects the
   cells starting at column 2 and ending at the current row number minus 1.
 
 * ``` bnf
@@ -1498,17 +1492,17 @@ shade5 | shade6 | shade7 | shade8
 shade9 | #cdf   | #94a8cb | nothing 
 mycolor | yourcolor | warning
 ===
-[r1:c1] shade1  
-[r1:c2] shade2  
-[r1:c3] shade3  
-[r1:c4] shade4  
-[r2:c1] shade5  
-[r2:c2] shade6  
-[r2:c3] shade7  
-[r2:c4] shade8  
-[r3:c1] shade9  
-[r3:c2] #cdf
-[r3:c3] #94a8cb
+[r1:c1] bg(shade1)  
+[r1:c2] bg(shade2)  
+[r1:c3] bg(shade3)  
+[r1:c4] bg(shade4)  
+[r2:c1] bg(shade5)  
+[r2:c2] bg(shade6)  
+[r2:c3] bg(shade7)  
+[r2:c4] bg(shade8)  
+[r3:c1] bg(shade9)  
+[r3:c2] bg(#cdf)
+[r3:c3] bg(#94a8cb)
 [r4:c1] bg(mycolor)
 [r4:c2] bg(yourcolor)
 [r4:c3] bg(pulse)
@@ -1522,17 +1516,17 @@ shade5 | shade6 | shade7 | shade8
 shade9 | #cdf   | #94a8cb | nothing 
 mycolor | yourcolor | warning
 ===
-[r1:c1] shade1  
-[r1:c2] shade2  
-[r1:c3] shade3  
-[r1:c4] shade4  
-[r2:c1] shade5  
-[r2:c2] shade6  
-[r2:c3] shade7  
-[r2:c4] shade8  
-[r3:c1] shade9  
-[r3:c2] #cdf
-[r3:c3] #94a8cb
+[r1:c1] bg(shade1)  
+[r1:c2] bg(shade2)  
+[r1:c3] bg(shade3)  
+[r1:c4] bg(shade4)  
+[r2:c1] bg(shade5)  
+[r2:c2] bg(shade6)  
+[r2:c3] bg(shade7)  
+[r2:c4] bg(shade8)  
+[r3:c1] bg(shade9)  
+[r3:c2] bg(#cdf)
+[r3:c3] bg(#94a8cb)
 [r4:c1] bg(mycolor)
 [r4:c2] bg(yourcolor)
 [r4:c3] bg(pulse)
@@ -1902,13 +1896,13 @@ taken from the top-left–most cell in each block.
  13 | 14 | 15 | 16
  ===
 [r1-3:c1] span
-[r1:c1] shade1
+[r1:c1] bg(shade1)
 
 [r1-3:c2-3] span
-[r1:c2] shade3
+[r1:c2] bg(shade3)
 
 [r4:c2-4] span
-[r4:c2] shade6
+[r4:c2] bg(shade6)
 ~~~
 ~~~~
 :::
@@ -1920,13 +1914,13 @@ taken from the top-left–most cell in each block.
  13 | 14 | 15 | 16
  ===
 [r1-3:c1] span
-[r1:c1] shade1
+[r1:c1] bg(shade1)
 
 [r1-3:c2-3] span
-[r1:c2] shade3
+[r1:c2] bg(shade3)
 
 [r4:c2-4] span
-[r4:c2] shade6
+[r4:c2] bg(shade6)
 ~~~
 ::::
 
