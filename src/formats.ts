@@ -45,7 +45,6 @@ export type Formats
   | FormatHlines
   | FormatLines
   | FormatSpan
-  | FormatClass
   | FormatVlines
   | FormatWidth
 

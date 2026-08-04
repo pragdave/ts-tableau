@@ -50,3 +50,27 @@ test("caption renders as the table's first child, wrapped in tableau-md", () => 
   expect(html[1]).toEqual("<caption><tableau-md>My Caption</tableau-md></caption>")
   expect(html[2]).toEqual("<tr><td><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>")
 })
+
+test("a caption line tolerates a trailing carriage return (CRLF input)", () => {
+  const table = tableau(["a|b", "===", "# a caption\r"])
+  expect(table.global_attr.caption).toBe("a caption")
+})
+
+test("caption text is trimmed of trailing whitespace", () => {
+  const table = tableau(["a|b", "===", "#   spaced caption   "])
+  expect(table.global_attr.caption).toBe("spaced caption")
+})
+
+test("caption text with HTML-special characters is escaped when rendered", () => {
+  const html = generate(tableau(["a|b", "===", "# A & B < C"]))
+  expect(html[1]).toEqual("<caption><tableau-md>A &amp; B &lt; C</tableau-md></caption>")
+})
+
+test("a caption prefix inside a selector-scoped line is not treated as a caption", () => {
+  expect(() => tableau(["a|b", "===", "[r1] # not a caption"])).toThrow()
+})
+
+test("the last of multiple caption lines wins", () => {
+  const table = tableau(["a|b", "===", "# First", "# Second"])
+  expect(table.global_attr.caption).toBe("Second")
+})

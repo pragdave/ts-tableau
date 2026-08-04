@@ -6,7 +6,7 @@ import { parse_global_formats, parse_selector_formats } from "./parse_formats"
 import { parse_selector } from "./parse_selector"
 
 const BLANK_OR_COMMENT_RE = /^\s*(--|$)/
-const CAPTION_RE = /^\s*(?:#+|:)\s+(.*)$/
+const CAPTION_RE = /^\s*(?:#+|:)[^\S\r\n]+(.*?)\s*$/
 
 export function parse_format_row(line: string) {
   if (BLANK_OR_COMMENT_RE.test(line)) {
@@ -28,10 +28,6 @@ export function parse_format_row(line: string) {
   else {
     const f = parse_selector_formats(src)
     result = new FormatRow(selectors, f)
-  }
-
-  if (!src.hasTerminated()) {
-    console.error("unexpected stuff at end of line: " + src.peek(50))
   }
 
   return result

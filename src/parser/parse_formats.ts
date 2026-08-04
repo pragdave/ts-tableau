@@ -35,7 +35,7 @@ import type { Formats } from "../formats"
 // --     align([lcrj][tmb])          Y          Y
 // --     width(n)                    Y          Y 
 // --     lines([ []_~ ]+)            N          Y 
-// --     style(a,b,c)                Y          Y
+// --     style(a)                    Y          Y
 // --     header                      N          Y
 // --     footer                      N          Y
 // --     small                       Y          Y
@@ -50,7 +50,7 @@ export function parse_global_formats(src: StringScanner): Formats[] {
   while (fmt = parse_global_format(src))
     result.push(fmt)
   if (!src.hasTerminated()) {
-    throw `unrecognized format: ${src.peek(30)}`
+    throw new Error(`unrecognized format: ${src.peek(30)}`)
   }
   return result
 }
@@ -82,7 +82,7 @@ export function parse_selector_formats(src: StringScanner): Formats[] {
     result.push(fmt)
   }
   if (!src.hasTerminated()) {
-    throw `unrecognized format: ${src.peek(30)}`
+    throw new Error(`unrecognized format: ${src.peek(30)}`)
   }
   return result
 }
@@ -112,7 +112,6 @@ function parse_selector_format(src: StringScanner): Formats | null {
 const SHADE_RE = new RegExp(Array.from(SHADE_NAMES.keys()).join("|"))
 
 function color(src: StringScanner): ColorRepresentations | null {
-  console.error("color ", src.peek(20))
   if (src.scan(/#([0-9a-f]{3}([0-9a-f]{3})?)/)) {
     return GenColorHex(src.getCapture(0))
   }
