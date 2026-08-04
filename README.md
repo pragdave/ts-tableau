@@ -26,8 +26,8 @@ Here are some sample tables:
 
 The layout language is vaguely dynamic. The following example shows the
 markup on the left and the result on the right. The layout section uses
-the special variables `$r` (the number of rows), and `@r` (the current
-row being generated. It also does arithmetic.
+the special variables `$r` (the number of rows), and `$tr` (the current
+row being generated). It also does arithmetic.
 
 ![Multiplication table](README_ASSETS/times-table.png)
 

@@ -63,13 +63,13 @@ describe("$tr / $thisrow degenerate cases", () => {
   test("$tr in a row spec throws", () => {
     const src = new StringScanner("r$tr]")
     const result = parse_selector(src)
-    expect(() => Array.from(result.cells(TABLE))).toThrow()
+    expect(() => Array.from(result.cells(TABLE))).toThrow(/has no meaning in a row spec or inside a span selector/)
   })
 
   test("$tr combined with span throws", () => {
     const src = new StringScanner("c$tr]")
     const result = parse_selector(src)
-    expect(() => Array.from(result.rectangles(TABLE))).toThrow()
+    expect(() => Array.from(result.rectangles(TABLE))).toThrow(/has no meaning in a row spec or inside a span selector/)
   })
 })
 

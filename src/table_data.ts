@@ -115,6 +115,12 @@ export class TableData {
 
   apply_selector_format(cells: Generator<CellCoords>, formats: Formats[]) {
     for (let cell_coord of cells) {
+      // Computed coordinates (e.g. c$tr) can fall outside the table on
+      // non-square tables. Formats are decorative, so out-of-bounds
+      // coordinates are simply skipped rather than crashing.
+      if (cell_coord.row < 1 || cell_coord.row > this.row_count()) continue
+      if (cell_coord.col < 1 || cell_coord.col > this.col_count()) continue
+
       let cell = this.cell_at(cell_coord)
       cell.add_format(formats)
     }

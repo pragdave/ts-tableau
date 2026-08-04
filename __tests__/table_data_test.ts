@@ -1,6 +1,7 @@
 import { parse_data_row } from "../src/parser/parse_data_row"
 import { Row } from "../src/row"
 import { TableData } from "../src/table_data"
+import { tableau } from "../src/tableau"
 
 type CellTestSimple = any[]
 
@@ -72,6 +73,29 @@ test("table with empty row", () => {
     ["c", "d"],
   ]
   simple_table(rows, expected)
+})
+
+test("selector coords computed outside the table are skipped, not crashed on", () => {
+  // 5 rows, 3 columns: c$tr walks the diagonal (r1c1, r2c2, r3c3, r4c4,
+  // r5c5) but the table is only 3 columns wide, so rows 4 and 5 have no
+  // matching column. Those coordinates should simply be left unformatted
+  // rather than throwing.
+  const lines = [
+    "a|b|c",
+    "d|e|f",
+    "g|h|i",
+    "j|k|l",
+    "m|n|o",
+    "===",
+    "[c$tr] bg(red)",
+  ]
+
+  expect(() => tableau(lines)).not.toThrow()
+
+  const table = tableau(lines)
+  expect(table.cell_at({ row: 1, col: 1 }).bg).not.toBeNull()
+  expect(table.cell_at({ row: 3, col: 3 }).bg).not.toBeNull()
+  expect(table.cell_at({ row: 1, col: 2 }).bg).toBeNull()
 })
 
 
