@@ -38,6 +38,21 @@ row being generated). It also does arithmetic.
   * prototype/poc working
   * development starting
 
+## Cell Content
+
+Tableau does not render Markdown inside cells itself -- it treats cell
+content as opaque text and wraps it in a `<tableau-md>...</tableau-md>`
+marker in its HTML output, with the content HTML-entity-escaped. This
+keeps the library engine-agnostic: any postprocessor (a remark plugin, a
+Quarto/Pandoc filter, or anything else consuming this HTML) is expected to
+find `<tableau-md>` elements, HTML-unescape their contents, run its own
+Markdown renderer over the result, and replace the element with the
+rendered output.
+
+`<tableau-md>` is a valid custom-element name and is otherwise inert --
+plain HTML viewers will just show its (unescaped, unrendered) text
+content.
+
 ## Documentation
 
 A combined guide and reference [is available](https://pragdave.github.io/pandoc-tableau/tableau-guide.html).

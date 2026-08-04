@@ -30,7 +30,7 @@ function test_global_attrs(format_rows: string[], expected_attrs: string) {
 
   let expected = [
     `<table class="tableau ${expected_attrs}">`,
-    "<tr><td>a</td><td>b</td></tr>",
+    "<tr><td><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>",
     "</table>",
   ]
   test(`global table attrs: ${format_rows.join(", ")}`, () => {

@@ -86,7 +86,18 @@ function add_classes(table: TableData): string {
 //
 function do_cell(cell: Cell): string {
   const tag = (cell.header || cell.footer) ? "th" : "td"
-  return `<${tag}${cell_opener(cell)}>${cell.content}</${tag}>`
+  return `<${tag}${cell_opener(cell)}><tableau-md>${escape_markdown(cell.content)}</tableau-md></${tag}>`
+}
+
+// cell.content is deferred Markdown source, not HTML -- ts-tableau
+// intentionally does not render it. Wrapping it in <tableau-md> (a valid,
+// inert custom-element name) marks it for a downstream consumer to find,
+// unescape, and render with its own Markdown pipeline.
+function escape_markdown(content: string): string {
+  return content
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
 }
 
 function cell_opener(cell: Cell): string {

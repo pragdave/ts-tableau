@@ -14,8 +14,8 @@ test("single-cell span emits no rowspan/colspan", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    "<tr><td>a</td><td>b</td></tr>",
-    "<tr><td>c</td><td>d</td></tr>",
+    "<tr><td><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>",
+    "<tr><td><tableau-md>c</tableau-md></td><td><tableau-md>d</tableau-md></td></tr>",
     "</table>",
   ])
 })
@@ -29,8 +29,8 @@ test("horizontal span merges two cells into one colspan", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td colspan="2">a</td></tr>`,
-    "<tr><td>c</td><td>d</td></tr>",
+    `<tr><td colspan="2"><tableau-md>a</tableau-md></td></tr>`,
+    "<tr><td><tableau-md>c</tableau-md></td><td><tableau-md>d</tableau-md></td></tr>",
     "</table>",
   ])
 })
@@ -44,8 +44,8 @@ test("vertical span merges two cells into one rowspan", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td rowspan="2">a</td><td>b</td></tr>`,
-    "<tr><td>d</td></tr>",
+    `<tr><td rowspan="2"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
+    "<tr><td><tableau-md>d</tableau-md></td></tr>",
     "</table>",
   ])
 })
@@ -59,7 +59,7 @@ test("rectangular span merges a 2x2 block into one cell", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td rowspan="2" colspan="2">a</td></tr>`,
+    `<tr><td rowspan="2" colspan="2"><tableau-md>a</tableau-md></td></tr>`,
     "<tr></tr>",
     "</table>",
   ])
@@ -75,8 +75,8 @@ test("two independent span groups from separate format lines", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td colspan="2">a</td></tr>`,
-    `<tr><td colspan="2">c</td></tr>`,
+    `<tr><td colspan="2"><tableau-md>a</tableau-md></td></tr>`,
+    `<tr><td colspan="2"><tableau-md>c</tableau-md></td></tr>`,
     "</table>",
   ])
 })
@@ -90,8 +90,8 @@ test("compound selector: each term spans independently, not merged together", ()
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    "<tr><td>a</td><td>b</td></tr>",
-    "<tr><td>c</td><td>d</td></tr>",
+    "<tr><td><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>",
+    "<tr><td><tableau-md>c</tableau-md></td><td><tableau-md>d</tableau-md></td></tr>",
     "</table>",
   ])
 })
@@ -107,10 +107,10 @@ test("compound selector with ranges: each term merges independently", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td rowspan="2">a</td><td>b</td></tr>`,
-    "<tr><td>d</td></tr>",
-    `<tr><td rowspan="2">e</td><td>f</td></tr>`,
-    "<tr><td>h</td></tr>",
+    `<tr><td rowspan="2"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
+    "<tr><td><tableau-md>d</tableau-md></td></tr>",
+    `<tr><td rowspan="2"><tableau-md>e</tableau-md></td><td><tableau-md>f</tableau-md></td></tr>`,
+    "<tr><td><tableau-md>h</tableau-md></td></tr>",
     "</table>",
   ])
 })
@@ -124,8 +124,8 @@ test("span combines correctly with other cell formats", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td colspan="2" style="background: red">a</td></tr>`,
-    "<tr><td>c</td><td>d</td></tr>",
+    `<tr><td colspan="2" style="background: red"><tableau-md>a</tableau-md></td></tr>`,
+    "<tr><td><tableau-md>c</tableau-md></td><td><tableau-md>d</tableau-md></td></tr>",
     "</table>",
   ])
 })
