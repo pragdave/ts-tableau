@@ -99,11 +99,11 @@ table.tableau {
     margin:0;
   }
 
-  & td > p:first-child {
+  & td > p:first-child, & th > p:first-child {
     margin-top: 0;
   }
 
-  & td > p:last-child {
+  & td > p:last-child, & th > p:last-child {
     margin-bottom: 0;
   }
 
