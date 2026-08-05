@@ -99,6 +99,14 @@ table.tableau {
     margin:0;
   }
 
+  & td > p:first-child {
+    margin-top: 0;
+  }
+
+  & td > p:last-child {
+    margin-bottom: 0;
+  }
+
   &.halign-l td{
     text-align: left;
   }
