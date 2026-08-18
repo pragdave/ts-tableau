@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { existsSync, readdirSync, statSync, createReadStream } from "node:fs"
 import { createServer } from "node:http"
-import { extname, join, dirname } from "node:path"
+import { extname, join, dirname, relative, isAbsolute } from "node:path"
 import { fileURLToPath } from "node:url"
 import { spawnSync } from "node:child_process"
 
@@ -69,7 +69,9 @@ function serve() {
   const server = createServer((req, res) => {
     const urlPath = req.url === "/" ? "/index.html" : req.url.split("?")[0]
     const filePath = join(distDir, urlPath)
-    if (!filePath.startsWith(distDir) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
+    const rel = relative(distDir, filePath)
+    const isInsideDistDir = rel === "" || (!rel.startsWith("..") && !isAbsolute(rel))
+    if (!isInsideDistDir || !existsSync(filePath) || statSync(filePath).isDirectory()) {
       res.writeHead(404)
       res.end("Not found")
       return
