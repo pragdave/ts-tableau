@@ -5,6 +5,7 @@ import { Compartment } from "https://esm.sh/@codemirror/state@6"
 import { StreamLanguage, syntaxHighlighting, HighlightStyle } from "https://esm.sh/@codemirror/language@6"
 import { tags } from "https://esm.sh/@lezer/highlight@1"
 import { history, defaultKeymap, historyKeymap } from "https://esm.sh/@codemirror/commands@6"
+import { marked } from "https://esm.sh/marked@13"
 
 // --- tableau syntax highlighting ------------------------------------------
 
@@ -110,6 +111,7 @@ const htmlOutput = document.getElementById("html-output") as HTMLElement
 const jsonOutput = document.getElementById("json-output") as HTMLElement
 const htmlToggle = document.getElementById("html-toggle") as HTMLInputElement
 const jsonToggle = document.getElementById("json-toggle") as HTMLInputElement
+const markdownToggle = document.getElementById("markdown-toggle") as HTMLInputElement
 const renderStatus = document.getElementById("render-status")!
 
 let editor: EditorView
@@ -135,6 +137,9 @@ function render() {
   } else {
     resultContainer.classList.remove("has-error")
     tableOutput.innerHTML = result.html
+    if (markdownToggle.checked) {
+      renderMarkdownInCells(tableOutput)
+    }
     htmlOutput.hidden = !htmlToggle.checked
     htmlOutput.querySelector("pre")!.textContent = result.html
     jsonOutput.hidden = !jsonToggle.checked
@@ -148,6 +153,13 @@ function render() {
   } catch (e) {
     // localStorage unavailable (private browsing etc.) -- ignore
   }
+}
+
+function renderMarkdownInCells(root: HTMLElement) {
+  root.querySelectorAll("tableau-md").forEach((el) => {
+    const text = el.textContent ?? ""
+    el.innerHTML = marked.parse(text) as string
+  })
 }
 
 function debounce<T extends (...args: any[]) => void>(fn: T, delay: number): T {
@@ -218,6 +230,7 @@ exampleSelector.addEventListener("change", (e) => {
 
 htmlToggle.addEventListener("change", render)
 jsonToggle.addEventListener("change", render)
+markdownToggle.addEventListener("change", render)
 
 // --- theme -----------------------------------------------------------------
 
