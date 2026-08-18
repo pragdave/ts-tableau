@@ -1,8 +1,8 @@
-# Tableau: Enhanced Markdown Tables for Quarto
+# Tableau: Enhanced Markdown Tables
 
 Tableau is a library that simplifies table layout by separating
 data from layout. It is intended to be used as a preprocessor for
-markup languages swuch as Markdown, but can be used standalone to
+markup languages such as Markdown, but can be used standalone to
 generate HTML.
 
 Here are some sample tables:
@@ -112,27 +112,36 @@ add it here.
 
 ## Installation
 
-The Tableau extension is available in the `_extensions` directory.
-
-## Adding to Your Document
-
-This extension must be run prior to the bulk of Quarto processing. Add
-it to your `_quarto.yml` file like this:
-
-~~~ yml
-filters:
-  - _extensions/tableau_pre/tableau_pre.lua
-  - quarto
-  - other_filters_go_here
-~~~
-
-You'll need to add the `tableau_pre` extension at the top of your
-filters, and then add the `- quarto` line (if it isn't already there).
-This second line tells Quarto where in the filter chain it should run.
+```sh
+npm install ts-tableau
+```
 
 ## Using
 
-See [the guide](https://pragdave.github.io/ts-tableau/).
+Most consumers won't call `ts-tableau` directly -- see
+[Preprocessors](#preprocessors) above for pipeline integrations
+(`remark-tableau` for unified/remark-based Markdown pipelines, or
+`pandoc-tableau` for Pandoc/Quarto). To call it yourself:
+
+```js
+import { tableau, generate } from "ts-tableau"
+
+const table = tableau([
+  "a | b | c",
+  "d | e | f",
+  "===",
+  "hlines vlines",
+])
+
+console.log(generate(table).join("\n"))
+```
+
+`tableau()` parses table markup (data section, then an optional `===`
+layout section) into a `TableData`; `generate()` renders that into an
+array of HTML lines. Load `ts-tableau/tableau.css` alongside the
+generated HTML for the table's default styling. See
+[the guide](https://pragdave.github.io/ts-tableau/) for the full markup
+and layout-format reference.
 
 ### License
 
