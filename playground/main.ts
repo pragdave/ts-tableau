@@ -1,3 +1,5 @@
+import "../assets/tableau.css"
+
 import { run } from "./lib"
 
 import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from "https://esm.sh/@codemirror/view@6"
