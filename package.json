@@ -24,7 +24,8 @@
     "md2html": "tsx cli/md2html.mts",
     "test": "jest",
     "wtest": "jest --watch",
-    "playground:build": "vite build --config playground/vite.config.ts"
+    "playground:build": "vite build --config playground/vite.config.ts",
+    "playground": "node playground/serve.mjs"
   },
   "keywords": [],
   "author": "",
