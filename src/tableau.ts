@@ -13,8 +13,18 @@ export function tableau(lines: string[]): TableData {
   while (index < data.length) {
     const row = parse_data_row(data[index])
     index++
+    const index_before_blocks = index
     index = merge_column_blocks(data, index, row)
     table_data.add_row(row)
+
+    // Blank lines are normally meaningful (a half-height row), but once a
+    // row has column blocks attached, any blank lines right after them
+    // are just visual spacing before the next row -- not their own row.
+    if (index > index_before_blocks) {
+      while (index < data.length && data[index].trim() === "") {
+        index++
+      }
+    }
   }
 
   for (const line of format) {

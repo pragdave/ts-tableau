@@ -1,0 +1,253 @@
+:root {
+  color-scheme: light dark;
+
+  --tbs-max-width: 46rem;
+  --tbs-toc-width: 16rem;
+  --tbs-fg: #1a1a1a;
+  --tbs-bg: #fff;
+  --tbs-muted-fg: #555;
+  --tbs-link: #0552a8;
+  --tbs-border: #ddd;
+  --tbs-code-bg: #f4f4f4;
+  --tbs-callout-border: #888;
+  --tbs-callout-bg: #f0f4fa;
+  --tbs-callout-fg: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tbs-fg: #e8e8e8;
+    --tbs-bg: #16181c;
+    --tbs-muted-fg: #a0a0a0;
+    --tbs-link: #7db4ff;
+    --tbs-border: #3a3d42;
+    --tbs-code-bg: #22252b;
+    --tbs-callout-border: #666;
+    --tbs-callout-bg: #1f2733;
+    --tbs-callout-fg: #e8e8e8;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--tbs-bg);
+  color: var(--tbs-fg);
+  font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.55;
+}
+
+a {
+  color: var(--tbs-link);
+}
+
+.tb-page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3rem;
+  max-width: calc(var(--tbs-max-width) + var(--tbs-toc-width) + 3rem);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.tb-content {
+  max-width: var(--tbs-max-width);
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.tb-content h1 {
+  font-size: 2rem;
+  margin-top: 0;
+}
+
+.tb-content h2 {
+  border-bottom: 1px solid var(--tbs-border);
+  padding-bottom: 0.25em;
+  margin-top: 2.5em;
+}
+
+.tb-content h3 {
+  margin-top: 2em;
+}
+
+.tb-content code {
+  background: var(--tbs-code-bg);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.tb-content pre {
+  background: var(--tbs-code-bg);
+  padding: 0.85em 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+
+.tb-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.tb-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin: 1.25em 0;
+  padding: 0.75em 1em;
+  background: var(--tbs-code-bg);
+  border-radius: 6px;
+}
+
+.tb-column {
+  flex: 1 1 0;
+  min-width: 14rem;
+  overflow-x: auto;
+}
+
+.tb-callout {
+  margin: 1.25em 0;
+  padding: 0.75em 1em;
+  border: 1px solid var(--tbs-callout-border);
+  border-left-width: 4px;
+  border-radius: 4px;
+  background: var(--tbs-callout-bg);
+  color: var(--tbs-callout-fg);
+}
+
+.tb-callout > :last-child {
+  margin-bottom: 0;
+}
+
+.tb-callout-title,
+.tb-callout summary {
+  font-weight: 600;
+  margin-top: 0;
+  cursor: default;
+}
+
+.tb-callout summary {
+  cursor: pointer;
+}
+
+/* --- table of contents ------------------------------------------------ */
+
+.tb-toc {
+  flex: 0 0 var(--tbs-toc-width);
+  position: sticky;
+  top: 2rem;
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  font-size: 0.85rem;
+}
+
+.tb-toc h2 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tbs-muted-fg);
+  margin: 0 0 0.5em;
+}
+
+.tb-toc ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0.9em;
+  border-left: 1px solid var(--tbs-border);
+}
+
+.tb-toc > ul {
+  padding-left: 0;
+  border-left: none;
+}
+
+.tb-toc li {
+  margin: 0.3em 0;
+}
+
+.tb-toc a {
+  text-decoration: none;
+  color: var(--tbs-muted-fg);
+}
+
+.tb-toc a:hover {
+  color: var(--tbs-link);
+}
+
+@media (max-width: 900px) {
+  .tb-toc {
+    display: none;
+  }
+}
+
+/* --- code highlighting (rehype-highlight / highlight.js classes) ------ */
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--tbs-muted-fg);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-literal {
+  color: #a626a4;
+}
+
+.hljs-string,
+.hljs-attr {
+  color: #50a14f;
+}
+
+.hljs-number,
+.hljs-built_in,
+.hljs-type {
+  color: #986801;
+}
+
+.hljs-title,
+.hljs-name,
+.hljs-symbol {
+  color: #4078f2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-literal {
+    color: #c678dd;
+  }
+
+  .hljs-string,
+  .hljs-attr {
+    color: #98c379;
+  }
+
+  .hljs-number,
+  .hljs-built_in,
+  .hljs-type {
+    color: #d19a66;
+  }
+
+  .hljs-title,
+  .hljs-name,
+  .hljs-symbol {
+    color: #61afef;
+  }
+}
+
+/* --- index page --------------------------------------------------------- */
+
+.tb-index-list {
+  list-style: none;
+  padding: 0;
+}
+
+.tb-index-list li {
+  margin: 0.75em 0;
+}

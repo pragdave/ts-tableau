@@ -15,6 +15,16 @@ export class FormatLines {
     this.flags = this.decode(spec)
   }
 
+  // Combines this and another FormatLines' sides (bitwise OR), so that
+  // applying line(t) and then line(b) to the same cell via two different
+  // selectors leaves it with both sides rather than the second call
+  // discarding the first.
+  merge(other: FormatLines): FormatLines {
+    const combined = new FormatLines("")
+    combined.flags = this.flags | other.flags
+    return combined
+  }
+
   top() { return !!(this.flags & FormatLines.T) }
   bottom() { return !!(this.flags & FormatLines.B) }
   left() { return !!(this.flags & FormatLines.L) }

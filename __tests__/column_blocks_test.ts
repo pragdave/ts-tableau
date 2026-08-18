@@ -97,6 +97,34 @@ test("a block targeting an out-of-range column is silently ignored", () => {
   ])
 })
 
+test("a blank line used as visual spacing after a row's column blocks is not counted as its own row", () => {
+  const lines = [
+    "Cicero|||",
+    "col 2 {{",
+    "text",
+    "}}",
+    "",
+    "next|||",
+  ]
+  expect(rows_of(lines)).toEqual([
+    ["Cicero", "text", ""],
+    ["next", "", ""],
+  ])
+})
+
+test("a blank line between two ordinary rows (no column blocks involved) still produces a half-height row", () => {
+  const lines = [
+    "a|b",
+    "",
+    "c|d",
+  ]
+  expect(rows_of(lines)).toEqual([
+    ["a", "b"],
+    ["", ""],
+    ["c", "d"],
+  ])
+})
+
 test("a block missing its closing '}}' throws", () => {
   const lines = [
     "a|b",

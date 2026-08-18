@@ -46,3 +46,8 @@ test("[r1:c1] lines(r) renders a right-only border class on the cell", () => {
   const html = generate(tableau(["a|b", "===", "[r1:c1] lines(r)"]))
   expect(html[1]).toContain(`class="tb_l_0100"`)
 })
+
+test("two selectors that both apply line() to the same cell combine sides instead of the second overwriting the first", () => {
+  const html = generate(tableau(["a|b", "===", "[r1] line(t)", "[c1] line(b)"]))
+  expect(html[1]).toContain(`class="tb_l_1010"`)
+})

@@ -69,9 +69,11 @@ export class Cell {
       case FormatHeader:
         this.header = true
         break
-      case FormatLines:
-        this.lines = format as FormatLines
+      case FormatLines: {
+        const incoming = format as FormatLines
+        this.lines = this.lines ? this.lines.merge(incoming) : incoming
         break
+      }
       case FormatClass:
         this.style = format as FormatClass
         break

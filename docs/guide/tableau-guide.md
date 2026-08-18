@@ -1,38 +1,27 @@
----
-ragged-columns: true
-columngap: 3em 
-column-rule: "1px solid black"
----
 # Tableau
 ##### A Different Kind of Table Formatter for Pandoc/Quarto
 
-Tableau is a Pandoc/Quarto extension that provides greater control
-over table layout and styling that the traditional Markdown table
-options.
-
+Tableau lets you create great-looking tables from plain-text descriptions.
+It was initially written as a preprocessor for markdown documents, but
+can also be used standalone. It renders HTML out of the box, but you
+can plug in renderers for any other markup language (such as LaTeX).
+ 
 Tableau separates the data content of your table from its presentation.
 
 For example, here's a multiplication table:
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
 |  2 |  2 |  4 |  6 |  8 | 10 |
 |  3 |  3 |  6 |  9 | 12 | 15 |
 |  4 |  4 |  8 | 12 | 16 | 20 |
 |  5 |  5 | 10 | 15 | 20 | 25 |
-===
-# Times table 
-[r1;c1] header
-[r2-$r:c$tr] line(lb)
-[r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
@@ -40,30 +29,88 @@ For example, here's a multiplication table:
 |  3 |  3 |  6 |  9 | 12 | 15 |
 |  4 |  4 |  8 | 12 | 16 | 20 |
 |  5 |  5 | 10 | 15 | 20 | 25 |
-===
-# Times table 
-[r1;c1] header
-[r2-$r:c$tr] line(lb)
-[r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
+:::
 ::::
 
-The text before the three equals signs is the table data; the stuff after is the presentation:
+This table has no presentation specifications, so tableau uses its default layout.
 
-`# Times table`
-: set the caption
+Presentation is specified after the table data, and starts with a line containing three equals signs.
 
-`[r1;c1] header`
-: row 1 and column 1 are headers
+::::columns
+:::column
+~~~
+|  x |  1 |  2 |  3 |  4 |  5 |
+|  1 |  1 |  2 |  3 |  4 |  5 |
+|  2 |  2 |  4 |  6 |  8 | 10 |
+|  3 |  3 |  6 |  9 | 12 | 15 |
+|  4 |  4 |  8 | 12 | 16 | 20 |
+|  5 |  5 | 10 | 15 | 20 | 25 |
+===
+# Times table 
+[r1;c1] header
+~~~
+:::
+:::column
+~~~ tableau
+|  x |  1 |  2 |  3 |  4 |  5 |
+|  1 |  1 |  2 |  3 |  4 |  5 |
+|  2 |  2 |  4 |  6 |  8 | 10 |
+|  3 |  3 |  6 |  9 | 12 | 15 |
+|  4 |  4 |  8 | 12 | 16 | 20 |
+|  5 |  5 | 10 | 15 | 20 | 25 |
+===
+# Times table 
+[r1;c1] header
+~~~
+:::
+::::
+
+We told it to use "Times Table" as the table's caption (the `#` is like a markdown header). The next line formats cells. Each cell format line is a _cell selector_ between `[` and `]`, followed by format instructions. Here the selector is `[r1;c1]`. This selects all cells in row 1 and also all cells in column 1. The `head` format turns these cells into table headings.
+
+Cell selectors can be more powerful:
+
+
+::::columns
+:::column
+~~~
+|  x |  1 |  2 |  3 |  4 |  5 |
+|  1 |  1 |  2 |  3 |  4 |  5 |
+|  2 |  2 |  4 |  6 |  8 | 10 |
+|  3 |  3 |  6 |  9 | 12 | 15 |
+|  4 |  4 |  8 | 12 | 16 | 20 |
+|  5 |  5 | 10 | 15 | 20 | 25 |
+===
+# Times table 
+[r1;c1] header
+[r2-$r:c$tr] line(lb)
+[r2-$r:c2-$tr~1] small bg(shade6)
+~~~
+:::
+:::column
+~~~ tableau
+|  x |  1 |  2 |  3 |  4 |  5 |
+|  1 |  1 |  2 |  3 |  4 |  5 |
+|  2 |  2 |  4 |  6 |  8 | 10 |
+|  3 |  3 |  6 |  9 | 12 | 15 |
+|  4 |  4 |  8 | 12 | 16 | 20 |
+|  5 |  5 | 10 | 15 | 20 | 25 |
+===
+# Times table 
+[r1;c1] header
+[r2-$r:c$tr] line(lb)
+[r2-$r:c2-$tr~1] small bg(shade6)
+~~~
+:::
+::::
 
 `[r2-$r:c$tr] line(lb)`
-: for rows two through the last row in the table, select the cell whose column
-number is the same as the row number and draw a line on its left and below it.
+selects the cells in rows two through the last row in the table whose column
+number is the same as the row number and draw a line on its left and below it. `line(lb)` draws a line on the cell's left and bottom sides.
 
 `[r2-$r:c2-$tr~1] small bg(shade6)`
-: for rows two through six, select cells from column two through the column one less than the row number. 
+selects the cells in rows two through six, columns two through the column one less than the row number. 
 Make the text small, and shade the background.
-
 
 We'll explain all this in detail later. First, a few more examples:
 
@@ -85,6 +132,7 @@ small
 [r3-$r:c2-$c] align(r)
 [r1:c2-3] span
 [r1:c4-5] span
+[r1-2:c1,6,7,8] span
 [r1;r3] line(t)
 [r$r] line(b)
 [r1:c2-5] line(b)
@@ -136,9 +184,8 @@ align(l)
 
 ### Funky backgrounds and Flexible Spans
 
-::: {layout-ncol=2}
-
-
+::::columns
+:::column
 ``` tableau
  ant | bee | cat
  dog | elk | fox
@@ -148,7 +195,8 @@ align(l)
 [r2:c2] .glow
 xlarge
 ```
-
+:::
+:::column
 ``` tableau
  1  | 2  | 3  |  4 |  5
  6  | 7  | 8  |  9 | 10
@@ -166,6 +214,7 @@ xlarge
 
 ```
 :::
+::::
 
 
 # A Gentle Guide to Tableau
@@ -173,20 +222,19 @@ xlarge
 ## Table Data
 
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 | a | b | c |
 | d | e | f |
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 | a | b | c |
 | d | e | f |
 ~~~
+:::
 ::::
 
 * Tableau tables are written inside code blocks with the language `tableau`.
@@ -194,45 +242,43 @@ xlarge
 
 ##### Leading and Trailing Pipes
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 a | b | c
 d | e | f
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 a | b | c
 d | e | f
 ~~~
+:::
 ::::
 
-* Leading and trailing pipe characters may be omited, but only when the
+* Leading and trailing pipe characters may be omitted, but only when the
   cell they precede or follow is not empty.
 
 ##### Blank Lines
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 a | b | c
 d | e | f
 
 g | h | i
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 a | b | c
 d | e | f
 
 g | h | i
 ~~~
+:::
 ::::
 
 * Blank lines generate a small vertical space. This space is actually a 
@@ -241,27 +287,26 @@ g | h | i
 
 ##### Inline Cell Formatting
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Pole star | _Alpha Ursae_ |	$323–433 ly$
 Dog star  | _Sirius_ | $8.60 \pm 0.04 ly$ 
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Pole star | _Alpha Ursae_ |	$323–433 ly$
 Dog star  | _Sirius_ | $8.60 \pm 0.04 ly$ 
 ~~~
+:::
 ::::
 
-* regular inline markup can be used in table cells.
+* Regular inline markup can be used in table cells.
 
 ## Table Layout
 
-Table layout and stying is placed in a separate block that follows the table data, separated 
+Table layout and styling is placed in a separate block that follows the table data, separated 
 from it by three equals signs.
 
 ~~~~
@@ -278,10 +323,9 @@ Layout can be applied to the table as a whole, or to one or more cells.
 
 ##### Add a Caption
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -291,9 +335,8 @@ Mouse    | 1.5      |  4
 ===
 # Fake Animal Lifespan Data
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -304,6 +347,7 @@ Mouse    | 1.5      |  4
 ===
 # Fake Animal Lifespan Data
 ~~~
+:::
 ::::
 
 * The `# ...` line is used to set the table's caption.
@@ -314,10 +358,9 @@ Mouse    | 1.5      |  4
 
 ##### Add Lines
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -328,9 +371,8 @@ Mouse    | 1.5      |  4
 # Fake Animal Lifespan Data
 hlines vlines
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -342,6 +384,7 @@ Mouse    | 1.5      |  4
 # Fake Animal Lifespan Data
 hlines vlines
 ~~~
+:::
 ::::
 
 * The `hlines` format adds lines between each row.
@@ -351,10 +394,9 @@ hlines vlines
 
 ##### Add Lines to Particular Rows (the hard way)
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -368,9 +410,8 @@ Mouse    | 1.5      |  4
 [r5] lines(t)
 [r6] lines(t)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -385,6 +426,7 @@ Mouse    | 1.5      |  4
 [r5] lines(t)
 [r6] lines(t)
 ~~~
+:::
 ::::
 
 * This is an example of using _selectors_. A selector is an expression that appears at the start
@@ -396,10 +438,9 @@ Mouse    | 1.5      |  4
 
 ##### Add Lines to Particular Rows (an easier way)
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -410,9 +451,8 @@ Mouse    | 1.5      |  4
 # Fake Animal Lifespan Data
 [r3,4,5,6] lines(t)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -424,6 +464,7 @@ Mouse    | 1.5      |  4
 # Fake Animal Lifespan Data
 [r3,4,5,6] lines(t)
 ~~~
+:::
 ::::
 
 * We could list each of the rows in the same selector, separated by
@@ -432,10 +473,9 @@ Mouse    | 1.5      |  4
 
 ##### Add Lines to Particular Rows (the easiest way)
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -446,9 +486,8 @@ Mouse    | 1.5      |  4
 # Fake Animal Lifespan Data
 [r3-6] lines(t)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -460,16 +499,16 @@ Mouse    | 1.5      |  4
 # Fake Animal Lifespan Data
 [r3-6] lines(t)
 ~~~
+:::
 ::::
 
 * or we could use a range. 
 
 ##### Add a Header
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -481,9 +520,8 @@ Mouse    | 1.5      |  4
 [r1-2] header
 [r3-6] lines(t) 
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -496,16 +534,16 @@ Mouse    | 1.5      |  4
 [r1-2] header
 [r3-6] lines(t) 
 ~~~
+:::
 ::::
 
 * The line  `[r1-2] header` denotes rows 1 and 2 as header rows.
 
 ##### Span Some Cells
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -518,9 +556,8 @@ Mouse    | 1.5      |  4
 [r1:c2-3] span
 [r3-6] lines(t) 
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -534,6 +571,7 @@ Mouse    | 1.5      |  4
 [r1:c2-3] span
 [r3-6] lines(t) 
 ~~~
+:::
 ::::
 
 * `[r1:c2-3] span` selects columns 2 and 3 in row one, and then spans
@@ -541,10 +579,9 @@ Mouse    | 1.5      |  4
 
 ##### Align Ranges of Cells
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -559,9 +596,8 @@ Mouse    | 1.5      |  4
 [r3-$r:c1] align(l)
 [r3-$r:c2-$c] align(r)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -577,19 +613,19 @@ Mouse    | 1.5      |  4
 [r3-$r:c1] align(l)
 [r3-$r:c2-$c] align(r)
 ~~~
+:::
 ::::
 
 * The notations `$r` and `$c` refer to the last row and column
 * The new format lines align column 1 in rows 3 through 6 to the left,
-* and the cels in rows 3-6, columns 2 and 3 to the right.
+* and the cells in rows 3-6, columns 2 and 3 to the right.
 
 
 ##### Shade the Background of Some Cells
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 Animal   | Lifespan
 |        | Average  | Max
 Badger   |  8       | 14
@@ -606,9 +642,8 @@ Mouse    | 1.5      |  4
 [r5:c2;r6:c2] bg(shade)
 [r3:c3;r4:c3] bg(shade8)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 Animal   | Lifespan
 |        | Average  | Max
@@ -626,6 +661,7 @@ Mouse    | 1.5      |  4
 [r5:c2;r6:c2] bg(shade)
 [r3:c3;r4:c3] bg(shade8)
 ~~~
+:::
 ::::
 
 * We've shaded the background of the cells of the two animals with the
@@ -642,7 +678,7 @@ Mouse    | 1.5      |  4
 * Tableau comes with a palette of shades that complement each other. They
   adapt to dark and light modes.
 
-##### Longer column content {#sec-lcc}
+##### Longer column content
 
 (Because this example is longer, I'm formatting it with the output below the markup.)
 
@@ -658,7 +694,7 @@ atque corrupti quos dolores et quas molestias
 
 | | | |
 col 2 {{
-::: {.callout-note}
+:::callout-note
 On the other hand, we denounce with righteous indignation and dislike men who
 are so beguiled and demoralized by the charms of pleasure of the moment, so
 blinded by desire...
@@ -678,7 +714,7 @@ align(l)
 ~~~
 ~~~~
 
-Ths renders as:
+This renders as:
 
 ~~~ tableau
 Cicero | | |
@@ -691,7 +727,7 @@ atque corrupti quos dolores et quas molestias
 
 | | | |
 col 2 {{
-::: {.callout-note}
+:::callout-note
 On the other hand, we denounce with righteous indignation and dislike men who
 are so beguiled and demoralized by the charms of pleasure of the moment, so
 blinded by desire...
@@ -713,17 +749,16 @@ align(l)
 * This table has three data rows. The first and last have text in column
   one, the middle one has three empty columns.
 * Following each row is column block data. This starts `col n {{`, where
-  `n` is the column number to be filled. This is followed by one of more
+  `n` is the column number to be filled. This is followed by one or more
   blocks of markdown, and then is terminated by a closing '}}'.
 * The column blocks are substituted into the appropriate column of the row
   that precedes them.
 
 ##### Matching the Current Row 
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
 |  2 |  2 |  4 |  6 |  8 | 10 |
@@ -734,9 +769,8 @@ align(l)
 [r1;c1] header
 [r2-6:c$tr] line(lb)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
@@ -748,6 +782,7 @@ align(l)
 [r1;c1] header
 [r2-6:c$tr] line(lb)
 ~~~
+:::
 ::::
 
 * `[r1;c1] header` uses the `;` to separate distinct selectors: the
@@ -757,14 +792,13 @@ align(l)
   the cell whose column equals the row number (that's the `$tr`
   notation).
 
-* For each selected sell, we draw a line on the left and the bottom.
+* For each selected cell, we draw a line on the left and the bottom.
 
 ##### Matching a Range Based on the Current Row 
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
 |  2 |  2 |  4 |  6 |  8 | 10 |
@@ -776,9 +810,8 @@ align(l)
 [r2-6:c$tr] line(lb)
 [r2-6:c2-$tr~1] small bg(shade6)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
@@ -791,24 +824,24 @@ align(l)
 [r2-6:c$tr] line(lb)
 [r2-6:c2-$tr~1] small bg(shade6)
 ~~~
+:::
 ::::
 
 * `r2-6:c2-$tr~1` is probably the most complex selector so far. Let's
-  disect it:
+  dissect it:
 
   * `r2-6` selects rows two through six
   * `:` then selects some cells within that row
   * `c2-$tr~1` selects the cells starting in column two and 
-    ending at the current now number (`$tr`) minus one (`~1`). 
+    ending at the current row number (`$tr`) minus one (`~1`). 
   * Note that we use `~` (tilde) for minus, because we already use the
     minus sign to denote a range.
 
 ##### Selecting Periodic Values in a Range
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
 |  2 |  2 |  4 |  6 |  8 | 10 |
@@ -819,9 +852,8 @@ align(l)
 [r1;c1] header
 [r2-6%even:c2-$c] bg(shade1)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 |  x |  1 |  2 |  3 |  4 |  5 |
 |  1 |  1 |  2 |  3 |  4 |  5 |
@@ -833,11 +865,12 @@ align(l)
 [r1;c1] header
 [r2-6%even:c2-$c] bg(shade1)
 ~~~
+:::
 ::::
 
 * `r2-6%even` selects just the even-numbered rows in the given range.
   The syntax `$c` represents the last column, so `c2-$c` is the cells in column two 
-  though to the end of the row.
+  through to the end of the row.
   For each of these, we add a background color.
 
 * We can also use `/odd` to select odd numbered rows, and `/n` to select
@@ -845,10 +878,9 @@ align(l)
 
 ##### Selecting Periodic Rows And Columns
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 | ♜ | ♞ | ♝ | ♛ | ♚ | ♝ | ♞ | ♜ |
 | ♟ | ♟︎ | ♟︎ | ♟︎ | ♟︎ | ♟︎ | ♟︎ | ♟︎ |
 =empty
@@ -862,9 +894,8 @@ xlarge
 [r1-8%even:c1-8%odd] bg(shade6)
 [r1-8%odd:c1-8%even] bg(shade6)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 | ♜ | ♞ | ♝ | ♛ | ♚ | ♝ | ♞ | ♜ |
 | ♟ | ♟︎ | ♟︎ | ♟︎ | ♟︎ | ♟︎ | ♟︎ | ♟︎ |
@@ -879,6 +910,7 @@ xlarge
 [r1-8%even:c1-8%odd] bg(shade6)
 [r1-8%odd:c1-8%even] bg(shade6)
 ~~~
+:::
 ::::
 
 * To create a chess board, we highlight the odd columns on the even
@@ -893,10 +925,9 @@ xlarge
 
 ##### Selecting Rows or Column Numbers That Are a Multiple Of a Value
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 County Number | County Name | FIPS Code | Public Health Region | Health Service Region
 1 | Anderson | 48001 | 4 | 4/5N
 2 | Andrews | 48003 | 9 | 9/10
@@ -917,9 +948,8 @@ County Number | County Name | FIPS Code | Public Health Region | Health Service 
 [r1] header
 [r1-$r%%4] line(b)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 County Number | County Name | FIPS Code | Public Health Region | Health Service Region
 1 | Anderson | 48001 | 4 | 4/5N
@@ -941,18 +971,20 @@ County Number | County Name | FIPS Code | Public Health Region | Health Service 
 [r1] header
 [r1-$r%%4] line(b)
 ~~~
+:::
 ::::
 
 * The selector `r1-$r%%4` breaks down as 
   * select the first to last row, and then
-  * only pick every fourth of them. Using `\` causes the numbering
-    to be based on relative row numbers.
+  * only pick every fourth of them. Using `%%` (instead of `%`) causes the
+    numbering to be based on the offset into the range, rather than
+    absolute row numbers.
 
 # Tableau Reference
 
 ## Create a Table
 
-Tableau tables created inside code blocks with a language of tableau.
+Tableau tables are created inside code blocks with a language of tableau.
 
 ~~~~
 ~~~ tableau
@@ -970,7 +1002,7 @@ can add an ID so we can reference the table elsewhere:
 ~~~~
 
 The table contains a data section and an optional layout section, separated
-by a line containing just three rquals signs:
+by a line containing just three equals signs:
 
 ~~~~
 ~~~ tableau
@@ -1013,8 +1045,8 @@ concatenated lines.
 ## Tableau Data Section
 
 
-It data section is normally interpreted line by line. There are four line
-types. The first three each correspond to a roew in the resulting table:
+The data section is normally interpreted line by line. There are four line
+types. The first three each correspond to a row in the resulting table:
 
 * column data for a row
 * an empty line
@@ -1035,7 +1067,7 @@ to separate columns in a row.
 ~~~
 ~~~~
 
-Oening pipe characters are optional _unless_ the cell they
+Opening pipe characters are optional _unless_ the cell they
 are adjacent to is blank.
 
 ~~~
@@ -1073,18 +1105,18 @@ In Tableau, we specify layout in a separate section.
 
 ### Blank Lines
 
-A line consistiong of zero or more spaces will create a half-height empty
+A line consisting of zero or more spaces will create a half-height empty
 row in the displayed table.
 
 ### Empty Lines
 
-A line containing just the test `=empty` creates a row containing empty
-cells, where each cell will have same same height as a filled table row.
+A line containing just the text `=empty` creates a row containing empty
+cells, where each cell will have the same height as a filled table row.
 
 ### Column Paragraphs
 
 Any column data row may be followed by one or more column paragraph
-entries. Tnese look like:
+entries. These look like:
 
 ~~~
 col «n» {{
@@ -1096,7 +1128,7 @@ col «n» {{
 The text between the opening `{{` and closing `}}` will be interpreted at
 the Markdown block level, and so may contain paragraphs, code blocks, divs,
 and so on. This text will be formatted, and the result will be used as the
-value of column «n» of the previous row. See @sec-lcc for an example.
+value of column «n» of the previous row. See [Longer column content](#longer-column-content) for an example.
 
 
 ## Table Layout Section
@@ -1177,7 +1209,7 @@ version.
   <col>             := "c" <numbers>
   ~~~
 
-  Each individual selector specifies a number or rows and/or columns. 
+  Each individual selector specifies a number of rows and/or columns. 
   If only a row is specified, all columns in that row are implied. If only
   a column is specified, the specifier applied to that column in all rows.
 
@@ -1248,12 +1280,12 @@ starting with the definition of a number
   -- select the second to last row
   r$r~1
 
-  -- select the cell whose cvolumn numberr is two more than the current row
-  number.
+  -- select the cell whose column number is two more than the current row
+  -- number.
   c$tr+2
   ~~~
 
-  Note that we use a tidle (`~`) to represent subtraction.
+  Note that we use a tilde (`~`) to represent subtraction.
 
   
 * ``` bnf
@@ -1265,10 +1297,9 @@ starting with the definition of a number
 
   We saw this when we shaded the multiplication table:
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
   |  x |  1 |  2 |  3 |  4 |  5 |
   |  1 |  1 |  2 |  3 |  4 |  5 |
   |  2 |  2 |  4 |  6 |  8 | 10 |
@@ -1281,9 +1312,8 @@ starting with the definition of a number
   [r2-$r:c$tr] line(lb)
   [r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
   |  x |  1 |  2 |  3 |  4 |  5 |
   |  1 |  1 |  2 |  3 |  4 |  5 |
@@ -1297,9 +1327,10 @@ starting with the definition of a number
   [r2-$r:c$tr] line(lb)
   [r2-$r:c2-$tr~1] small bg(shade6)
 ~~~
+:::
 ::::
 
-  The selector `r2-6:c$tr` selects cells in rowes 2 through the end of the
+  The selector `r2-6:c$tr` selects cells in rows 2 through the end of the
   table whose column number is the same as the row number.
 
   `r2-$r:c2-$tr~1` looks at rows 2 through 6. In each row, it selects the
@@ -1316,8 +1347,8 @@ starting with the definition of a number
   The skip starts with either `%` or `%%`.
   If you use `%`, then the skip test uses the absolute value of each number
   in the range. If instead you use `%%`, the test uses the offset into the
-  range: the first value in the range has a skiup vaue of 0, the second has
-  a value of 1 andf so on.
+  range: the first value in the range has a skip value of 0, the second has
+  a value of 1 and so on.
 
   ``` lua
   r3-8%even  -> 2, 4, 6, 8  ( absolute = n)
@@ -1341,7 +1372,7 @@ cells.
 
 Lines that do not contain cell selectors apply to the table as a whole.
 
-There are some format selectors thst only make sense when applied to the
+There are some format selectors that only make sense when applied to the
 whole table, and others only apply to cells.
 
 ~~~ tableau
@@ -1393,10 +1424,9 @@ l
 Set horizontal cell alignment (left, center, right, justified) and/or
 vertical cell alignment (top, middle, bottom)
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 | lt | ct | rt | Now is the time for all
 | lb | cm | rt | Now is the time for all
 | b  | rm | l  | Now is the time for all
@@ -1415,9 +1445,8 @@ vlines hlines
 [r3:c3] l
 [r3:c4] r
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 | lt | ct | rt | Now is the time for all
 | lb | cm | rt | Now is the time for all
@@ -1437,6 +1466,7 @@ vlines hlines
 [r3:c3] l
 [r3:c4] r
 ~~~
+:::
 ::::
 
 
@@ -1453,11 +1483,11 @@ l
 ~~~
 
 Set the background color of a cell. Hex colors and the predefined
-shade_n_ colors are called _known colors_, and can be used implicitly. 
+shade*n* colors are called _known colors_, and can be used implicitly. 
 
 Unknown colors _must_ appear inside a `bg(...)` specifier. For HTML output,
 these colors are converted into a CSS class name, prefixed by `bg-`. This
-means thatg `bg(warning)` becomes the CSS class `bg-warning`. It also means
+means that `bg(warning)` becomes the CSS class `bg-warning`. It also means
 that you can use more complex backgrounds, such as gradients and images.
 
 
@@ -1483,10 +1513,9 @@ that you can use more complex backgrounds, such as gradients and images.
 }
 </style>
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 shade1 | shade2 | shade3 | shade4
 shade5 | shade6 | shade7 | shade8
 shade9 | #cdf   | #94a8cb | nothing
@@ -1503,9 +1532,8 @@ shade9 | #cdf   | #94a8cb | nothing
 [r3:c2] bg(#cdf)
 [r3:c3] bg(#94a8cb)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 shade1 | shade2 | shade3 | shade4
 shade5 | shade6 | shade7 | shade8
@@ -1523,9 +1551,10 @@ shade9 | #cdf   | #94a8cb | nothing
 [r3:c2] bg(#cdf)
 [r3:c3] bg(#94a8cb)
 ~~~
+:::
 ::::
 
-::: {.callout-note collapse=true}
+:::callout-note{collapse=true}
 #### Expand to see the styles used in the previous table
 ~~~ css
 <style>
@@ -1565,19 +1594,17 @@ l
 
 Draw a box around the entire table.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 cat  | kitten
 dog  | puppy
 deer | fawn
 ===
 boxed
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 cat  | kitten
 dog  | puppy
@@ -1585,6 +1612,7 @@ deer | fawn
 ===
 boxed
 ~~~
+:::
 ::::
 
 
@@ -1602,10 +1630,9 @@ l
 Set the foreground color of the selected cells. See the description of `bg`
 for notes on the color parameter.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 cat  | kitten | 27 | medium
 dog  | puppy  | 42 | large
 deer | fawn   | 68 | larger
@@ -1613,9 +1640,8 @@ deer | fawn   | 68 | larger
 fg(#a00)
 [r2:c2-3] fg(shade4)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 cat  | kitten | 27 | medium
 dog  | puppy  | 42 | large
@@ -1624,6 +1650,7 @@ deer | fawn   | 68 | larger
 fg(#a00)
 [r2:c2-3] fg(shade4)
 ~~~
+:::
 ::::
 
 
@@ -1661,10 +1688,9 @@ The selected cells are made into a table footer. Normally applied to whole
 rows or columns. 
 
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 adult | child  | beta | concern
 cat   | kitten | 27 | medium
 dog   | puppy  | 42 | large
@@ -1674,9 +1700,8 @@ adult | child  | beta | concern
 [r1] header
 [r$r] footer
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 adult | child  | beta | concern
 cat   | kitten | 27 | medium
@@ -1687,6 +1712,7 @@ adult | child  | beta | concern
 [r1] header
 [r$r] footer
 ~~~
+:::
 ::::
 
 
@@ -1706,19 +1732,17 @@ l
 
 Draw lines between table rows.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 cat   | kitten | 27 | medium
 dog   | puppy  | 42 | large
 deer  | fawn   | 68 | larger
 ===
 hlines
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 cat   | kitten | 27 | medium
 dog   | puppy  | 42 | large
@@ -1726,6 +1750,7 @@ deer  | fawn   | 68 | larger
 ===
 hlines
 ~~~
+:::
 ::::
 
 
@@ -1742,10 +1767,9 @@ l
 Increase font size by a small, medium, or large amount. Also see `normal`
 and `small`.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
   small  | xsmall | xxsmall
   normal | normal | normal
   xxlarge | xlarge | large
@@ -1758,9 +1782,8 @@ and `small`.
 [r3:c2] xlarge
 [r3:c3] large
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
   small  | xsmall | xxsmall
   normal | normal | normal
@@ -1774,6 +1797,7 @@ and `small`.
 [r3:c2] xlarge
 [r3:c3] large
 ~~~
+:::
 ::::
 
 
@@ -1788,14 +1812,13 @@ l
 [c1] width(10)
 ~~~
 
-Draw lines on the (t)op, (b)ottom, (l)edft, or (r)ight of the selected
-cells. The bo(x) attribute drawsm a box afound the cell. Multiple sides may
+Draw lines on the (t)op, (b)ottom, (l)eft, or (r)ight of the selected
+cells. The bo(x) attribute draws a box around the cell. Multiple sides may
 be given in a single `lines` specifier.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
  1  | 2  | 3  | 4
  5  | 6  | 7  | 8
  9  | 10 | 11 | 12
@@ -1808,9 +1831,8 @@ be given in a single `lines` specifier.
 [r4:c1-$c%even] lines(t)
 [r4:c1-$c%odd] lines(b)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
  1  | 2  | 3  | 4
  5  | 6  | 7  | 8
@@ -1824,6 +1846,7 @@ be given in a single `lines` specifier.
 [r4:c1-$c%even] lines(t)
 [r4:c1-$c%odd] lines(b)
 ~~~
+:::
 ::::
 Note that the `lines` specifier applies to each selected cell individually.
 
@@ -1874,14 +1897,13 @@ l
 [c1] width(10)
 ~~~
 
-Looks for contiguous rectangular blocks amoung the selected cells, and
+Looks for contiguous rectangular blocks among the selected cells, and
 makes each block into a single logical cell, whose content and style is
 taken from the top-left–most cell in each block.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
  1  | 2  | 3  | 4
  5  | 6  | 7  | 8
  9  | 10 | 11 | 12
@@ -1896,9 +1918,8 @@ taken from the top-left–most cell in each block.
 [r4:c2-4] span
 [r4:c2] bg(shade6)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
  1  | 2  | 3  | 4
  5  | 6  | 7  | 8
@@ -1914,6 +1935,39 @@ taken from the top-left–most cell in each block.
 [r4:c2-4] span
 [r4:c2] bg(shade6)
 ~~~
+:::
+::::
+
+A cell-selector row or column spec that's written as a dash **range**
+(`r1-3`, `c2-4`) is treated as a single contiguous block, but one written
+as a **comma list** (`r1,2,3`, `c2,3,4`) is treated as several
+independent, single-value selectors -- each combination of a row group
+and a column group produces its own rectangle. This matters for `span`:
+a range merges its cells into one block, while a comma list keeps each
+value's cells as a separate block. So `[r1-2:c2-4] span` spans rows 1-2
+and columns 2-4 into a *single* 2×3 cell, but `[r1-2:c2,3,4] span` spans
+rows 1-2 within *each* of columns 2, 3, and 4 independently, giving three
+separate two-row-tall cells side by side:
+
+::::columns
+:::column
+~~~
+ 1  | 2  | 3  | 4
+ 5  | 6  | 7  | 8
+ 9  | 10 | 11 | 12
+ ===
+[r1-2:c2,3,4] span
+~~~
+:::
+:::column
+~~~ tableau
+ 1  | 2  | 3  | 4
+ 5  | 6  | 7  | 8
+ 9  | 10 | 11 | 12
+ ===
+[r1-2:c2,3,4] span
+~~~
+:::
 ::::
 
 #### `.style`: 
@@ -1930,10 +1984,9 @@ Associates the given style with the selected cells. The interpretation of
 the style depends on the output format used. For HTML output, the style
 becomes a CSS selector.
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
  ant | bee | cat
  dog | elk | fox
  gnu | hen | idk
@@ -1941,9 +1994,8 @@ becomes a CSS selector.
 .gradient
 [r2:c2] .glow
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
  ant | bee | cat
  dog | elk | fox
@@ -1952,26 +2004,27 @@ becomes a CSS selector.
 .gradient
 [r2:c2] .glow
 ~~~
+:::
 ::::
 
 <style>
-.gradient {
+table.tableau.gradient {
   background: linear-gradient(0.1turn, #3f87a6, #ebf8e1, #f69d3c);
 }
 
-table.tableau-table td.glow {
+table.tableau td.glow {
   box-shadow: 0px 0px 20px 14px rgba(255,46,46,0.9);
 }
 </style>
 
-::: {.callout-note collapse=true}
+:::callout-note{collapse=true}
 ### Expand to see the CSS for the previous table
 ~~~ css
-.gradient {
+table.tableau.gradient {
   background: linear-gradient(0.1turn, #3f87a6, #ebf8e1, #f69d3c);
 }
 
-table.tableau-table td.glow {
+table.tableau td.glow {
   box-shadow: 0px 0px 20px 14px rgba(255,46,46,0.9);
 }
 ~~~
@@ -1994,13 +2047,13 @@ l
 ~~~
 
 The `width` specifier takes a number. If this number is a float greater
-than 0.0 and less that 1.0, then it is interpreted as a ratio (multiply it
-by 100 in your head ikf you prefer working with percentages). If it is an
+than 0.0 and less than 1.0, then it is interpreted as a ratio (multiply it
+by 100 in your head if you prefer working with percentages). If it is an
 integer greater than one, it uses the approximate width of that many
 characters in the default font.
 
 When applied at the table level, `width` specifies the width of the table
-as a whole. When a ratio if given, the width is that ration of the line
+as a whole. When a ratio is given, the width is that ratio of the line
 length.
 
 When applied to a cell, it represents the width of that cell. Column widths
@@ -2008,16 +2061,16 @@ are calculated from the widths of cells in that column using a heuristic
 which attempts to maintain proportional widths depending on the widths of
 the cells in each column.
 
-::: {.callout-note collapse=true}
+:::callout-note{collapse=true}
 ### If you want to know how this works, expand this
 
 * if no widths are given for a particular column, then the width is
-  approximated by the widt of the widest cell in the column.
+  approximated by the width of the widest cell in the column.
 
 * if a character width is specified for one or more cells, then the width
   is set to the largest of these.
 
-* if on or more cells has a ratio as a width, the column width is set to
+* if one or more cells has a ratio as a width, the column width is set to
   the largest of these.
 
 At this point we have a list of columns. Some may have ratio widths,
@@ -2033,29 +2086,37 @@ character widths times $\frac{rr}{{cw}_{tot}}$.
 
 :::
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 one  | two  | three
 four | five | six
 ===
 bg(#f0f9ff)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 one  | two  | three
 four | five | six
 ===
 bg(#f0f9ff)
 ~~~
+:::
 ::::
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
+::::columns
+:::column
+~~~
+one  | two  | three
+four | five | six
+===
+bg(#f0f9ff)
+[c1] width(20)
+[c2] width(4)
+~~~
+:::
+:::column
 ~~~ tableau
 one  | two  | three
 four | five | six
@@ -2064,22 +2125,22 @@ bg(#f0f9ff)
 [c1] width(20)
 [c2] width(4)
 ~~~
-~~~~
 :::
-\columnbreak
-~~~ tableau
+::::
+
+::::columns
+:::column
+~~~
 one  | two  | three
 four | five | six
 ===
 bg(#f0f9ff)
+width(.75)
 [c1] width(20)
 [c2] width(4)
 ~~~
-::::
-
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
+:::
+:::column
 ~~~ tableau
 one  | two  | three
 four | five | six
@@ -2089,24 +2150,12 @@ width(.75)
 [c1] width(20)
 [c2] width(4)
 ~~~
-~~~~
 :::
-\columnbreak
-~~~ tableau
-one  | two  | three
-four | five | six
-===
-bg(#f0f9ff)
-width(.75)
-[c1] width(20)
-[c2] width(4)
-~~~
 ::::
 
-:::: {style='columns: 2; column-gap: 3em; column-rule: 1px solid #969; margin: 1em 0 .75em;'}
-::: {style='background: #fff2ff; padding: 0.5em 1em; break-after: column;'}
-~~~~
-~~~ tableau
+::::columns
+:::column
+~~~
 one  | two  | three
 four | five | six
 ===
@@ -2115,9 +2164,8 @@ width(.4)
 [c1] width(.2)
 [c2] width(.4)
 ~~~
-~~~~
 :::
-\columnbreak
+:::column
 ~~~ tableau
 one  | two  | three
 four | five | six
@@ -2127,68 +2175,97 @@ width(.4)
 [c1] width(.2)
 [c2] width(.4)
 ~~~
+:::
 ::::
 
 # Styling
 
 ## HTML Output
 
-Tableau uses CSS for all styling. Scope any changes you make with
-`table.tableau-table` in order to get the correct specificity.
+Tableau uses CSS for all styling. Generated tables have the class
+`tableau`, so scope any changes you make with `table.tableau` (or, for a
+single cell's custom class, `table.tableau.yourclass`) in order to get
+the correct specificity -- `table.tableau` beats a bare `.yourclass`
+rule, since `tableau.css` itself uses `table.tableau` selectors to reset
+background/border/box-shadow back to neutral values (so that a host
+page's own table theme, or an earlier `bg()`/`lines()`/shading rule,
+doesn't leak through). See the `.gradient` example above.
 
-You can override colors using CSS variables.
+You can override colors using CSS variables:
 
 ~~~ css
-:root{
-  --hbg-h: 240deg;
-  --hbg-s: 29%;
-  --caption-bg:      hsl(var(--hbg-h) var(--hbg-s) 98%);
-  --header-bg-color: hsl(var(--hbg-h) var(--hbg-s) 60%);
-  --grid-line-color-normal: hsl(var(--hbg-h) var(--hbg-s) 80%);
-  --grid-line-color-header: hsl(var(--hbg-h) var(--hbg-s) 50%);
-  --shade1-bg:       hsl(60deg, 66%, 84%);
-  --shade2-bg:       hsl(95deg, 61%, 79%);
-  --shade3-bg:       hsl(130deg, 61%, 79%);
-  --shade4-bg:       hsl(165deg, 61%, 79%);
-  --shade5-bg:       hsl(200deg, 61%, 79%);
-  --shade6-bg:       hsl(235deg, 61%, 79%);
-  --shade7-bg:       hsl(270deg, 61%, 79%);
-  --shade8-bg:       hsl(305deg, 61%, 79%);
-  --shade9-bg:       hsl(340deg, 61%, 79%);
-  --shade-bg:        var(--shade1-bg);
-  --shade1-fg:       hsl(60deg, 66%, 44%);
-  --shade2-fg:       hsl(95deg, 61%, 39%);
-  --shade3-fg:       hsl(130deg, 61%, 39%);
-  --shade4-fg:       hsl(165deg, 61%, 39%);
-  --shade5-fg:       hsl(200deg, 61%, 39%);
-  --shade6-fg:       hsl(235deg, 61%, 39%);
-  --shade7-fg:       hsl(270deg, 61%, 39%);
-  --shade8-fg:       hsl(305deg, 61%, 39%);
-  --shade9-fg:       hsl(340deg, 61%, 39%);
-  --shade-bg:        var(--shade1-bg);
-  --stripe-bg:       hsl(var(--hbg-h) var(--hbg-s) 95%);
+:root {
+  --tb-hue: 240deg;
+  --tb-sat: 29%;
+
+  --tb-border-color: hsl(var(--tb-hue) var(--tb-sat) 55%);
+  --tb-cell-border-color: hsl(var(--tb-hue) var(--tb-sat) 55%);
+  --tb-line-color: hsl(var(--tb-hue) var(--tb-sat) 80%);
+  --tb-header-bg: hsl(var(--tb-hue) var(--tb-sat) 60%);
+  --tb-header-fg: #fff;
+  --tb-footer-bg: var(--tb-header-bg);
+  --tb-footer-fg: var(--tb-header-fg);
+  --tb-caption-bg: hsl(var(--tb-hue) var(--tb-sat) 98%);
+  --tb-caption-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+
+  --tb-shade1-bg: hsl(60deg, 66%, 84%);
+  --tb-shade2-bg: hsl(95deg, 61%, 79%);
+  --tb-shade3-bg: hsl(130deg, 61%, 79%);
+  --tb-shade4-bg: hsl(165deg, 61%, 79%);
+  --tb-shade5-bg: hsl(200deg, 61%, 79%);
+  --tb-shade6-bg: hsl(235deg, 61%, 79%);
+  --tb-shade7-bg: hsl(270deg, 61%, 79%);
+  --tb-shade8-bg: hsl(305deg, 61%, 79%);
+  --tb-shade9-bg: hsl(340deg, 61%, 79%);
+  --tb-shade-bg:  var(--tb-shade1-bg);
+
+  --tb-shade1-fg: hsl(60deg, 66%, 28%);
+  --tb-shade2-fg: hsl(95deg, 61%, 32%);
+  --tb-shade3-fg: hsl(130deg, 61%, 33%);
+  --tb-shade4-fg: hsl(165deg, 61%, 32%);
+  --tb-shade5-fg: hsl(200deg, 61%, 39%);
+  --tb-shade6-fg: hsl(235deg, 61%, 39%);
+  --tb-shade7-fg: hsl(270deg, 61%, 39%);
+  --tb-shade8-fg: hsl(305deg, 61%, 39%);
+  --tb-shade9-fg: hsl(340deg, 61%, 39%);
+  --tb-shade-fg:  var(--tb-shade1-fg);
 }
 ~~~
 
-Tableau also has definitions for dark mode:
+`--tb-hue`/`--tb-sat` set the single hue the header, footer, caption
+banner, and grid lines are all derived from, so changing just those two
+re-themes the whole table consistently. `--tb-shade1-bg` through
+`--tb-shade9-bg` (and their `-fg` counterparts) are the named colors
+`bg(shade1)`...`bg(shade9)` resolve to.
+
+Tableau also ships dark-mode values, applied automatically via
+`prefers-color-scheme` -- no extra class or data attribute needed:
 
 ~~~ css
-[data-md-color-scheme=slate] {
-  --hbg-h: 240deg;
-  --hbg-s: 29%;
-  --caption-bg:      hsl(var(--hbg-h) var(--hbg-s) 23%);
-  --header-bg-color: hsl(var(--hbg-h) var(--hbg-s) 30%);
-  --grid-line-color-normal: hsl(var(--hbg-h) var(--hbg-s) 50%);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tb-border-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+    --tb-cell-border-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+    --tb-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+    --tb-header-bg: hsl(var(--tb-hue) var(--tb-sat) 30%);
+    --tb-caption-bg: hsl(var(--tb-hue) var(--tb-sat) 23%);
 
         :       :
+  }
+}
 ~~~
 
+Overriding these variables inside a `@media (prefers-color-scheme: dark)`
+block of your own (after `tableau.css` is loaded) re-themes dark mode the
+same way.
 
-You can change the position to the table caption:
+The table caption renders below the table by default (`caption-side:
+bottom` is already set on `table.tableau`). To put it back above the
+table:
 
 ~~~ css
-table.tableau-table {
-  width: auto;  
-  caption-side: bottom
+table.tableau {
+  caption-side: top;
+}
 ~~~
 

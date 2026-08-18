@@ -1,13 +1,9 @@
-import { readFileSync, writeFileSync } from "node:fs"
+import { readFileSync, writeFileSync, copyFileSync, mkdirSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { unified } from "unified"
-import remarkParse from "remark-parse"
-import remarkFrontmatter from "remark-frontmatter"
-import remarkTableau from "remark-tableau"
-import remarkRehype from "remark-rehype"
-import rehypeRaw from "rehype-raw"
-import rehypeStringify from "rehype-stringify"
+import { renderMarkdown } from "./lib/render.mts"
+import { renderPage } from "./lib/template.mts"
+import { copyKatexAssets } from "./lib/assets.mts"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
@@ -18,32 +14,22 @@ if (!inputPath) {
 }
 
 const outputPath = outputPathArg ?? inputPath.replace(/\.[^./]+$/, ".html")
+const outputDir = dirname(outputPath)
+mkdirSync(outputDir, { recursive: true })
 
-const css = readFileSync(join(__dirname, "..", "assets", "tableau.css"), "utf-8")
+copyFileSync(join(__dirname, "..", "assets", "tableau.css"), join(outputDir, "tableau.css"))
+copyFileSync(join(__dirname, "..", "assets", "site.css"), join(outputDir, "site.css"))
+copyKatexAssets(outputDir)
+
 const markdown = readFileSync(inputPath, "utf-8")
+const { bodyHtml, toc, title } = await renderMarkdown(markdown)
 
-const file = await unified()
-  .use(remarkParse)
-  .use(remarkFrontmatter)
-  .use(remarkTableau)
-  .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypeRaw)
-  .use(rehypeStringify)
-  .process(markdown)
-
-const html = `<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<style>
-${css}
-</style>
-</head>
-<body>
-${String(file)}
-</body>
-</html>
-`
+const html = renderPage({
+  title,
+  bodyHtml,
+  toc,
+  cssHrefs: ["tableau.css", "site.css", "katex.min.css"],
+})
 
 writeFileSync(outputPath, html)
 console.log(`wrote ${outputPath}`)

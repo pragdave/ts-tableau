@@ -34,7 +34,7 @@ function do_row(row: Row): string {
   const result = ["<tr>"]
   row.cells.forEach((cell) => {
     if (!cell.hidden) {
-      result.push(do_cell(cell))
+      result.push(do_cell(cell, row.is_empty))
     }
   })
   result.push("</tr>")
@@ -46,9 +46,6 @@ function table_opener(table: TableData): string {
   const attrs: string[] = []
   const styles = add_styles(table)
   const classes = add_classes(table)
-  if (table.global_attr.style.length > 0) {
-    attrs.push(`style="${attr_escape(table.global_attr.style)})"`)
-  }
   if (styles.length > 0) {
     attrs.push(`style="${styles.join("; ")}"`)
   }
@@ -69,6 +66,9 @@ function add_styles(table: TableData): string[] {
 
 function add_classes(table: TableData): string {
   const classes: string[] = ["tableau"]
+  if (table.global_attr.style.length > 0) {
+    classes.push(table.global_attr.style)
+  }
   if (table.global_attr.boxed) {
     classes.push("boxed")
   }
@@ -87,9 +87,18 @@ function add_classes(table: TableData): string {
 
 // CELL level formatting
 //
-function do_cell(cell: Cell): string {
+// An "=empty" row is documented as producing cells the same height as a
+// normal data row (unlike a bare blank line, which collapses to a
+// half-height row). A real line of content is what gives a cell its
+// height, so an empty cell in such a row gets a non-breaking space --
+// invisible, but occupying a full line box like any other cell's text.
+const FULL_HEIGHT_PLACEHOLDER = " "
+
+function do_cell(cell: Cell, force_full_height = false): string {
   const tag = (cell.header || cell.footer) ? "th" : "td"
-  return `<${tag}${cell_opener(cell)}><tableau-md>${escape_markdown(cell.content)}</tableau-md></${tag}>`
+  const content =
+    force_full_height && cell.content === "" ? FULL_HEIGHT_PLACEHOLDER : escape_markdown(cell.content)
+  return `<${tag}${cell_opener(cell)}><tableau-md>${content}</tableau-md></${tag}>`
 }
 
 // cell.content is deferred Markdown source, not HTML -- ts-tableau
@@ -129,6 +138,9 @@ function do_cell_classes(cell: Cell): string[] {
 
   if (cell.lines) {
     result.push(add_lines(cell.lines))
+  }
+  if (cell.style) {
+    result.push(cell.style.name)
   }
   return result
 }
@@ -183,13 +195,6 @@ function do_color(color: ColorRepresentations, kind: "bg" | "fg") {
 
 function add_lines(lines: FormatLines): string {
   return `tb_l_${lines.as_string()}`
-}
-
-function attr_escape(str: string) {
-  return str
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;")
-    .replace(/\\/g, "")
 }
 
 function format_width_to_css(w: FormatWidth): string {

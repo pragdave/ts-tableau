@@ -1,0 +1,66 @@
+name: Deploy docs site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/guide/**"
+      - "assets/**"
+      - "cli/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-docs.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # ts-tableau's package.json depends on remark-tableau via a
+      # file:../remark-tableau path (the two are developed side by side
+      # locally) -- checking it out as a sibling here reproduces that
+      # layout so `npm ci` can resolve it.
+      - uses: actions/checkout@v4
+        with:
+          path: ts-tableau
+      - uses: actions/checkout@v4
+        with:
+          repository: pragdave/remark-tableau
+          path: remark-tableau
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ts-tableau/package-lock.json
+      - name: Build remark-tableau
+        working-directory: remark-tableau
+        run: |
+          npm ci
+          npm run build
+      - name: Build docs site
+        working-directory: ts-tableau
+        run: |
+          npm ci
+          npm run build:site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ts-tableau/docs-site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

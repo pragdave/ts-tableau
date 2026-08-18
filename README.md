@@ -90,7 +90,25 @@ ordering, depending on what fits that host).
 
 ## Documentation
 
-A combined guide and reference [is available](https://pragdave.github.io/pandoc-tableau/tableau-guide.html).
+A combined guide and reference [is available](https://pragdave.github.io/ts-tableau/).
+
+## Preprocessors
+
+Tableau itself only turns table markup into HTML (see [Cell
+Content](#cell-content) above) -- something upstream still needs to feed
+it that markup and hand its output to a Markdown/HTML pipeline. Known
+preprocessors:
+
+* [remark-tableau](https://github.com/pragdave/remark-tableau) -- a
+  remark plugin that renders Tableau fenced code blocks for
+  unified/remark-based toolchains (this is what generates the guide
+  linked above).
+* [pandoc-tableau](https://github.com/pragdave/pandoc-tableau) -- the
+  original Pandoc/Quarto Lua filter version of Tableau, with its own
+  markup syntax.
+
+If you build a preprocessor for another toolchain, let me know and I'll
+add it here.
 
 ## Installation
 
@@ -114,7 +132,7 @@ This second line tells Quarto where in the filter chain it should run.
 
 ## Using
 
-See [the guide](https://pragdave.github.io/pandoc-tableau/tableau-guide.html).
+See [the guide](https://pragdave.github.io/ts-tableau/).
 
 ### License
 

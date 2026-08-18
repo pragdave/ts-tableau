@@ -1,13 +1,18 @@
 :root {
   color-scheme: light dark;
 
-  --tb-border-color: #bbb;
-  --tb-cell-border-color: #888;
-  --tb-line-color: #ddd;
-  --tb-header-bg: #cef;
-  --tb-header-fg: #222;
-  --tb-footer-bg: #ecf;
-  --tb-footer-fg: #222;
+  --tb-hue: 240deg;
+  --tb-sat: 29%;
+
+  --tb-border-color: hsl(var(--tb-hue) var(--tb-sat) 55%);
+  --tb-cell-border-color: hsl(var(--tb-hue) var(--tb-sat) 55%);
+  --tb-line-color: hsl(var(--tb-hue) var(--tb-sat) 80%);
+  --tb-header-bg: hsl(var(--tb-hue) var(--tb-sat) 60%);
+  --tb-header-fg: #fff;
+  --tb-footer-bg: var(--tb-header-bg);
+  --tb-footer-fg: var(--tb-header-fg);
+  --tb-caption-bg: hsl(var(--tb-hue) var(--tb-sat) 98%);
+  --tb-caption-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
 
   --tb-shade1-bg: hsl(60deg, 66%, 84%);
   --tb-shade2-bg: hsl(95deg, 61%, 79%);
@@ -34,13 +39,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --tb-border-color: #666;
-    --tb-cell-border-color: #555;
-    --tb-line-color: #444;
-    --tb-header-bg: hsl(195deg, 40%, 20%);
-    --tb-header-fg: #eee;
-    --tb-footer-bg: hsl(285deg, 40%, 20%);
-    --tb-footer-fg: #eee;
+    --tb-border-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+    --tb-cell-border-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+    --tb-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
+    --tb-header-bg: hsl(var(--tb-hue) var(--tb-sat) 30%);
+    --tb-header-fg: #fff;
+    --tb-footer-bg: var(--tb-header-bg);
+    --tb-footer-fg: var(--tb-header-fg);
+    --tb-caption-bg: hsl(var(--tb-hue) var(--tb-sat) 23%);
+    --tb-caption-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
 
     --tb-shade1-bg: hsl(60deg, 61%, 30%);
     --tb-shade2-bg: hsl(95deg, 61%, 30%);
@@ -93,6 +100,29 @@ table.tableau td {
 table.tableau {
   border-collapse: collapse;
   border-spacing: 0;
+  caption-side: bottom;
+
+  & caption {
+    margin-top: 0;
+    padding: 0.25em 0;
+    text-align: center;
+    font-size: 90%;
+    font-variant: all-small-caps;
+    background: var(--tb-caption-bg);
+    border-top: 0.5px solid var(--tb-caption-line-color);
+    border-bottom: 0.5px solid var(--tb-caption-line-color);
+
+    & p {
+      margin: 0;
+    }
+  }
+
+  &.boxed caption {
+    border-left: 0.5px solid var(--tb-caption-line-color);
+    border-right: 0.5px solid var(--tb-caption-line-color);
+    padding-left: 1em;
+    padding-right: 1em;
+  }
 
   & td, & th {
     padding: 0.25rem 0.5rem;
@@ -178,10 +208,14 @@ table.tableau tr td, table.tableau tr th {
   &.tb-header {
     background: var(--tb-header-bg);
     color: var(--tb-header-fg);
+    font-weight: 500;
+    font-size: 90%;
   }
   &.tb-footer {
     background: var(--tb-footer-bg);
     color: var(--tb-footer-fg);
+    font-weight: 500;
+    font-size: 90%;
   }
 
   &.tb-boxed  { border: 1px solid var(--tb-cell-border-color); }
