@@ -16,7 +16,7 @@ export class FormatLines {
   }
 
   top() { return !!(this.flags & FormatLines.T) }
-  bottom() { return !!(this.flags & FormatLines.R) }
+  bottom() { return !!(this.flags & FormatLines.B) }
   left() { return !!(this.flags & FormatLines.L) }
   right() { return !!(this.flags & FormatLines.R) }
   box() { return !!(this.flags & FormatLines.X) }
@@ -25,7 +25,7 @@ export class FormatLines {
     if (this.box()) {
       return "box"
     }
-    return [FormatLines.T, FormatLines.B, FormatLines.B, FormatLines.L]
+    return [FormatLines.T, FormatLines.R, FormatLines.B, FormatLines.L]
       .map((flag) => {
         return this.flags & flag ? "1" : "0"
       })
