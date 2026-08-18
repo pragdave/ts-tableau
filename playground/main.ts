@@ -106,6 +106,10 @@ const autoRenderCheckbox = document.getElementById("auto-render") as HTMLInputEl
 const renderBtn = document.getElementById("render-btn")!
 const clearBtn = document.getElementById("clear-btn")!
 const exampleSelector = document.getElementById("example-selector") as HTMLSelectElement
+const htmlOutput = document.getElementById("html-output") as HTMLElement
+const jsonOutput = document.getElementById("json-output") as HTMLElement
+const htmlToggle = document.getElementById("html-toggle") as HTMLInputElement
+const jsonToggle = document.getElementById("json-toggle") as HTMLInputElement
 const renderStatus = document.getElementById("render-status")!
 
 let editor: EditorView
@@ -124,11 +128,17 @@ function render() {
     const pre = document.createElement("pre")
     pre.textContent = result.error
     tableOutput.appendChild(pre)
+    htmlOutput.hidden = true
+    jsonOutput.hidden = true
     renderStatus.textContent = "Error"
     renderStatus.style.color = "var(--error-text)"
   } else {
     resultContainer.classList.remove("has-error")
     tableOutput.innerHTML = result.html
+    htmlOutput.hidden = !htmlToggle.checked
+    htmlOutput.querySelector("pre")!.textContent = result.html
+    jsonOutput.hidden = !jsonToggle.checked
+    jsonOutput.querySelector("pre")!.textContent = JSON.stringify(result.tableData, null, 2)
     renderStatus.textContent = `${elapsed}ms`
     renderStatus.style.color = ""
   }
@@ -205,6 +215,9 @@ exampleSelector.addEventListener("change", (e) => {
   }
   ;(e.target as HTMLSelectElement).value = ""
 })
+
+htmlToggle.addEventListener("change", render)
+jsonToggle.addEventListener("change", render)
 
 // --- theme -----------------------------------------------------------------
 

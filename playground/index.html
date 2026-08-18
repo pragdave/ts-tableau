@@ -154,6 +154,15 @@
       color: var(--error-text);
     }
 
+    .debug-panel { margin-top: 16px; }
+    .debug-panel pre {
+      background: var(--bg-header);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 12px;
+      overflow: auto;
+    }
+
     #example-selector {
       padding: 4px 8px;
       font-size: 0.8rem;
@@ -217,9 +226,14 @@
         <span>Result</span>
         <span id="render-status"></span>
       </div>
-      <div class="result-toolbar"></div>
+      <div class="result-toolbar">
+        <label><input type="checkbox" id="html-toggle"> Show generated HTML</label>
+        <label><input type="checkbox" id="json-toggle"> Show parsed JSON</label>
+      </div>
       <div id="result-container">
         <div id="table-output"></div>
+        <div id="html-output" class="debug-panel" hidden><pre></pre></div>
+        <div id="json-output" class="debug-panel" hidden><pre></pre></div>
       </div>
     </section>
   </main>
