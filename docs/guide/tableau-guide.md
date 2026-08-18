@@ -1380,7 +1380,7 @@ Format | Table | Cell |  |  | Format | Table | Cell
 align  | Y     | Y    |  |  | large  | Y     | Y
 bg     | Y     | Y    |  |  | lines  |       | Y
 boxed  | Y     |      |  |  | normal | Y     | Y
-       |       |      |  |  | small  | Y     | Y
+|      |       |      |  |  | small  | Y     | Y
 fg     | Y     | Y    |  |  | span   |       | Y
 footer |       | Y    |  |  | style  | Y     | Y
 header |       | Y    |  |  | vlines | Y     |
