@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau Playground</title>
+  <style>
+    :root {
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', Consolas, monospace;
+      --bg-page: #f5f5f5;
+      --bg-panel: #ffffff;
+      --bg-header: #f0f0f0;
+      --border-color: #e0e0e0;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --accent: #1976d2;
+      --error-bg: #fff5f5;
+      --error-border: #ffcdd2;
+      --error-text: #c62828;
+    }
+
+    html.dark {
+      --bg-page: #1a1a1a;
+      --bg-panel: #242424;
+      --bg-header: #2a2a2a;
+      --border-color: #3a3a3a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #999999;
+      --accent: #5ca0e8;
+      --error-bg: #2a1a1a;
+      --error-border: #5a2a2a;
+      --error-text: #ef5350;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 12px 20px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    header h1 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+    header .subtitle { color: var(--text-secondary); font-size: 0.85rem; max-width: 60ch; }
+
+    #theme-toggle {
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+
+    main { display: flex; flex: 1; min-height: 0; }
+    .pane { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    .pane-header {
+      padding: 8px 16px;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 12px;
+    }
+
+    .editor-pane { border-right: 1px solid var(--border-color); }
+
+    #source-editor { flex: 1; width: 100%; overflow: auto; background: var(--bg-panel); }
+    #source-editor .cm-editor { height: 100%; font-family: var(--font-mono); font-size: 13px; }
+    #source-editor .cm-scroller { padding: 16px; line-height: 1.5; }
+    #source-editor .cm-focused { outline: none; }
+
+    .editor-toolbar {
+      padding: 8px 16px;
+      background: var(--bg-header);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .editor-toolbar label, .result-toolbar label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .editor-toolbar button {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-panel);
+      cursor: pointer;
+    }
+
+    .editor-toolbar button:hover { background: var(--bg-header); }
+
+    .result-pane { background: var(--bg-panel); overflow: auto; }
+
+    .result-toolbar {
+      padding: 8px 16px;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    #result-container { padding: 16px; }
+    #result-container.has-error { background: var(--error-bg); }
+    #result-container pre {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    #result-container.has-error pre {
+      padding: 16px;
+      background: var(--error-bg);
+      border: 1px solid var(--error-border);
+      border-radius: 4px;
+      color: var(--error-text);
+    }
+
+    #example-selector {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-panel);
+      color: var(--text-primary);
+    }
+
+    footer {
+      padding: 8px 20px;
+      background: var(--bg-panel);
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      main { flex-direction: column; }
+      .editor-pane { border-right: none; border-bottom: 1px solid var(--border-color); min-height: 40vh; }
+      .result-pane { min-height: 40vh; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Tableau Playground</h1>
+      <div class="subtitle">Type tableau markup on the left, see the rendered table on the right.</div>
+    </div>
+    <button id="theme-toggle" title="Toggle dark mode">&#9790;</button>
+  </header>
+
+  <main>
+    <section class="pane editor-pane">
+      <div class="pane-header">
+        <span>Source</span>
+        <select id="example-selector">
+          <option value="">-- Load Example --</option>
+          <option value="simple">Simple Table</option>
+          <option value="headerfooter">Header Row + Rule Lines</option>
+          <option value="spans">Column/Row Spans</option>
+          <option value="alignment">Column Alignment</option>
+          <option value="blocks">Block Content</option>
+          <option value="caption">Caption</option>
+          <option value="dynamic">Dynamic Selectors ($tr)</option>
+        </select>
+      </div>
+      <div id="source-editor"></div>
+      <div class="editor-toolbar">
+        <label><input type="checkbox" id="auto-render" checked> Auto-render</label>
+        <button id="render-btn">Render</button>
+        <button id="clear-btn">Clear</button>
+      </div>
+    </section>
+
+    <section class="pane result-pane">
+      <div class="pane-header">
+        <span>Result</span>
+        <span id="render-status"></span>
+      </div>
+      <div class="result-toolbar"></div>
+      <div id="result-container">
+        <div id="table-output"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>tableau &mdash; table layout, separated from data</footer>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

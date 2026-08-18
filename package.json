@@ -23,7 +23,8 @@
     "tab": "tsx cli/tab.ts",
     "md2html": "tsx cli/md2html.mts",
     "test": "jest",
-    "wtest": "jest --watch"
+    "wtest": "jest --watch",
+    "playground:build": "vite build --config playground/vite.config.ts"
   },
   "keywords": [],
   "author": "",
@@ -40,7 +41,8 @@
     "ts-jest": "^29.2.5",
     "tsx": "^4.23.5",
     "typescript": "^5.6.2",
-    "unified": "^11.0.5"
+    "unified": "^11.0.5",
+    "vite": "^6.0.0"
   },
   "dependencies": {
     "strscan-ts": "^1.0.0"
