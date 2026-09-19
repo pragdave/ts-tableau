@@ -146,7 +146,7 @@ small
 | Servings Per Container 8                 |
 | Amount Per Serving:                      |
 | Calories 200 • Calories from Fat 130     |
-|   \% Daily Value  |                      |
+|   % Daily Value  |                      |
 | Total Fat |                        | 22% |
 |           | Saturated Fat 9g       | 22% |
 |           | Trans Fat 9g           |  0% |
@@ -873,7 +873,7 @@ align(l)
   through to the end of the row.
   For each of these, we add a background color.
 
-* We can also use `/odd` to select odd numbered rows, and `/n` to select
+* We can also use `%odd` to select odd numbered rows, and `%n` to select
   rows that are a multiple of $n$.
 
 ##### Selecting Periodic Rows And Columns

@@ -124,24 +124,26 @@ function adjusted_number(src: StringScanner): SelAdjustedNumber {
 //   = rel_or_abs modulo
 //   | rel_or_abs "even"
 //   | rel_or_abs "odd"
-//   | "even" 
-//   | "odd" 
 //
 // rel_or_abs
 //   = "%%" -- rel
 //   | "%"  -- abs
 
 function maybe_skip(src: StringScanner) {
-  let rel_or_abs: RelOrAbs = "abs"
-  let seen_percent = false
-
-  if (src.scan(/\s*(%%?)\s*/)) {
-    seen_percent = true
-    rel_or_abs = src.getCapture(0).length == 2 ? "rel" : "abs"
-    let n = maybe_int(src)
-    if (n) {
-      return new SelSkip(rel_or_abs, 0, n)
+  if (!src.scan(/\s*(%%?)\s*/)) {
+    // "odd"/"even" used to be accepted without the prefix, which the grammar
+    // never allowed; say so rather than leaving it to surface as a missing ']'.
+    if (src.check(/\s*(odd|even)\b/)) {
+      throw `a skip needs a '%' or '%%' prefix (I see '${src.peek(20)}')`
     }
+    return SelNoSkip
+  }
+
+  const rel_or_abs: RelOrAbs = src.getCapture(0).length == 2 ? "rel" : "abs"
+
+  const n = maybe_int(src)
+  if (n) {
+    return new SelSkip(rel_or_abs, 0, n)
   }
 
   if (src.scan(/odd\b/)) {
@@ -152,11 +154,7 @@ function maybe_skip(src: StringScanner) {
     return new SelSkip(rel_or_abs, 0, 2)
   }
 
-  if (seen_percent) {
-    throw `a skip needs a number, 'odd', or 'even' after the '%' (I see '${src.peek(20)}')`
-  }
-
-  return SelNoSkip
+  throw `a skip needs a number, 'odd', or 'even' after the '%' (I see '${src.peek(20)}')`
 }
 
 

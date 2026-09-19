@@ -187,6 +187,16 @@ describe("malformed skips are rejected", () => {
       .toThrow(/needs a number, 'odd', or 'even'/)
   })
 
+  test("'odd' without a % prefix is rejected", () => {
+    expect(() => parse_selector(new StringScanner("r3-8odd:c1]")))
+      .toThrow(/needs a '%' or '%%' prefix/)
+  })
+
+  test("'even' without a % prefix is rejected", () => {
+    expect(() => parse_selector(new StringScanner("r3-8even:c1]")))
+      .toThrow(/needs a '%' or '%%' prefix/)
+  })
+
   test("a skip on a single number says a skip needs a range", () => {
     expect(() => parse_selector(new StringScanner("r2%even:c1]")))
       .toThrow(/skip .* only be applied to a range/)
