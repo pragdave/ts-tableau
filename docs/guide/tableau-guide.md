@@ -1082,7 +1082,8 @@ column, and so this row has data in columns 1 and 2, and not columns 2 and
 3.
 
 Include a literal pipe character in a column by escaping it with a
-backslash. Percent characters must also be escaped.
+backslash. A backslash escapes whatever character follows it, so use
+`\\\\` for a literal backslash.
 
 #### No Format Information in the Data Section
 
@@ -1124,6 +1125,10 @@ col «n» {{
     .. .. .. .. ..
 }}
 ~~~
+
+«n» is either a column number (`col2`) or a letter (`colb`, which is the
+same column). `column` may be written in full or abbreviated to `col`. A
+block naming a column the previous row does not have is ignored.
 
 The text between the opening `{{` and closing `}}` will be interpreted at
 the Markdown block level, and so may contain paragraphs, code blocks, divs,
@@ -1168,11 +1173,12 @@ version.
 
 <number range>    := <adjusted number> | <adjusted number> "-" <adjusted number> <skip>?
 
-<adjusted number> := <number> ( [~+] <integer> )
+<adjusted number> := <number> ( [~+] <integer> )?
 
 <number>          := <integer>
-                  | '$c'
-                  | '$r' | '$tr'
+                  | '$c' | '$lastcol'
+                  | '$r' | '$lastrow'
+                  | '$tr' | '$thisrow'
 
 <skip>          := ( "%" | "%%" ) ( "odd" | "even" | <integer> )
 ~~~
@@ -1189,7 +1195,7 @@ version.
   independently with each selector, so
 
   ~~~
-  [sel1;sell2;sell3] fmt1 fmt2
+  [sel1;sel2;sel3] fmt1 fmt2
   ~~~
 
   is the same as writing
@@ -1255,22 +1261,24 @@ starting with the definition of a number
 
 * ``` bnf
   <number>          := <integer>
-                    | '$c' 
-                    | '$r' | '$tr'
+                    | '$c' | '$lastcol'
+                    | '$r' | '$lastrow'
+                    | '$tr' | '$thisrow'
   ```
 
   A number represents a particular row or column. Both are numbered
   starting at 1.
 
   The values `$c` and `$r` represent the maximum column and row values.
+  They may also be written in full as `$lastcol` and `$lastrow`.
 
-  The value `$tr` represents the current row. For example, the selector
+  The value `$tr` (or, in full, `$thisrow`) represents the current row. For example, the selector
   `r1,3,5:c$tr` represents the three cells `r1:c1`, `r3:c3`, and `r5:c5`.
 
   This will be more useful when we look at ranges.
 
 * ``` bnf
-  <adjusted number> := <number> ( [~+] <integer> )
+  <adjusted number> := <number> ( [~+] <integer> )?
   ```
 
   You can add or subtract a fixed amount from a number. This is typically
@@ -1330,10 +1338,10 @@ starting with the definition of a number
 :::
 ::::
 
-  The selector `r2-6:c$tr` selects cells in rows 2 through the end of the
+  The selector `r2-$r:c$tr` selects cells in rows 2 through the end of the
   table whose column number is the same as the row number.
 
-  `r2-$r:c2-$tr~1` looks at rows 2 through 6. In each row, it selects the
+  `r2-$r:c2-$tr~1` looks at rows 2 through the last. In each row, it selects the
   cells starting at column 2 and ending at the current row number minus 1.
 
 * ``` bnf
@@ -1351,8 +1359,8 @@ starting with the definition of a number
   a value of 1 and so on.
 
   ``` lua
-  r3-8%even  -> 2, 4, 6, 8  ( absolute = n)
-  r3-8%%even  -> 3, 5, 7     (relative =  n-start)
+  r3-8%even   -> 4, 6, 8   (absolute: n is even)
+  r3-8%%even  -> 3, 5, 7   (relative: n-start is even)
   ```
 
 <!-- ==================================================================== -->
@@ -1380,7 +1388,7 @@ Format | Table | Cell |  |  | Format | Table | Cell
 align  | Y     | Y    |  |  | large  | Y     | Y
 bg     | Y     | Y    |  |  | lines  |       | Y
 boxed  | Y     |      |  |  | normal | Y     | Y
-|      |       |      |  |  | small  | Y     | Y
+caption| Y    |      |  |  | small  | Y     | Y
 fg     | Y     | Y    |  |  | span   |       | Y
 footer |       | Y    |  |  | style  | Y     | Y
 header |       | Y    |  |  | vlines | Y     |
@@ -1397,12 +1405,11 @@ hlines | Y     |      |  |  | width  | Y     | Y
 
 Many formats have both explicit and implicit forms. The explicit form is
 the name of the format, with options between parentheses. The implicit form
-uses just the options. For example, the following three lines are the same:
+uses just the options. For example, these two lines are the same:
 
 ```
 [r1:c2] align(lt) bg(shade2)
-[r1:r2] lt bg(shade2)
-[r1:r2] lt shade2
+[r1:c2] lt bg(shade2)
 ```
 
 The descriptions that follow show whether a particular format has an
@@ -1475,43 +1482,26 @@ vlines hlines
 
 ~~~ tableau
 context:  | table and cell
-explicit: | `bg(` any_string `)`
-implicit: | `#`xxx \| `#`xxxxxx \| 'shade'[1-9]
+explicit: | `bg(` color `)`
+implicit: | n/a
 ===
 l
 [c1] width(10)
 ~~~
 
-Set the background color of a cell. Hex colors and the predefined
-shade*n* colors are called _known colors_, and can be used implicitly. 
+Set the background color of the selected cells. A color is one of:
 
-Unknown colors _must_ appear inside a `bg(...)` specifier. For HTML output,
-these colors are converted into a CSS class name, prefixed by `bg-`. This
-means that `bg(warning)` becomes the CSS class `bg-warning`. It also means
-that you can use more complex backgrounds, such as gradients and images.
+* a hex value, `#`xxx or `#`xxxxxx
+* one of the nine predefined shades, `shade1` through `shade9`
+* a [CSS named color](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color),
+  such as `crimson` or `hotpink`
 
+Anything else is an error: there is no bare-color shorthand, so a color
+always appears inside `bg(...)`.
 
-<style>
-@keyframes pulse-warning {
-  0%   { background-color: orange; }
-  100% { background-color: red }
-}
-
-.bg-pulse {
-  animation-name: pulse-warning;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-
-.bg-mycolor {
-  background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
-}
-
-.bg-yourcolor {
-  background-image: url("./rule_segment_wave_40px.svg");
-}
-</style>
+For backgrounds Tableau cannot express directly -- gradients, images,
+animations -- attach a class to the cells instead and write the CSS
+yourself. See [`.style`](#style) below.
 
 ::::columns
 :::column
@@ -1554,38 +1544,10 @@ shade9 | #cdf   | #94a8cb | nothing
 :::
 ::::
 
-:::callout-note{collapse=true}
-#### Expand to see the styles used in the previous table
-~~~ css
-<style>
-@keyframes pulse-warning {
-  0%   { background-color: orange; }
-  100% { background-color: red }
-}
-
-.bg-pulse {
-  animation-name: pulse-warning;
-  animation-duration: 1s;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-
-.bg-mycolor {
-  background: linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c);
-}
-
-.bg-yourcolor {
-  background-image: url("./rule_segment_wave_40px.svg");
-}
-</style>
-~~~
-:::
-
-
 #### `boxed`: Box table
 ~~~ tableau
 context:  | table only
-explicit: | `boxed
+explicit: | `boxed` \| `box`
 implicit: | n/a
 ===
 l
@@ -1614,6 +1576,50 @@ boxed
 ~~~
 :::
 ::::
+
+
+
+#### `caption`: Give the table a caption
+
+~~~ tableau
+context:  | table only
+explicit: | `#` text \| `:` text
+implicit: | n/a
+===
+l
+[c1] width(10)
+~~~
+
+A layout line whose first non-blank character is `#` or `:`, followed by
+a space, sets the table's caption. Any number of leading `#` characters
+works the same way, so `#`, `##` and `###` are equivalent -- the markdown
+habit of picking a heading level does no harm.
+
+Unlike the other specifiers, a caption line carries no cell selector and
+takes the rest of the line as its text. If several layout lines set a
+caption, the last one wins.
+
+::::columns
+:::column
+~~~
+cat  | kitten
+deer | fawn
+===
+: Animals and their young
+~~~
+:::
+:::column
+~~~ tableau
+cat  | kitten
+deer | fawn
+===
+: Animals and their young
+~~~
+:::
+::::
+
+The caption renders below the table by default. See [Styling](#styling)
+for how to move it above.
 
 
 
@@ -1659,7 +1665,7 @@ fg(#a00)
 
 ~~~ tableau
 context:  | cells only
-explicit: | `footer`
+explicit: | `footer` \| `foot`
 implicit: | n/a
 ===
 l
@@ -1677,14 +1683,14 @@ rows or columns. See the description of `header` for an example.
 #### `header`: Specify table header cells
 ~~~ tableau
 context:  | cells only
-explicit: | `header`
+explicit: | `header` \| `head`
 implicit: | n/a
 ===
 l
 [c1] width(10)
 ~~~
 
-The selected cells are made into a table footer. Normally applied to whole
+The selected cells are made into a table header. Normally applied to whole
 rows or columns. 
 
 
@@ -1723,7 +1729,7 @@ adult | child  | beta | concern
 
 ~~~ tableau
 context:  | table only
-explicit: | `hlines`
+explicit: | `hlines` \| `hline`
 implicit: | n/a
 ===
 l
@@ -1758,6 +1764,7 @@ hlines
 ~~~ tableau
 context:  | table and cells
 explicit: | `large` \| `xlarge` \| `xxlarge`
+short:    | `lg` \| `xlg` \| `xxlg`
 implicit: | n/a
 ===
 l
@@ -1805,8 +1812,8 @@ and `small`.
 #### `lines`: Draw lines around cells
 ~~~ tableau
 context:  | cells only
-explicit: | `lines(` [tblrx]+ `)`
-implicit: | na
+explicit: | `lines(` [tblrx]+ `)` \| `line(` [tblrx]+ `)`
+implicit: | n/a
 ===
 l
 [c1] width(10)
@@ -1875,6 +1882,7 @@ an example.
 ~~~ tableau
 context:  | table and cells
 explicit: | `small` \| `xsmall` \| `xxsmall`
+short:    | `sm` \| `xsm` \| `xxsm`
 implicit: | n/a
 ===
 l
@@ -1897,9 +1905,14 @@ l
 [c1] width(10)
 ~~~
 
-Looks for contiguous rectangular blocks among the selected cells, and
-makes each block into a single logical cell, whose content and style is
-taken from the top-left–most cell in each block.
+Merges the selected cells into single logical cells, whose content and
+style are taken from the top-left–most cell of each block.
+
+The selector produces one block per combination of a row range and a
+column range, so `[r1-3:c1;r4:c2-4] span` makes two blocks. Each range
+must be contiguous -- a skip such as `%even` has no rectangle to draw --
+and two blocks may not overlap. Either is an error rather than a
+silently mangled table.
 
 ::::columns
 :::column
@@ -1970,11 +1983,12 @@ separate two-row-tall cells side by side:
 :::
 ::::
 
-#### `.style`: 
+#### `.style`: Attach a CSS class
+
 ~~~ tableau
 context:  | table and cells
-explicit: | `.stylename`
-implicit: | n/a
+explicit: | `style(` name `)` \| `class(` name `)`
+implicit: | `.`name
 ===
 l
 [c1] width(10)
@@ -1982,7 +1996,24 @@ l
 
 Associates the given style with the selected cells. The interpretation of
 the style depends on the output format used. For HTML output, the style
-becomes a CSS selector.
+becomes a CSS class.
+
+The name may be written with or without a leading dot inside `style(...)`
+or `class(...)`, so `style(warning)`, `style(.warning)`, `class(warning)`
+and `.warning` are all the same thing.
+
+Styles accumulate. A cell (or the table) keeps every class applied to it,
+in the order the layout section applies them, so
+
+~~~
+[r1:c1] .boxed-in
+[r1:c1] .warning
+~~~
+
+gives that cell `class="boxed-in warning"`. Applying the same name twice
+is harmless -- it is only emitted once. This is how you attach a
+background Tableau cannot express itself, such as a gradient or an
+image: write the CSS yourself and name the class here.
 
 ::::columns
 :::column
@@ -2036,21 +2067,61 @@ table.tableau td.glow {
 
 
 
-#### `width`: Set table or column  width
+#### `vlines`: Draw lines between columns
+
 ~~~ tableau
-context:  | table and cells
-explicit: | `width(` number `)`
+context:  | table only
+explicit: | `vlines` \| `vline`
 implicit: | n/a
 ===
 l
 [c1] width(10)
 ~~~
 
-The `width` specifier takes a number. If this number is a float greater
-than 0.0 and less than 1.0, then it is interpreted as a ratio (multiply it
-by 100 in your head if you prefer working with percentages). If it is an
-integer greater than one, it uses the approximate width of that many
+Draw lines between table columns. See `hlines` for the horizontal
+equivalent; the two are frequently used together.
+
+::::columns
+:::column
+~~~
+cat   | kitten | 27
+dog   | puppy  | 42
+deer  | fawn   | 68
+===
+vlines
+~~~
+:::
+:::column
+~~~ tableau
+cat   | kitten | 27
+dog   | puppy  | 42
+deer  | fawn   | 68
+===
+vlines
+~~~
+:::
+::::
+
+
+#### `width`: Set table or column  width
+~~~ tableau
+context:  | table and cells
+explicit: | `width(` number `)` \| `w(` number `)`
+implicit: | n/a
+===
+l
+[c1] width(10)
+~~~
+
+The `width` specifier takes a number, and how it reads that number
+depends on how you write it. Written with a decimal point -- anything
+from `.0001` up to `1.0` -- it is a ratio (multiply it by 100 in your
+head if you prefer working with percentages). Written as a plain
+integer of 1 or more, it is the approximate width of that many
 characters in the default font.
+
+So `width(1)` is one character wide and `width(1.0)` is full width. A
+ratio above `1.0`, or anything that is not a number, is an error.
 
 When applied at the table level, `width` specifies the width of the table
 as a whole. When a ratio is given, the width is that ratio of the line
