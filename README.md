@@ -103,6 +103,9 @@ preprocessors:
   remark plugin that renders Tableau fenced code blocks for
   unified/remark-based toolchains (this is what generates the guide
   linked above).
+* [slidev-addon-tableau](https://github.com/pragdave/slidev-addon-tableau)
+  -- a [Slidev](https://sli.dev) addon that renders Tableau fenced code
+  blocks in presentations.
 * [pandoc-tableau](https://github.com/pragdave/pandoc-tableau) -- the
   original Pandoc/Quarto Lua filter version of Tableau, with its own
   markup syntax.
