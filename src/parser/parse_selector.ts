@@ -55,11 +55,11 @@ function parse_term(src: StringScanner): SelTerm {
 }
 
 function parse_col_spec(src: StringScanner): SelCol | null {
-  return parse_row_and_col_spec(src, /c/i, SelCol)
+  return parse_row_and_col_spec(src, /c/, SelCol)
 
 }
 function parse_row_spec(src: StringScanner): SelRow | null {
-  return parse_row_and_col_spec(src, /r/i, SelRow)
+  return parse_row_and_col_spec(src, /r/, SelRow)
 }
 
 function parse_row_and_col_spec(src: StringScanner, prefix: RegExp, creator: typeof SelRowCol): SelRowCol | null {
@@ -93,6 +93,9 @@ export function number_list(src: StringScanner): SelNumberGenerator {
   if (src.scan(/-/)) {
     n2 = adjusted_number(src)
     skip = maybe_skip(src)
+  }
+  else if (src.check(/\s*%/)) {
+    throw `a skip ('%' or '%%') can only be applied to a range (I see '${src.peek(20)}')`
   }
   return new SelNumberGenerator(n1, n2 || n1, skip)
 }
@@ -130,8 +133,10 @@ function adjusted_number(src: StringScanner): SelAdjustedNumber {
 
 function maybe_skip(src: StringScanner) {
   let rel_or_abs: RelOrAbs = "abs"
+  let seen_percent = false
 
   if (src.scan(/\s*(%%?)\s*/)) {
+    seen_percent = true
     rel_or_abs = src.getCapture(0).length == 2 ? "rel" : "abs"
     let n = maybe_int(src)
     if (n) {
@@ -145,6 +150,10 @@ function maybe_skip(src: StringScanner) {
 
   if (src.scan(/even\b/)) {
     return new SelSkip(rel_or_abs, 0, 2)
+  }
+
+  if (seen_percent) {
+    throw `a skip needs a number, 'odd', or 'even' after the '%' (I see '${src.peek(20)}')`
   }
 
   return SelNoSkip

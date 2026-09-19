@@ -66,8 +66,8 @@ function add_styles(table: TableData): string[] {
 
 function add_classes(table: TableData): string {
   const classes: string[] = ["tableau"]
-  if (table.global_attr.style.length > 0) {
-    classes.push(table.global_attr.style)
+  if (table.global_attr.classes.length > 0) {
+    classes.push(...table.global_attr.classes)
   }
   if (table.global_attr.boxed) {
     classes.push("boxed")
@@ -139,9 +139,7 @@ function do_cell_classes(cell: Cell): string[] {
   if (cell.lines) {
     result.push(add_lines(cell.lines))
   }
-  if (cell.style) {
-    result.push(cell.style.name)
-  }
+  result.push(...cell.classes)
   return result
 }
 

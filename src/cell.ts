@@ -36,7 +36,7 @@ export class Cell {
   row_span = 1
   col_span = 1
   hidden = false
-  style: FormatClass | null = null
+  classes: string[] = []
   width: FormatWidth | null = null
 
 
@@ -74,9 +74,12 @@ export class Cell {
         this.lines = this.lines ? this.lines.merge(incoming) : incoming
         break
       }
-      case FormatClass:
-        this.style = format as FormatClass
+      case FormatClass: {
+        const name = (format as FormatClass).name
+        if (!this.classes.includes(name))
+          this.classes.push(name)
         break
+      }
       case FormatWidth:
         this.width = format as FormatWidth
         break

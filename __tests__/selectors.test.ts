@@ -153,3 +153,32 @@ function test_one_row(input_string: string, expected: CellCoords[]) {
 }
 
 
+
+describe("selector prefixes are case-sensitive", () => {
+  test("an uppercase row prefix is rejected", () => {
+    expect(() => parse_selector(new StringScanner("R1:c2]")))
+      .toThrow(/expected row spec, col spec/)
+  })
+
+  test("an uppercase column prefix is rejected", () => {
+    expect(() => parse_selector(new StringScanner("r1:C2]")))
+      .toThrow(/expected column select/)
+  })
+})
+
+describe("malformed skips are rejected", () => {
+  test("a '%' with no number, odd or even is rejected", () => {
+    expect(() => parse_selector(new StringScanner("r1-3%:c1]")))
+      .toThrow(/needs a number, 'odd', or 'even'/)
+  })
+
+  test("a '%%' with no number, odd or even is rejected", () => {
+    expect(() => parse_selector(new StringScanner("r1-3%%:c1]")))
+      .toThrow(/needs a number, 'odd', or 'even'/)
+  })
+
+  test("a skip on a single number says a skip needs a range", () => {
+    expect(() => parse_selector(new StringScanner("r2%even:c1]")))
+      .toThrow(/skip .* only be applied to a range/)
+  })
+})

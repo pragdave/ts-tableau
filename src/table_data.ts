@@ -31,7 +31,7 @@ type GlobalAttributes = {
   caption: string | null,
   halign: HALIGN,
   hlines: boolean,
-  style: string,
+  classes: string[],
   valign: VALIGN,
   vlines: boolean,
   width: FormatWidth,
@@ -48,7 +48,7 @@ export class TableData {
     caption: null,
     halign: "c",
     hlines: false,
-    style: "",
+    classes: [],
     valign: "m",
     vlines: false,
     width: new FormatWidth(1.0, "ratio"),
@@ -106,9 +106,12 @@ export class TableData {
         this.global_attr.hlines = true
         break
 
-      case FormatClass:
-        this.global_attr.style = (format as FormatClass).name
+      case FormatClass: {
+        const name = (format as FormatClass).name
+        if (!this.global_attr.classes.includes(name))
+          this.global_attr.classes.push(name)
         break
+      }
 
       case FormatVlines:
         this.global_attr.vlines = true
