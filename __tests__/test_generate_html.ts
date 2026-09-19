@@ -62,7 +62,6 @@ const ga_tests = {
 }
 
 for (let [attr, expected_attrs] of Object.entries(ga_tests)) {
-  console.log(attr, expected_attrs)
   test_global_attrs(attr.split(","), expected_attrs)
 }
 

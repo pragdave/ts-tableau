@@ -36,6 +36,16 @@ describe('selector_parse', () => {
     "this row (long form)": ["c$thisrow", cell_list([one_cell(1, 1), one_cell(2, 2), one_cell(3, 3), one_cell(4, 4)])],
     "this row (short form)": ["c$tr", cell_list([one_cell(1, 1), one_cell(2, 2), one_cell(3, 3), one_cell(4, 4)])],
     "this row with offset": ["c$tr+1", cell_list([one_cell(1, 2), one_cell(2, 3), one_cell(3, 4), one_cell(4, 5)])],
+    // Coordinates off the edge of the table are produced here and discarded
+    // when the format is applied, so col 0 is expected.
+    "this row with negative offset": ["c$tr~1", cell_list([one_cell(1, 0), one_cell(2, 1), one_cell(3, 2), one_cell(4, 3)])],
+
+    "range ending at the last row": ["r2-$r:c1", cell_list([[c(2, 1), c(ROWS, 1)]])],
+    "range ending at the last column": ["r1:c2-$c", cell_list([[c(1, 2), c(1, COLS)]])],
+
+    "two terms": ["r1:c1;r2:c2", cell_list([one_cell(1, 1), one_cell(2, 2)])],
+    "three terms": ["r1:c1;r2:c2;r3:c3", cell_list([one_cell(1, 1), one_cell(2, 2), one_cell(3, 3)])],
+    "a row term and a column term": ["r1;c1", cell_list([[c(1, 1), c(1, COLS)], [c(2, 1), c(ROWS, 1)]])],
 
     // skips
     "skip even absolute 1": ["r3-8%even:c1", cell_list([one_cell(4, 1), one_cell(6, 1), one_cell(8, 1)])],

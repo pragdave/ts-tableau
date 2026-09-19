@@ -277,7 +277,7 @@ describe("formats after selector", () => {
     test_align(parse_selector_formats)
   test_bg(parse_selector_formats)
   test_fg(parse_selector_formats)
-  test_fontsize(parse_global_formats)
+  test_fontsize(parse_selector_formats)
   test_footer(parse_selector_formats)
   test_header(parse_selector_formats)
   test_span(parse_selector_formats)
