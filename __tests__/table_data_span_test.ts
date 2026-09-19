@@ -190,3 +190,15 @@ test("overlapping span selectors throw instead of silently corrupting the table"
   ]
   expect(() => tableau(lines)).toThrow()
 })
+
+test("a non-contiguous span error quotes the range as the user wrote it", () => {
+  const lines = [
+    "1|2",
+    "3|4",
+    "5|6",
+    "7|8",
+    "===",
+    "[r1-$r%even:c1] span",
+  ]
+  expect(() => tableau(lines)).toThrow(/"1-\$lastrow"/)
+})

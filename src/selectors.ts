@@ -37,10 +37,6 @@ export class Selector {
       yield* term.rectangles(table);
     }
   }
-
-  to_s() {
-    return this.cell_ranges.map((cr) => cr.to_s()).join(";");
-  }
 }
 
 // ####################################################
@@ -125,17 +121,6 @@ export class SelTerm {
       }
     }
   }
-
-  to_s() {
-    const col_str = this.col ? this.col.to_s() : "*";
-    const row_str = this.row ? this.row.to_s() : "*";
-
-    if (col_str == "*" && row_str == "*") return "r*";
-
-    if (row_str == "*") return col_str;
-
-    return `${row_str}:${col_str}`;
-  }
 }
 
 function contiguous_values(gen: SelNumberGenerator, table: TableData, axis: "row" | "column"): number[] {
@@ -149,14 +134,8 @@ function contiguous_values(gen: SelNumberGenerator, table: TableData, axis: "row
 }
 
 // ####################################################
-//  row
-//    = "r"i numbers:numbers
-//    / "r\*"
-//
-// col
-//    = "c"i numbers:numbers
-//    / "c\*"
-//
+//  row = "r" numbers
+//  col = "c" numbers
 
 export class SelRowCol {
   constructor(public numbers: SelNumberGenerator[]) { }
@@ -168,23 +147,10 @@ export class SelRowCol {
       }
     }
   }
-
-  to_s() {
-    return this.numbers.map((n) => n.to_s()).join(",");
-  }
 }
 
-export class SelCol extends SelRowCol {
-  to_s() {
-    return "c" + super.to_s();
-  }
-}
-
-export class SelRow extends SelRowCol {
-  to_s() {
-    return "r" + super.to_s();
-  }
-}
+export class SelCol extends SelRowCol { }
+export class SelRow extends SelRowCol { }
 
 export class SelNumberGenerator {
   constructor(
@@ -214,29 +180,6 @@ export class SelNumberGenerator {
   }
 }
 
-// // ####################################################
-// export class SelNumberRange {
-//   constructor(
-//     public from: SelAdjustedNumber,
-//     public to: SelAdjustedNumber,
-//   ) {
-//   }
-//
-//   *cell_coords(table: TableData): Generator<number> {
-//     const from = this.from.getValue(table);
-//     const to = this.to.getValue(table);
-//     for (let i = from; i <= to; i++) {
-//       yield i;
-//     }
-//   }
-//
-//   to_s() {
-//     if (this.from.sameAs(this.to)) return this.from.to_s();
-//
-//     return `${this.from.to_s()}-${this.to.to_s()}`;
-//   }
-// }
-//
 // ####################################################
 export abstract class SelNumber {
   abstract getValue(table: TableData, current_row?: number): number;
@@ -274,7 +217,7 @@ export class SelNumberLastRow extends SelNumber {
     return table.row_count();
   }
   syntax_value() {
-    return "lastrow";
+    return "$lastrow";
   }
 }
 
@@ -286,7 +229,7 @@ export class SelNumberLastCol extends SelNumber {
     return table.col_count();
   }
   syntax_value() {
-    return "lastcol";
+    return "$lastcol";
   }
 }
 
@@ -301,7 +244,7 @@ export class SelNumberThisRow extends SelNumber {
     return current_row;
   }
   syntax_value() {
-    return "thisrow";
+    return "$thisrow";
   }
 }
 
