@@ -11,13 +11,16 @@ export class Selector {
   constructor(public cell_ranges: SelTerm[]) {
   }
 
+  // Overlapping terms ("[r1:c1-3;r1:c2-4]") name the same cell more than once.
+  // Keyed by value, not by object identity: every cell_coords() call allocates
+  // a fresh CellCoords, so an identity-keyed map never actually collided.
   *cells(table: TableData): Generator<CellCoords> {
-    const entries = new Map<CellCoords, boolean>();
-    for (let entry of this.cell_coords(table)) {
-      entries.set(entry, true);
-    }
-    for (const coord of entries.keys()) {
-      yield coord
+    const seen = new Set<string>();
+    for (const coord of this.cell_coords(table)) {
+      const key = `${coord.row},${coord.col}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      yield coord;
     }
   }
 

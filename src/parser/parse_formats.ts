@@ -103,7 +103,7 @@ function parse_selector_format(src: StringScanner): Formats | null {
     header(src) ||
     span(src) ||
     width(src) ||
-    lines(src)      // lines must go at the end, because it swallows single characters
+    lines(src)
   )
 }
 
@@ -194,22 +194,17 @@ function boxed(src: StringScanner): FormatBoxed | null {
 // --     font_size: x{0,2}small | normal | x{0,2}large
 
 function font_size(src: StringScanner): FormatFontsize | null {
-  let scale = 1
   if (src.scan(/normal\b/))
     return new FormatFontsize(0)
 
-  if (src.scan(/xx?/))
-    scale = src.getMatch().length + 1
-
-  if (!src.scan(/(small|large|sm|lg)\b/)) {
-    if (scale != 1)
-      src.unscan()
+  // Matched as a single unit: scanning the "x" prefix separately meant a
+  // non-match on the size word had to be undone with unscan(), which throws
+  // when the preceding scan already failed (e.g. a bare "x").
+  if (!src.scan(/(xx?)?(small|large|sm|lg)\b/))
     return null
-  }
 
-  let sign = 1;
-  if (src.getMatch()[0] == "s")
-    sign = -1;
+  const scale = (src.getCapture(0) || "").length + 1
+  const sign = src.getCapture(1)[0] == "s" ? -1 : 1
 
   return new FormatFontsize(sign * scale)
 }
@@ -244,12 +239,7 @@ function lines(src: StringScanner): FormatLines | null {
   if (src.scan(/lines?\(([tbrlx]+)\)/)) {
     return new FormatLines(src.getCapture(0))
   }
-  else if (src.scan(/([tbrlx]+)/)) {
-    return new FormatLines(src.getCapture(0))
-  }
-  else {
-    return null
-  }
+  return null
 }
 
 // --------------------------------------------------------------------------------
@@ -290,7 +280,7 @@ function width(src: StringScanner): FormatWidth | null {
     return null
   let w = src.getCapture(1)
   switch (true) {
-    case /^(0?\.[0-9]+)|(1.0)$/.test(w):
+    case /^(0?\.[0-9]+|1\.0)$/.test(w):
       return new FormatWidth(parseFloat(w), "ratio")
     case /^[1-9][0-9]*$/.test(w):
       return new FormatWidth(parseInt(w), "chars")

@@ -59,6 +59,20 @@ describe('selector_parse', () => {
   }
 })
 
+describe("duplicate coordinates", () => {
+  test("a cell named by two terms is yielded once", () => {
+    const result = parse_selector(new StringScanner("r1:c1;r1:c1]"))
+    expect(Array.from(result.cells(TABLE))).toEqual([{ row: 1, col: 1 }])
+  })
+
+  test("overlapping ranges yield each shared cell once", () => {
+    const result = parse_selector(new StringScanner("r1:c1-3;r1:c2-4]"))
+    expect(Array.from(result.cells(TABLE))).toEqual([
+      { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }, { row: 1, col: 4 },
+    ])
+  })
+})
+
 describe("$tr / $thisrow degenerate cases", () => {
   test("$tr in a row spec throws", () => {
     const src = new StringScanner("r$tr]")

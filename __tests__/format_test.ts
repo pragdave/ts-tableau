@@ -299,3 +299,46 @@ describe("global formats", () => {
 
 })
 
+
+//////////////////////////////////////////////////////////////// regression tests
+
+describe("width() classifies its argument correctly", () => {
+  function parsed_width(spec: string) {
+    return parse_global_formats(new StringScanner(spec))[0] as FormatWidth
+  }
+
+  test("a three-digit integer is a character width, not a ratio", () => {
+    const result = parsed_width("width(100)")
+    expect(result.type).toBe("chars")
+    expect(result.width).toBe(100)
+  })
+
+  test("an integer ending in 1-digit-0 is a character width", () => {
+    const result = parsed_width("width(150)")
+    expect(result.type).toBe("chars")
+    expect(result.width).toBe(150)
+  })
+
+  test("a non-numeric argument is rejected", () => {
+    expect(() => parsed_width("width(1x0)")).toThrow(/expects a float/)
+  })
+})
+
+describe("unrecognized formats are reported cleanly", () => {
+  test("a bare 'x' reports an unrecognized format", () => {
+    expect(() => parse_selector_formats(new StringScanner("x")))
+      .toThrow(/unrecognized format/)
+  })
+
+  test("an 'x' following a valid format reports an unrecognized format", () => {
+    expect(() => parse_selector_formats(new StringScanner("footer x")))
+      .toThrow(/unrecognized format/)
+  })
+})
+
+describe("there is no implicit lines shorthand", () => {
+  test("a bare line spec containing x is rejected, not read as lines", () => {
+    expect(() => parse_selector_formats(new StringScanner("tbx")))
+      .toThrow(/unrecognized format/)
+  })
+})
