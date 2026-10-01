@@ -1,6 +1,6 @@
 {
   "name": "ts-tableau",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A library that simplifies table layout by separating data from layout, for use as a preprocessor for Markdown and similar markup languages.",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "prepare": "npm run build",
     "tab": "tsx cli/tab.ts",
     "md2html": "tsx cli/md2html.mts",
-    "build:site": "tsx cli/build-site.mts",
+    "build:site": "tsx cli/build-site.mts && npm run playground:build && cp -R playground/dist docs-site/playground",
     "test": "jest",
     "wtest": "jest --watch",
     "playground:build": "vite build --config playground/vite.config.ts",

@@ -7,6 +7,8 @@ on:
       - "docs/guide/**"
       - "assets/**"
       - "cli/**"
+      - "src/**"
+      - "playground/**"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/deploy-docs.yml"

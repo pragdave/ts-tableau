@@ -8,6 +8,9 @@ can plug in renderers for any other markup language (such as LaTeX).
  
 Tableau separates the data content of your table from its presentation.
 
+You can try any of the examples here in the [playground](playground/),
+which renders your table as you type.
+
 For example, here's a multiplication table:
 
 ::::columns
@@ -130,9 +133,8 @@ Slope, as change in proportion per ms | .001 | .0002 | .002   |.0002 | 2.635 | .
 small
 [c1] align(l)
 [r3-$r:c2-$c] align(r)
-[r1:c2-3] span
-[r1:c4-5] span
-[r1-2:c1,6,7,8] span
+[r1:c2-3;r1:c4-5] span
+[r1-2:c1; r1-2:c6-8] span
 [r1;r3] line(t)
 [r$r] line(b)
 [r1:c2-5] line(b)
@@ -290,7 +292,7 @@ g | h | i
 ::::columns
 :::column
 ~~~
-Pole star | _Alpha Ursae_ |	$323–433 ly$
+Pole star | _Alpha Ursae_ | $323–433 ly$
 Dog star  | _Sirius_ | $8.60 \pm 0.04 ly$ 
 ~~~
 :::
@@ -920,8 +922,6 @@ xlarge
   each, we used the shortcut `=empty`, which fills them in for us. (If
   we'd just used a blank line, the row height would be a lot smaller.)
 
-* I have no idea why the black pawns look different to the white
-  pawns.
 
 ##### Selecting Rows or Column Numbers That Are a Multiple Of a Value
 
