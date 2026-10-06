@@ -218,7 +218,7 @@ table.tableau tr td, table.tableau tr th {
     font-size: 90%;
   }
 
-  &.tb-boxed  { border: 1px solid var(--tb-cell-border-color); }
+  &.tb_l_box  { border: 1px solid var(--tb-cell-border-color); }
   &.tb_l_1111 { border: 1px solid var(--tb-cell-border-color); }
   /*     TRBL */
   &.tb_l_0001 { border-left: 1px solid var(--tb-cell-border-color); }

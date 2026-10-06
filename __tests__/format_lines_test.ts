@@ -51,3 +51,24 @@ test("two selectors that both apply line() to the same cell combine sides instea
   const html = generate(tableau(["a|b", "===", "[r1] line(t)", "[c1] line(b)"]))
   expect(html[1]).toContain(`class="tb_l_1010"`)
 })
+
+// The generator names a cell's line class from as_string(), and the
+// stylesheet has to have a rule for every name it can produce, or the
+// lines are silently not drawn. lines(x) shipped that way: it emitted
+// tb_l_box while the stylesheet only knew tb-boxed.
+describe("tableau.css", () => {
+  const css = require("fs").readFileSync(
+    require("path").join(__dirname, "../assets/tableau.css"),
+    "utf8",
+  )
+
+  const specs = ["x"]
+  for (let mask = 1; mask < 16; mask++) {
+    specs.push(["t", "r", "b", "l"].filter((_, i) => mask & (1 << i)).join(""))
+  }
+
+  test.each(specs)("has a rule for the class lines(%s) produces", (spec) => {
+    const name = `tb_l_${new FormatLines(spec).as_string()}`
+    expect(css).toMatch(new RegExp(`&\\.${name}\\s*\\{`))
+  })
+})
