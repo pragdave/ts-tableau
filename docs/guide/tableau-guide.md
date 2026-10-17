@@ -1493,11 +1493,17 @@ Set the background color of the selected cells. A color is one of:
 
 * a hex value, `#`xxx or `#`xxxxxx
 * one of the nine predefined shades, `shade1` through `shade9`
+* `shade$tr` or `shade$tc`: the shade numbered by each cell's row or
+  column, cycling back to `shade1` after `shade9`
 * a [CSS named color](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color),
   such as `crimson` or `hotpink`
 
 Anything else is an error: there is no bare-color shorthand, so a color
 always appears inside `bg(...)`.
+
+`[r2-$r] bg(shade$tr)` gives each row its own shade, and
+`[r1] bg(shade$tc)` each column of the first row. Row numbers count
+blank spacer rows too.
 
 For backgrounds Tableau cannot express directly -- gradients, images,
 animations -- attach a class to the cells instead and write the CSS
@@ -1867,7 +1873,7 @@ order, separated by commas or spaces:
 ~~~ tableau
 weight | `thin` `default` `thick` `xthick`
 style  | `solid` `dashed` `dotted` `double` `groove` `ridge` `inset` `outset`
-color  | `shade1` ... `shade9` -- the background shades
+color  | `shade1` ... `shade9`, `shade$tr`, `shade$tc` -- the background shades
 ===
 l
 [c1] width(8)

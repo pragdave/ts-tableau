@@ -29,6 +29,7 @@ import {
   LINE_WEIGHTS,
   LINE_STYLES,
   ShadeColor,
+  DynamicShadeColor,
 } from "../formats"
 
 import type { Formats, LineStyle, LineWeight, LineStyleName } from "../formats"
@@ -117,10 +118,25 @@ function parse_selector_format(src: StringScanner): Formats | null {
 // --------------------------------------------------------------------------------
 // color helper
 const SHADE_RE = new RegExp(Array.from(SHADE_NAMES.keys()).join("|"))
+const DYNAMIC_SHADE_RE = /shade\$(tr|tc)\b/
+
+function dynamic_shade(text: string): DynamicShadeColor {
+  return new DynamicShadeColor(text.endsWith("tr") ? "tr" : "tc")
+}
+
+function bad_dynamic_shade(text: string): Error {
+  return new Error(`'${text}': a shade can be numbered by $tr or $tc only`)
+}
 
 function color(src: StringScanner): ColorRepresentations | null {
   if (src.scan(/#([0-9a-f]{3}([0-9a-f]{3})?)/)) {
     return GenColorHex(src.getCapture(0))
+  }
+  if (src.scan(DYNAMIC_SHADE_RE)) {
+    return dynamic_shade(src.getMatch())
+  }
+  if (src.check(/shade\$/)) {
+    throw bad_dynamic_shade(src.check(/shade\$\w*/))
   }
   if (src.scan(SHADE_RE)) {
     return GenColorShade(src.getMatch())
@@ -255,6 +271,8 @@ function table_line_style(args: string | undefined, name: string): LineStyle {
   const { sides, style } = line_args(args ?? "", name)
   if (sides !== "")
     throw new Error(`${name} does not take sides: got '${sides}'`)
+  if (style.color instanceof DynamicShadeColor)
+    throw new Error(`${name} has no cell to take $${style.color.variable} from`)
   return style
 }
 
@@ -277,6 +295,10 @@ function line_args(args: string, name: string): { sides: string, style: LineStyl
       set_once("style", arg as LineStyleName, arg)
     else if (SHADE_NAMES.has(arg))
       set_once("color", new ShadeColor(arg), arg)
+    else if (new RegExp(`^${DYNAMIC_SHADE_RE.source}$`).test(arg))
+      set_once("color", dynamic_shade(arg), arg)
+    else if (arg.startsWith("shade$"))
+      throw bad_dynamic_shade(arg)
     else
       throw new Error(`unrecognized ${name} argument: '${arg}'`)
   }

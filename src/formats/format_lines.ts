@@ -1,6 +1,6 @@
 // The lines around a cell or group of cells
 
-import { ShadeColor } from "./format_colors"
+import { DynamicShadeColor, ShadeColor } from "./format_colors"
 
 export const LINE_WEIGHTS = ["thin", "default", "thick", "xthick"] as const
 export const LINE_STYLES = ["solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"] as const
@@ -11,7 +11,7 @@ export type LineStyleName = typeof LINE_STYLES[number]
 export interface LineStyle {
   weight?: LineWeight
   style?: LineStyleName
-  color?: ShadeColor
+  color?: ShadeColor | DynamicShadeColor
 }
 
 export type Side = "t" | "r" | "b" | "l"
@@ -33,6 +33,12 @@ export class FormatLines {
   }
 
   has_sides() { return this.flags !== 0 }
+
+  with_style(style: LineStyle): FormatLines {
+    const copy = new FormatLines("", style)
+    copy.flags = this.flags
+    return copy
+  }
 
   sides(): Side[] {
     if (this.box()) return SIDES

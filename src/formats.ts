@@ -49,7 +49,7 @@ export type Formats
   | FormatWidth
 
 // utilities
-export { ColorRepresentations, GenColorCss, GenColorHex, GenColorShade, CssColor, RGBColor, ShadeColor } from "./formats/format_colors"
+export { ColorRepresentations, GenColorCss, GenColorHex, GenColorShade, CssColor, DynamicShadeColor, RGBColor, ShadeColor } from "./formats/format_colors"
 export { SHADE_NAMES, CSS_NAMES } from "./formats/format_colors"
 export { HALIGN, VALIGN } from "./formats/format_align"
 export { LINE_WEIGHTS, LINE_STYLES, SIDES, CellLineStyles } from "./formats/format_lines"

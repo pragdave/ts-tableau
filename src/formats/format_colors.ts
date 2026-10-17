@@ -24,7 +24,7 @@ export const SHADE_NAMES = new Set([
 
 // These classes represent the different types of color spec
 //
-export type ColorRepresentations = RGBColor | ShadeColor | CssColor
+export type ColorRepresentations = RGBColor | ShadeColor | CssColor | DynamicShadeColor
 
 export class RGBColor {
   constructor(public r: number, public g: number, public b: number) {
@@ -38,6 +38,16 @@ export class ShadeColor {
 
 export class CssColor {
   constructor(public name: string) {
+  }
+}
+
+export class DynamicShadeColor {
+  constructor(public variable: "tr" | "tc") {
+  }
+
+  resolve(row: number, col: number): ShadeColor {
+    const n = this.variable === "tr" ? row : col
+    return new ShadeColor(`shade${(n - 1) % 9 + 1}`)
   }
 }
 

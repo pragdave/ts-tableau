@@ -24,6 +24,7 @@ import {
   VALIGN,
 } from "./formats";
 
+import { DynamicShadeColor } from "./formats/format_colors"
 import type { ColorRepresentations } from "./formats/format_colors"
 import type { LineStyle } from "./formats/format_lines"
 
@@ -142,7 +143,7 @@ export class TableData {
       if (cell_coord.col < 1 || cell_coord.col > this.col_count()) continue
 
       let cell = this.cell_at(cell_coord)
-      cell.add_format(formats)
+      cell.add_format(formats.map((f) => resolve_dynamic_shades(f, cell_coord)))
     }
   }
 
@@ -244,4 +245,17 @@ export class TableData {
   *all_col_numbers(): Generator<number> {
     for (let i = 1; i <= this.col_count(); i++) yield i;
   }
+}
+
+function resolve_dynamic_shades(format: Formats, at: CellCoords): Formats {
+  const resolve = <C>(color: C) =>
+    color instanceof DynamicShadeColor ? color.resolve(at.row, at.col) : color
+
+  if (format instanceof FormatBg && format.color instanceof DynamicShadeColor)
+    return new FormatBg(resolve(format.color))
+  if (format instanceof FormatFg && format.color instanceof DynamicShadeColor)
+    return new FormatFg(resolve(format.color))
+  if (format instanceof FormatLines && format.style.color instanceof DynamicShadeColor)
+    return format.with_style({ ...format.style, color: resolve(format.style.color) })
+  return format
 }

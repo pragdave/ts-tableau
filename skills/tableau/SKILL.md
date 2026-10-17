@@ -138,8 +138,9 @@ styles given with sides beat it. The table rules take no sides.
 | `.name` / `style(name)` / `class(name)` | both | add a CSS class; classes accumulate |
 
 **Colors** are `shade1` … `shade9` (a palette that adapts to light and dark
-mode; prefer these), a hex value (`#cdf`, `#94a8cb`), or a CSS color name
-(`crimson`). Colors appear inside `bg(…)` and `fg(…)`; line styles take
+mode; prefer these), `shade$tr` / `shade$tc` (the shade numbered by each
+cell's row / column, wrapping after 9: `[r2-$r] bg(shade$tr)`), a hex
+value (`#cdf`, `#94a8cb`), or a CSS color name (`crimson`). Colors appear inside `bg(…)` and `fg(…)`; line styles take
 shades only. A `bg(shadeN)` cell gets black text in light mode and white
 in dark, so don't add an `fg()` just for contrast; hex and named
 backgrounds don't adapt to dark mode, so prefer shades.

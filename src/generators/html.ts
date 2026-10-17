@@ -7,6 +7,7 @@ import {
   FormatWidth,
 
   CssColor,
+  DynamicShadeColor,
   RGBColor,
   ShadeColor,
   ColorRepresentations,
@@ -220,6 +221,9 @@ function do_color(color: ColorRepresentations, kind: "bg" | "fg") {
   }
   else if (color instanceof CssColor) {
     return color.name
+  }
+  else if (color instanceof DynamicShadeColor) {
+    throw new Error("internal error: shade$tr/shade$tc reached the generator unresolved")
   }
   else {
     throw new Error("Unknown color type")
