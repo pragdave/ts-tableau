@@ -1,9 +1,17 @@
-export class FormatBoxed { }
+import type { LineStyle } from "./format_lines"
+
+export class FormatBoxed {
+  constructor(public style: LineStyle = {}) { }
+}
 export class FormatCaption {
   constructor(public text: string) { }
 }
 export class FormatFooter { }
 export class FormatHeader { }
-export class FormatHlines { }
+export class FormatHlines {
+  constructor(public style: LineStyle = {}) { }
+}
 export class FormatSpan { }
-export class FormatVlines { }
+export class FormatVlines {
+  constructor(public style: LineStyle = {}) { }
+}

@@ -1,5 +1,22 @@
 // The lines around a cell or group of cells
 
+import { ShadeColor } from "./format_colors"
+
+export const LINE_WEIGHTS = ["thin", "default", "thick", "xthick"] as const
+export const LINE_STYLES = ["solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"] as const
+
+export type LineWeight = typeof LINE_WEIGHTS[number]
+export type LineStyleName = typeof LINE_STYLES[number]
+
+export interface LineStyle {
+  weight?: LineWeight
+  style?: LineStyleName
+  color?: ShadeColor
+}
+
+export type Side = "t" | "r" | "b" | "l"
+export const SIDES: Side[] = ["t", "r", "b", "l"]
+
 export class FormatLines {
   static T = 0x01 & 0xff
   static R = 0x02 & 0xff
@@ -11,8 +28,15 @@ export class FormatLines {
 
   flags = 0x00 & 0x00
 
-  constructor(spec: string) {
+  constructor(spec: string, public style: LineStyle = {}) {
     this.flags = this.decode(spec)
+  }
+
+  has_sides() { return this.flags !== 0 }
+
+  sides(): Side[] {
+    if (this.box()) return SIDES
+    return SIDES.filter((side) => this.flags & this.decode(side))
   }
 
   // Combines this and another FormatLines' sides (bitwise OR), so that
@@ -58,3 +82,25 @@ export class FormatLines {
   }
 }
 
+
+// A line() with sides styles just those sides; a line() without sides
+// styles every line the cell has, wherever it came from. Side-specific
+// styles win over cell-wide ones regardless of the order they were given.
+export class CellLineStyles {
+  private all: LineStyle = {}
+  private per_side: Record<Side, LineStyle> = { t: {}, r: {}, b: {}, l: {} }
+
+  add(format: FormatLines) {
+    if (!format.has_sides()) {
+      this.all = { ...this.all, ...format.style }
+      return
+    }
+    for (const side of format.sides()) {
+      this.per_side[side] = { ...this.per_side[side], ...format.style }
+    }
+  }
+
+  for_side(side: Side): LineStyle {
+    return { ...this.all, ...this.per_side[side] }
+  }
+}

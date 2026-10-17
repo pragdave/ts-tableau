@@ -25,15 +25,19 @@ import {
 } from "./formats";
 
 import type { ColorRepresentations } from "./formats/format_colors"
+import type { LineStyle } from "./formats/format_lines"
 
 type GlobalAttributes = {
   boxed: boolean,
+  boxed_style: LineStyle,
   caption: string | null,
   halign: HALIGN,
   hlines: boolean,
+  hlines_style: LineStyle,
   classes: string[],
   valign: VALIGN,
   vlines: boolean,
+  vlines_style: LineStyle,
   width: FormatWidth,
 }
 
@@ -45,12 +49,15 @@ export class TableData {
 
   readonly global_attr: GlobalAttributes = {
     boxed: false,
+    boxed_style: {},
     caption: null,
     halign: "c",
     hlines: false,
+    hlines_style: {},
     classes: [],
     valign: "m",
     vlines: false,
+    vlines_style: {},
     width: new FormatWidth(1.0, "ratio"),
   }
 
@@ -96,6 +103,7 @@ export class TableData {
 
       case FormatBoxed:
         this.global_attr.boxed = true
+        this.global_attr.boxed_style = { ...this.global_attr.boxed_style, ...(format as FormatBoxed).style }
         break
 
       case FormatCaption:
@@ -104,6 +112,7 @@ export class TableData {
 
       case FormatHlines:
         this.global_attr.hlines = true
+        this.global_attr.hlines_style = { ...this.global_attr.hlines_style, ...(format as FormatHlines).style }
         break
 
       case FormatClass: {
@@ -115,6 +124,7 @@ export class TableData {
 
       case FormatVlines:
         this.global_attr.vlines = true
+        this.global_attr.vlines_style = { ...this.global_attr.vlines_style, ...(format as FormatVlines).style }
         break
 
       case FormatWidth:

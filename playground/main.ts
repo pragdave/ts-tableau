@@ -12,7 +12,7 @@ import { marked } from "https://esm.sh/marked@13"
 
 // --- tableau syntax highlighting ------------------------------------------
 
-const FORMAT_KEYWORDS = /\b(align|bg|fg|width|lines|style|header|footer|small|hlines|vlines|boxed|span|caption|class)\b/
+const FORMAT_KEYWORDS = /\b(align|bg|fg|width|lines?|style|header|footer|small|hlines|vlines|boxed|span|caption|class|thin|default|thick|xthick|solid|dashed|dotted|double|groove|ridge|inset|outset)\b/
 
 const tableauLanguage = StreamLanguage.define({
   token(stream) {

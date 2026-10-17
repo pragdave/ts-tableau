@@ -121,6 +121,15 @@ Rows and columns are numbered from 1. Some useful combinations:
 | `lines(` `t b l r x` `)` / `line(…)` | cells | rules on the top/bottom/left/right of each cell; `x` boxes it |
 | `hlines` / `vlines` | table | rules between every row / column |
 | `boxed` / `box` | table | a box round the whole table |
+
+**Line styles.** `line`, `hlines`, `vlines` and `boxed` also take style
+arguments, in any order: a weight (`thin` `default` `thick` `xthick`), a
+style (`solid` `dashed` `dotted` `double` `groove` `ridge` `inset`
+`outset`) and a color (`shade1` … `shade9` only). `line(b, double, xthick)`
+is an accountant's double underline; `double` needs `thick` or more to
+show. A `line` with no sides (`[r1-$r] line(shade6)`) draws nothing
+itself, but restyles every line those cells get from other `line`s;
+styles given with sides beat it. The table rules take no sides.
 | `bg(color)` / `fg(color)` | both | background / text color |
 | `small` `xsmall` `xxsmall` (`sm` `xsm` `xxsm`) | both | smaller text |
 | `large` `xlarge` `xxlarge` (`lg` `xlg` `xxlg`) | both | larger text |

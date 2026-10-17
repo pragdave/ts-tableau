@@ -1,4 +1,9 @@
 unreleased
+           * line() takes a weight (thin, default, thick, xthick), a style
+             (solid, dashed, dotted, double, groove, ridge, inset, outset)
+             and a shade, e.g. line(b, shade4, dotted, thick). A line()
+             with no sides restyles the cell's other lines
+           * hlines, vlines and boxed take the same style arguments
            * playground: showcase examples (schedule, financials, pricing,
              API reference, calendar, APA, nutrition label, ...) grouped
              apart from the per-feature ones; the times table is the default

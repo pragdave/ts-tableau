@@ -1547,14 +1547,15 @@ shade9 | #cdf   | #94a8cb | nothing
 #### `boxed`: Box table
 ~~~ tableau
 context:  | table only
-explicit: | `boxed` \| `box`
+explicit: | `boxed` \| `box` \| `boxed(` line style `)`
 implicit: | n/a
 ===
 l
 [c1] width(10)
 ~~~
 
-Draw a box around the entire table.
+Draw a box around the entire table. `boxed(thick, shade6)` styles the
+box; see `lines` for the line style arguments.
 
 ::::columns
 :::column
@@ -1729,14 +1730,15 @@ adult | child  | beta | concern
 
 ~~~ tableau
 context:  | table only
-explicit: | `hlines` \| `hline`
+explicit: | `hlines` \| `hline` \| `hlines(` line style `)`
 implicit: | n/a
 ===
 l
 [c1] width(10)
 ~~~
 
-Draw lines between table rows.
+Draw lines between table rows. `hlines(dotted, shade6)` styles them; see
+`lines` for the line style arguments. Unstyled, these lines are `thin`.
 
 ::::columns
 :::column
@@ -1812,7 +1814,7 @@ and `small`.
 #### `lines`: Draw lines around cells
 ~~~ tableau
 context:  | cells only
-explicit: | `lines(` [tblrx]+ `)` \| `line(` [tblrx]+ `)`
+explicit: | `lines(` sides, line style `)` \| `line(` sides, line style `)`
 implicit: | n/a
 ===
 l
@@ -1856,6 +1858,60 @@ be given in a single `lines` specifier.
 :::
 ::::
 Note that the `lines` specifier applies to each selected cell individually.
+
+##### Line styles
+
+Along with the sides, `lines` takes up to three style arguments, in any
+order, separated by commas or spaces:
+
+~~~ tableau
+weight | `thin` `default` `thick` `xthick`
+style  | `solid` `dashed` `dotted` `double` `groove` `ridge` `inset` `outset`
+color  | `shade1` ... `shade9` -- the background shades
+===
+l
+[c1] width(8)
+~~~
+
+Anything left out keeps its default: a `default` weight, `solid`, in the
+table's line color. `double` needs at least a `thick` line to show both
+rules.
+
+A `lines` with no sides draws nothing itself: it restyles whatever lines
+the cell gets from its other `lines` specifiers, wherever they are in
+the layout. A style given with sides beats one given without.
+
+::::columns
+:::column
+~~~
+Item     | Amount
+Coffee   | 4.50
+Cake     | 3.25
+Total    | 7.75
+===
+[c2] align(r)
+[r1] line(b)
+[r$r] line(t) line(b, double, xthick)
+[r1-$r] line(shade6)
+~~~
+:::
+:::column
+~~~ tableau
+Item     | Amount
+Coffee   | 4.50
+Cake     | 3.25
+Total    | 7.75
+===
+[c2] align(r)
+[r1] line(b)
+[r$r] line(t) line(b, double, xthick)
+[r1-$r] line(shade6)
+~~~
+:::
+::::
+
+`hlines`, `vlines`, and `boxed` take the same style arguments, but no
+sides.
 
 
 
@@ -2071,7 +2127,7 @@ table.tableau td.glow {
 
 ~~~ tableau
 context:  | table only
-explicit: | `vlines` \| `vline`
+explicit: | `vlines` \| `vline` \| `vlines(` line style `)`
 implicit: | n/a
 ===
 l
@@ -2300,6 +2356,11 @@ You can override colors using CSS variables:
   --tb-shade8-fg: hsl(305deg, 61%, 39%);
   --tb-shade9-fg: hsl(340deg, 61%, 39%);
   --tb-shade-fg:  var(--tb-shade1-fg);
+
+  --tb-line-width-thin: 0.5px;
+  --tb-line-width-default: 1px;
+  --tb-line-width-thick: 2px;
+  --tb-line-width-xthick: 4px;
 }
 ~~~
 
@@ -2307,7 +2368,8 @@ You can override colors using CSS variables:
 banner, and grid lines are all derived from, so changing just those two
 re-themes the whole table consistently. `--tb-shade1-bg` through
 `--tb-shade9-bg` (and their `-fg` counterparts) are the named colors
-`bg(shade1)`...`bg(shade9)` resolve to.
+`bg(shade1)`...`bg(shade9)` resolve to. The `--tb-line-width-*`
+variables are the four line weights.
 
 Tableau also ships dark-mode values, applied automatically via
 `prefers-color-scheme` -- no extra class or data attribute needed:

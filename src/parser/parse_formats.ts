@@ -25,24 +25,31 @@ import {
 
   SHADE_NAMES,
   CSS_NAMES,
+
+  LINE_WEIGHTS,
+  LINE_STYLES,
+  ShadeColor,
 } from "../formats"
 
-import type { Formats } from "../formats"
+import type { Formats, LineStyle, LineWeight, LineStyleName } from "../formats"
 
 // --                              Global     Selector
 // --     fg(color)                   Y          Y
 // --     bg(color)                   Y          Y
 // --     align([lcrj][tmb])          Y          Y
 // --     width(n)                    Y          Y 
-// --     lines([ []_~ ]+)            N          Y 
+// --     lines(sides, line style)    N          Y
 // --     style(a)                    Y          Y
 // --     header                      N          Y
 // --     footer                      N          Y
 // --     small                       Y          Y
 // --
-// --     hlines                      Y          N
-// --     vlines                      Y          N
-// --     boxed                       Y          N
+// --     hlines(line style)          Y          N
+// --     vlines(line style)          Y          N
+// --     boxed(line style)           Y          N
+// --
+// --     a line style is any of a weight, a style, and a shade, e.g.
+// --     line(b, shade4, dotted, thick)
 
 export function parse_global_formats(src: StringScanner): Formats[] {
   const result: Formats[] = []
@@ -185,8 +192,8 @@ function fg(src: StringScanner): FormatBg | null {
 // --------------------------------------------------------------------------------
 // --     boxed
 function boxed(src: StringScanner): FormatBoxed | null {
-  if (src.scan(/box(ed)?\b/))
-    return new FormatBoxed();
+  if (src.scan(/box(ed)?\b(?:\(([^)]*)\))?/))
+    return new FormatBoxed(table_line_style(src.getCapture(1), "boxed()"));
   return null
 }
 
@@ -228,18 +235,52 @@ function header(src: StringScanner): FormatHeader | null {
 // --     hlines
 // hlines = (text) ->
 function hlines(src: StringScanner): FormatHlines | null {
-  if (src.scan(/hlines?\b/))
-    return new FormatHlines();
+  if (src.scan(/hlines?\b(?:\(([^)]*)\))?/))
+    return new FormatHlines(table_line_style(src.getCapture(0), "hlines()"));
   return null
 }
 
 // --------------------------------------------------------------------------------
-// --     lines([tblrx]+) 
+// --     lines(arg, ...): each arg is sides ([tblrx]+), a weight, a style, or a shade
 function lines(src: StringScanner): FormatLines | null {
-  if (src.scan(/lines?\(([tbrlx]+)\)/)) {
-    return new FormatLines(src.getCapture(0))
+  if (!src.scan(/lines?\(([^)]*)\)/))
+    return null
+  const { sides, style } = line_args(src.getCapture(0), "line()")
+  if (sides === "" && Object.keys(style).length === 0)
+    throw new Error("line() needs at least one side or line style")
+  return new FormatLines(sides, style)
+}
+
+function table_line_style(args: string | undefined, name: string): LineStyle {
+  const { sides, style } = line_args(args ?? "", name)
+  if (sides !== "")
+    throw new Error(`${name} does not take sides: got '${sides}'`)
+  return style
+}
+
+function line_args(args: string, name: string): { sides: string, style: LineStyle } {
+  let sides = ""
+  const style: LineStyle = {}
+
+  function set_once<K extends keyof LineStyle>(key: K, value: LineStyle[K], arg: string) {
+    if (style[key] !== undefined)
+      throw new Error(`${name} has more than one ${key}: '${arg}'`)
+    style[key] = value
   }
-  return null
+
+  for (const arg of args.split(/[\s,]+/).filter((a) => a !== "")) {
+    if (/^[tblrx]+$/.test(arg))
+      sides += arg
+    else if ((LINE_WEIGHTS as readonly string[]).includes(arg))
+      set_once("weight", arg as LineWeight, arg)
+    else if ((LINE_STYLES as readonly string[]).includes(arg))
+      set_once("style", arg as LineStyleName, arg)
+    else if (SHADE_NAMES.has(arg))
+      set_once("color", new ShadeColor(arg), arg)
+    else
+      throw new Error(`unrecognized ${name} argument: '${arg}'`)
+  }
+  return { sides, style }
 }
 
 // --------------------------------------------------------------------------------
@@ -268,8 +309,8 @@ function fclass(src: StringScanner): FormatClass | null {
 // --------------------------------------------------------------------------------
 // --     vlines
 function vlines(src: StringScanner): FormatVlines | null {
-  if (src.scan(/vlines?\b/))
-    return new FormatVlines();
+  if (src.scan(/vlines?\b(?:\(([^)]*)\))?/))
+    return new FormatVlines(table_line_style(src.getCapture(0), "vlines()"));
   return null
 }
 

@@ -35,6 +35,11 @@
   --tb-shade8-fg: hsl(305deg, 61%, 39%);
   --tb-shade9-fg: hsl(340deg, 61%, 39%);
   --tb-shade-fg:  var(--tb-shade1-fg);
+
+  --tb-line-width-thin: 0.5px;
+  --tb-line-width-default: 1px;
+  --tb-line-width-thick: 2px;
+  --tb-line-width-xthick: 4px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -98,6 +103,18 @@ table.tableau td {
 }
 
 table.tableau {
+  /* Set here rather than on :root so a nested table doesn't inherit the
+     outer table's boxed()/hlines()/vlines() styles, which arrive inline. */
+  --tb-boxed-width: var(--tb-line-width-default);
+  --tb-boxed-style: solid;
+  --tb-boxed-color: var(--tb-border-color);
+  --tb-hlines-width: var(--tb-line-width-thin);
+  --tb-hlines-style: solid;
+  --tb-hlines-color: var(--tb-line-color);
+  --tb-vlines-width: var(--tb-line-width-thin);
+  --tb-vlines-style: solid;
+  --tb-vlines-color: var(--tb-line-color);
+
   border-collapse: collapse;
   border-spacing: 0;
   caption-side: bottom;
@@ -165,15 +182,15 @@ table.tableau {
   }
 
   &.boxed {
-    border: 1px solid var(--tb-border-color);
+    border: var(--tb-boxed-width) var(--tb-boxed-style) var(--tb-boxed-color);
   }
 
   &.hlines tr:not(:last-child) td {
-    border-bottom: 0.5px solid var(--tb-line-color);
+    border-bottom: var(--tb-hlines-width) var(--tb-hlines-style) var(--tb-hlines-color);
   }
 
   &.vlines tr td:not(:last-child) {
-    border-right: 0.5px solid var(--tb-line-color);
+    border-right: var(--tb-vlines-width) var(--tb-vlines-style) var(--tb-vlines-color);
   }
 }
 
@@ -218,21 +235,21 @@ table.tableau tr td, table.tableau tr th {
     font-size: 90%;
   }
 
-  &.tb_l_box  { border: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1111 { border: 1px solid var(--tb-cell-border-color); }
+  &.tb_l_box  { border: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1111 { border: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
   /*     TRBL */
-  &.tb_l_0001 { border-left: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_0010 { border-bottom: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_0011 { border-left: 1px solid var(--tb-cell-border-color); border-bottom: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_0100 { border-right: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_0101 { border-left: 1px solid var(--tb-cell-border-color); border-right: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_0110 { border-right: 1px solid var(--tb-cell-border-color); border-bottom: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_0111 { border-right: 1px solid var(--tb-cell-border-color); border-left: 1px solid var(--tb-cell-border-color); border-bottom: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1000 { border-top: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1001 { border-top: 1px solid var(--tb-cell-border-color); border-left: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1010 { border-top: 1px solid var(--tb-cell-border-color); border-bottom: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1011 { border-top: 1px solid var(--tb-cell-border-color); border-left: 1px solid var(--tb-cell-border-color); border-bottom: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1100 { border-top: 1px solid var(--tb-cell-border-color); border-right: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1101 { border-top: 1px solid var(--tb-cell-border-color); border-right: 1px solid var(--tb-cell-border-color); border-left: 1px solid var(--tb-cell-border-color); }
-  &.tb_l_1110 { border-top: 1px solid var(--tb-cell-border-color); border-right: 1px solid var(--tb-cell-border-color); border-bottom: 1px solid var(--tb-cell-border-color); }
+  &.tb_l_0001 { border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_0010 { border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_0011 { border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_0100 { border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_0101 { border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_0110 { border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_0111 { border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1000 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1001 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1010 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1011 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1100 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1101 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-left: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
+  &.tb_l_1110 { border-top: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-right: var(--tb-line-width-default) solid var(--tb-cell-border-color); border-bottom: var(--tb-line-width-default) solid var(--tb-cell-border-color); }
 }

@@ -10,6 +10,8 @@ import {
   RGBColor,
   ShadeColor,
   ColorRepresentations,
+  LineStyle,
+  Side,
 } from "../formats"
 
 export function generate(table: TableData): string[] {
@@ -61,7 +63,14 @@ function add_styles(table: TableData): string[] {
     const w = table.global_attr.width
     styles.push(`width: ${format_width_to_css(w)}`)
   }
+  styles.push(...table_line_vars("boxed", table.global_attr.boxed_style))
+  styles.push(...table_line_vars("hlines", table.global_attr.hlines_style))
+  styles.push(...table_line_vars("vlines", table.global_attr.vlines_style))
   return styles
+}
+
+function table_line_vars(rule: string, style: LineStyle): string[] {
+  return line_style_css(style).map(([property, value]) => `--tb-${rule}-${property}: ${value}`)
 }
 
 function add_classes(table: TableData): string {
@@ -168,7 +177,30 @@ function do_cell_styles(cell: Cell): string[] {
   if (cell.width) {
     result.push(`width: ${format_width_to_css(cell.width)}`)
   }
+  if (cell.lines) {
+    for (const side of cell.lines.sides()) {
+      for (const [property, value] of line_style_css(cell.line_styles.for_side(side))) {
+        result.push(`border-${SIDE_NAMES[side]}-${property}: ${value}`)
+      }
+    }
+  }
 
+  return result
+}
+
+const SIDE_NAMES: Record<Side, string> = { t: "top", r: "right", b: "bottom", l: "left" }
+
+function line_style_css(style: LineStyle): [string, string][] {
+  const result: [string, string][] = []
+  if (style.weight) {
+    result.push(["width", `var(--tb-line-width-${style.weight})`])
+  }
+  if (style.style) {
+    result.push(["style", style.style])
+  }
+  if (style.color) {
+    result.push(["color", do_color(style.color, "bg")])
+  }
   return result
 }
 

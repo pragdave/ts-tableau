@@ -52,6 +52,8 @@ export type Formats
 export { ColorRepresentations, GenColorCss, GenColorHex, GenColorShade, CssColor, RGBColor, ShadeColor } from "./formats/format_colors"
 export { SHADE_NAMES, CSS_NAMES } from "./formats/format_colors"
 export { HALIGN, VALIGN } from "./formats/format_align"
+export { LINE_WEIGHTS, LINE_STYLES, SIDES, CellLineStyles } from "./formats/format_lines"
+export type { LineStyle, LineWeight, LineStyleName, Side } from "./formats/format_lines"
 
 // export class FComment extends Format {
 //   constructor(comment) {

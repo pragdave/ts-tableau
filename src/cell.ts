@@ -1,4 +1,5 @@
 import { Formats } from './formats'
+import { CellLineStyles } from './formats/format_lines'
 
 import {
   FormatAlign,
@@ -32,6 +33,7 @@ export class Cell {
   footer = false
   header = false
   lines: FormatLines | null = null
+  line_styles = new CellLineStyles()
   span_group: number | null = null
   row_span = 1
   col_span = 1
@@ -71,7 +73,10 @@ export class Cell {
         break
       case FormatLines: {
         const incoming = format as FormatLines
-        this.lines = this.lines ? this.lines.merge(incoming) : incoming
+        if (incoming.has_sides()) {
+          this.lines = this.lines ? this.lines.merge(incoming) : incoming
+        }
+        this.line_styles.add(incoming)
         break
       }
       case FormatClass: {

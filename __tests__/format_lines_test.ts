@@ -72,3 +72,136 @@ describe("tableau.css", () => {
     expect(css).toMatch(new RegExp(`&\\.${name}\\s*\\{`))
   })
 })
+
+describe("line styles", () => {
+  function cell_html(...layout: string[]): string {
+    return generate(tableau(["a|b", "===", ...layout]))[1]
+  }
+
+  test("line(b, shade4, dotted, thick) styles the bottom border", () => {
+    const html = cell_html("[r1:c1] line(b, shade4, dotted, thick)")
+    expect(html).toContain(`class="tb_l_0010"`)
+    expect(html).toContain(
+      `style="border-bottom-width: var(--tb-line-width-thick); border-bottom-style: dotted; border-bottom-color: var(--tb-shade4-bg)"`
+    )
+  })
+
+  test("arguments may come in any order, separated by commas or spaces", () => {
+    expect(cell_html("[r1:c1] line(dashed b)")).toContain("border-bottom-style: dashed")
+    expect(cell_html("[r1:c1] line(xthick,t)")).toContain("border-top-width: var(--tb-line-width-xthick)")
+  })
+
+  test("a plain line() emits no inline style", () => {
+    expect(cell_html("[r1:c1] line(b)")).not.toContain("style=")
+  })
+
+  test("line(x, double) styles all four sides of the box", () => {
+    const html = cell_html("[r1:c1] line(x, double)")
+    expect(html).toContain(`class="tb_l_box"`)
+    for (const side of ["top", "right", "bottom", "left"]) {
+      expect(html).toContain(`border-${side}-style: double`)
+    }
+  })
+
+  test("a line() without sides restyles sides drawn by another selector, in either order", () => {
+    for (const layout of [["[r1] line(t)", "[r1] line(dotted)"], ["[r1] line(dotted)", "[r1] line(t)"]]) {
+      const html = cell_html(...layout)
+      expect(html).toContain(`class="tb_l_1000"`)
+      expect(html).toContain("border-top-style: dotted")
+    }
+  })
+
+  test("a line() without sides draws nothing on its own", () => {
+    const html = cell_html("[r1] line(dotted, thick)")
+    expect(html).not.toContain("tb_l_")
+    expect(html).not.toContain("border-")
+  })
+
+  test("styles merge per side", () => {
+    const html = cell_html("[r1:c1] line(t, thick)", "[r1:c1] line(b, dotted)")
+    expect(html).toContain("border-top-width: var(--tb-line-width-thick)")
+    expect(html).not.toContain("border-top-style")
+    expect(html).toContain("border-bottom-style: dotted")
+    expect(html).not.toContain("border-bottom-width")
+  })
+
+  test("a later style for the same side wins, attribute by attribute", () => {
+    const html = cell_html("[r1:c1] line(t, thick, dotted)", "[r1:c1] line(t, dashed)")
+    expect(html).toContain("border-top-width: var(--tb-line-width-thick)")
+    expect(html).toContain("border-top-style: dashed")
+  })
+
+  test("a side-specific style beats a cell-wide one whatever the order", () => {
+    for (const layout of [["[r1] line(t, dashed)", "[r1] line(dotted)"], ["[r1] line(dotted)", "[r1] line(t, dashed)"]]) {
+      expect(cell_html(...layout)).toContain("border-top-style: dashed")
+    }
+  })
+
+  test("default is a weight that can override a cell-wide one", () => {
+    const html = cell_html("[r1] line(thick)", "[r1] line(t, default)", "[r1] line(b)")
+    expect(html).toContain("border-top-width: var(--tb-line-width-default)")
+    expect(html).toContain("border-bottom-width: var(--tb-line-width-thick)")
+  })
+
+  test.each([
+    ["line(b, wavy)", "unrecognized line() argument: 'wavy'"],
+    ["line(b, red)", "unrecognized line() argument: 'red'"],
+    ["line(b, thick, thin)", "line() has more than one weight: 'thin'"],
+    ["line(dotted, dashed)", "line() has more than one style: 'dashed'"],
+    ["line(shade1, shade2)", "line() has more than one color: 'shade2'"],
+    ["line()", "line() needs at least one side or line style"],
+  ])("[r1] %s is an error", (format, message) => {
+    expect(() => tableau(["a|b", "===", `[r1] ${format}`])).toThrow(message)
+  })
+})
+
+describe("table line styles", () => {
+  function table_tag(...layout: string[]): string {
+    return generate(tableau(["a|b", "c|d", "===", ...layout]))[0]
+  }
+
+  test("plain hlines, vlines and boxed set no inline style", () => {
+    expect(table_tag("hlines vlines boxed")).toBe(`<table class="tableau boxed hlines vlines halign-c valign-m">`)
+  })
+
+  test("hlines(dotted, shade6) sets the hlines variables on the table", () => {
+    const tag = table_tag("hlines(dotted, shade6)")
+    expect(tag).toContain("hlines")
+    expect(tag).toContain(`style="--tb-hlines-style: dotted; --tb-hlines-color: var(--tb-shade6-bg)"`)
+  })
+
+  test("vlines and boxed take the same arguments", () => {
+    const tag = table_tag("vlines(thick) boxed(double xthick)")
+    expect(tag).toContain("--tb-vlines-width: var(--tb-line-width-thick)")
+    expect(tag).toContain("--tb-boxed-width: var(--tb-line-width-xthick)")
+    expect(tag).toContain("--tb-boxed-style: double")
+  })
+
+  test("repeated table rules merge their styles", () => {
+    const tag = table_tag("hlines(dotted)", "hlines(thick)")
+    expect(tag).toContain("--tb-hlines-style: dotted")
+    expect(tag).toContain("--tb-hlines-width: var(--tb-line-width-thick)")
+  })
+
+  test.each(["hlines(t)", "vlines(x)", "boxed(b, thick)"])("%s is an error: table rules take no sides", (format) => {
+    expect(() => tableau(["a|b", "===", format])).toThrow("does not take sides")
+  })
+})
+
+describe("tableau.css line variables", () => {
+  const css = require("fs").readFileSync(
+    require("path").join(__dirname, "../assets/tableau.css"),
+    "utf8",
+  )
+
+  test.each(["thin", "default", "thick", "xthick"])("defines --tb-line-width-%s", (weight) => {
+    expect(css).toMatch(new RegExp(`--tb-line-width-${weight}:`))
+  })
+
+  test.each(["boxed", "hlines", "vlines"])("draws %s from its variables, with defaults", (rule) => {
+    expect(css).toContain(`var(--tb-${rule}-width) var(--tb-${rule}-style) var(--tb-${rule}-color)`)
+    for (const property of ["width", "style", "color"]) {
+      expect(css).toMatch(new RegExp(`--tb-${rule}-${property}:`))
+    }
+  })
+})

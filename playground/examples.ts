@@ -77,9 +77,9 @@ align(cm)
 [r2-$r:c2-$c] align(r)
 [r3-$r:c4-5] fg(shade8)
 
--- rules above the subtotals
+-- rules above the subtotals, and a double rule under the bottom line
 [r5;r$r] line(t)
-[r$r] line(b)`,
+[r$r] line(b, double, xthick)`,
   },
 
   {
@@ -304,8 +304,8 @@ large
 
 -- a span shows its top-left cell; style it there too
 [r1-3:c1] span bg(shade1)
-[r2-4:c2-3] span bg(shade3)
-[r3:c4-5] span bg(shade2)`,
+[r2-4:c2-3] span bg(shade3) line(x, thick, shade9)
+[r3:c4-5] span bg(shade2)  line(x, dashed, thick)`,
   },
 
   {
