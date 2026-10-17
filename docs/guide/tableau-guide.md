@@ -134,7 +134,7 @@ small
 [c1] align(l)
 [r3-$r:c2-$c] align(r)
 [r1:c2-3;r1:c4-5] span
-[r1-2:c1; r1-2:c6-8] span
+[r1-2:c1; r1-2:c6,7,8] span
 [r1;r3] line(t)
 [r$r] line(b)
 [r1:c2-5] line(b)

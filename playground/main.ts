@@ -1,6 +1,7 @@
 import "../assets/tableau.css"
 
 import { run } from "./lib"
+import { examples, DEFAULT_EXAMPLE, findExample } from "./examples"
 
 import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from "https://esm.sh/@codemirror/view@6"
 import { Compartment } from "https://esm.sh/@codemirror/state@6"
@@ -56,49 +57,6 @@ const darkHighlightStyle = HighlightStyle.define([
   { tag: tags.atom, color: "#d2a8ff" },
   { tag: tags.special(tags.variableName), color: "#ffa657" },
 ])
-
-// --- examples --------------------------------------------------------------
-
-const examples: Record<string, string> = {
-  simple: `Aardvark|Bear
-Cat|Dog`,
-
-  headerfooter: `Name|Score|Grade
-Alice|92|A
-Bob|81|B
-Carol|74|C
-===
-[r1] header
-hlines`,
-
-  spans: `a|b
-c|d
-===
-[r1:c1-2] span`,
-
-  alignment: `Name|Score
-Alice|92
-Bob|81
-===
-[c2] align(r)`,
-
-  blocks: `Cicero|||
-col2 {{
-  paragraph one
-
-  paragraph two
-}}`,
-
-  caption: `a|b
-===
-# My Caption`,
-
-  dynamic: `a|b|c
-d|e|f
-g|h|i
-===
-[c$tr] bg(red)`,
-}
 
 // --- DOM elements ------------------------------------------------------------
 
@@ -160,7 +118,9 @@ function render() {
 function renderMarkdownInCells(root: HTMLElement) {
   root.querySelectorAll("tableau-md").forEach((el) => {
     const text = el.textContent ?? ""
-    el.innerHTML = marked.parse(text) as string
+    const rendered = document.createElement("template")
+    rendered.innerHTML = marked.parse(text) as string
+    el.replaceWith(rendered.content)
   })
 }
 
@@ -180,7 +140,8 @@ function getExampleFromUrl(): string | null {
   return new URLSearchParams(window.location.search).get("example")
 }
 
-function setExampleInUrl(name: string | null) {
+function setCurrentExample(name: string | null) {
+  exampleSelector.value = name ?? ""
   const url = new URL(window.location.href)
   if (name) {
     url.searchParams.set("example", name)
@@ -197,9 +158,9 @@ function setEditorContent(content: string) {
 }
 
 function getInitialContent(): string {
-  const urlExample = getExampleFromUrl()
-  if (urlExample && examples[urlExample]) {
-    return examples[urlExample]
+  const urlExample = findExample(getExampleFromUrl())
+  if (urlExample) {
+    return urlExample.source
   }
   try {
     const saved = localStorage.getItem("tableau-playground-source")
@@ -207,7 +168,21 @@ function getInitialContent(): string {
   } catch (e) {
     // ignore
   }
-  return examples.simple
+  return findExample(DEFAULT_EXAMPLE)!.source
+}
+
+function populateExampleSelector() {
+  const groups = new Map<string, HTMLOptGroupElement>()
+  for (const example of examples) {
+    let group = groups.get(example.group)
+    if (!group) {
+      group = document.createElement("optgroup")
+      group.label = example.group
+      groups.set(example.group, group)
+      exampleSelector.appendChild(group)
+    }
+    group.appendChild(new Option(example.label, example.key))
+  }
 }
 
 // --- events --------------------------------------------------------------
@@ -216,18 +191,17 @@ renderBtn.addEventListener("click", render)
 
 clearBtn.addEventListener("click", () => {
   setEditorContent("")
-  setExampleInUrl(null)
+  setCurrentExample(null)
   render()
 })
 
 exampleSelector.addEventListener("change", (e) => {
-  const key = (e.target as HTMLSelectElement).value
-  if (key && examples[key]) {
-    setEditorContent(examples[key])
-    setExampleInUrl(key)
+  const example = findExample((e.target as HTMLSelectElement).value)
+  if (example) {
+    setEditorContent(example.source)
+    setCurrentExample(example.key)
     render()
   }
-  ;(e.target as HTMLSelectElement).value = ""
 })
 
 htmlToggle.addEventListener("change", render)
@@ -282,7 +256,7 @@ const tableauKeymap = keymap.of([
 
 const updateListener = EditorView.updateListener.of((update) => {
   if (update.docChanged) {
-    if (getExampleFromUrl()) setExampleInUrl(null)
+    if (getExampleFromUrl()) setCurrentExample(null)
     if (autoRenderCheckbox.checked) debouncedRender()
   }
 })
@@ -304,5 +278,7 @@ editor = new EditorView({
   parent: editorContainer,
 })
 
+populateExampleSelector()
+exampleSelector.value = findExample(getExampleFromUrl())?.key ?? ""
 applyTheme(isDark())
 render()

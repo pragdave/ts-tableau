@@ -67,7 +67,8 @@ const MIME_TYPES = {
 function serve() {
   const port = 4173
   const server = createServer((req, res) => {
-    const urlPath = req.url === "/" ? "/index.html" : req.url.split("?")[0]
+    const path = req.url.split("?")[0]
+    const urlPath = path === "/" ? "/index.html" : path
     const filePath = join(distDir, urlPath)
     const rel = relative(distDir, filePath)
     const isInsideDistDir = rel === "" || (!rel.startsWith("..") && !isAbsolute(rel))
