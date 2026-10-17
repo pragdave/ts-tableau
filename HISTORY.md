@@ -1,4 +1,4 @@
-unreleased
+v0.3.0     2026-10-17
            * shade$tr and shade$tc pick a shade by each cell's row or
              column number, wrapping after shade9: [c1] bg(shade$tr)
            * new shades: the same nine hues in light and dark mode, spread
