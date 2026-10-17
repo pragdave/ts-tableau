@@ -11,6 +11,8 @@ import rehypeHighlight from "rehype-highlight"
 import rehypeKatex from "rehype-katex"
 import rehypeStringify from "rehype-stringify"
 import { remarkTableauDirectives } from "./directives.mts"
+import { tableau } from "../../src/tableau"
+import { generate } from "../../src/generators/html"
 import { rehypeCollectHeadings, renderToc, type Heading } from "./toc.mts"
 
 export type RenderResult = { bodyHtml: string; toc: string; title: string }
@@ -29,7 +31,7 @@ export async function renderMarkdown(markdown: string): Promise<RenderResult> {
     .use(remarkDirective)
     .use(remarkTableauDirectives)
     .use(remarkMath)
-    .use(remarkTableau)
+    .use(remarkTableau, { tableau, generate })
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeKatex)
