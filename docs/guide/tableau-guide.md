@@ -1,10 +1,9 @@
 # Tableau
-##### A Different Kind of Table Formatter for Pandoc/Quarto
+##### A Different Kind of Table Formatter for Markdown
 
 Tableau lets you create great-looking tables from plain-text descriptions.
-It was initially written as a preprocessor for markdown documents, but
-can also be used standalone. It renders HTML out of the box, but you
-can plug in renderers for any other markup language (such as LaTeX).
+It renders them as HTML, and is usually run as a preprocessor for
+Markdown documents, though it can also be used standalone.
  
 Tableau separates the data content of your table from its presentation.
 
@@ -143,7 +142,7 @@ small
 ### Nutrition Label
 
 ~~~ tableau
-| Nutrition Information
+| **Nutrition Information**
 | Serving Size 1/2 cup (about 82g)         |
 | Servings Per Container 8                 |
 | Amount Per Serving:                      |
@@ -168,7 +167,7 @@ align(l)
 [c1] width(0.1)
 [c3] align(r)
 
-[r1] large .bold align(c) span
+[r1] large align(c) span
 [r1-3] bg(shade4)
 [r4-$r] bg(shade1)
 
@@ -988,15 +987,6 @@ Tableau tables are created inside code blocks with a language of tableau.
 
 ~~~~
 ~~~ tableau
-...
-~~~
-~~~~
-
-As with all code blocks, you can add additional attributes. For example, we
-can add an ID so we can reference the table elsewhere:
-
-~~~~
-~~~ {.tableau #my-table}
 ...
 ~~~
 ~~~~
