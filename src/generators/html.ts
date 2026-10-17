@@ -144,6 +144,9 @@ function do_cell_classes(cell: Cell): string[] {
   if (cell.header) {
     result.push("tb-header")
   }
+  if (cell.bg instanceof ShadeColor) {
+    result.push("tb-shaded")
+  }
 
   if (cell.lines) {
     result.push(add_lines(cell.lines))

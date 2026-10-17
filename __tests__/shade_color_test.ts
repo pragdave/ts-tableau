@@ -13,7 +13,7 @@ test("shade background color renders as a CSS variable reference", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td style="background: var(--tb-shade3-bg)"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
+    `<tr><td class="tb-shaded" style="background: var(--tb-shade3-bg)"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
     "</table>",
   ])
 })
@@ -39,7 +39,7 @@ test("bare 'shade' alias renders as a CSS variable reference", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td style="background: var(--tb-shade-bg)"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
+    `<tr><td class="tb-shaded" style="background: var(--tb-shade-bg)"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
     "</table>",
   ])
 })
@@ -52,7 +52,7 @@ test("shade bg and fg combined on one cell render both correctly", () => {
   ]
   expect(html_for(lines)).toEqual([
     `<table class="tableau halign-c valign-m">`,
-    `<tr><td style="background: var(--tb-shade3-bg); color: var(--tb-shade7-fg)"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
+    `<tr><td class="tb-shaded" style="background: var(--tb-shade3-bg); color: var(--tb-shade7-fg)"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
     "</table>",
   ])
 })
@@ -81,4 +81,16 @@ test("named CSS color rendering is unchanged by the do_color signature change", 
     `<tr><td style="background: red"><tableau-md>a</tableau-md></td><td><tableau-md>b</tableau-md></td></tr>`,
     "</table>",
   ])
+})
+
+test("only a shade background marks the cell as shaded, so its text can follow light/dark mode", () => {
+  const html = (fmt: string) => html_for(["a|b", "===", fmt])[1]
+  expect(html("[r1:c1] bg(shade3)")).toContain(`class="tb-shaded"`)
+  expect(html("[r1:c1] bg(#cdf)")).not.toContain("tb-shaded")
+  expect(html("[r1:c1] bg(crimson)")).not.toContain("tb-shaded")
+})
+
+test("tableau.css gives shaded cells black text in light mode and white in dark, except headers and footers", () => {
+  const css = require("fs").readFileSync(require("path").join(__dirname, "../assets/tableau.css"), "utf8")
+  expect(css).toMatch(/&\.tb-shaded:not\(\.tb-header, \.tb-footer\) \{\s*color: light-dark\(#000, #fff\);/)
 })

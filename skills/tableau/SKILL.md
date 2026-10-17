@@ -139,7 +139,10 @@ styles given with sides beat it. The table rules take no sides.
 
 **Colors** are `shade1` … `shade9` (a palette that adapts to light and dark
 mode; prefer these), a hex value (`#cdf`, `#94a8cb`), or a CSS color name
-(`crimson`). A color only ever appears inside `bg(…)` or `fg(…)`.
+(`crimson`). Colors appear inside `bg(…)` and `fg(…)`; line styles take
+shades only. A `bg(shadeN)` cell gets black text in light mode and white
+in dark, so don't add an `fg()` just for contrast; hex and named
+backgrounds don't adapt to dark mode, so prefer shades.
 
 ### Spans
 

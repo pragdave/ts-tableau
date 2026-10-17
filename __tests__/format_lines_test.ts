@@ -205,3 +205,9 @@ describe("tableau.css line variables", () => {
     }
   })
 })
+
+test("the guide lists tableau.css's :root variables exactly as shipped", () => {
+  const read = (path: string) => require("fs").readFileSync(require("path").join(__dirname, path), "utf8")
+  const root = read("../assets/tableau.css").match(/^:root \{\n[\s\S]*?^\}\n/m)[0]
+  expect(read("../docs/guide/tableau-guide.md")).toContain(root)
+})

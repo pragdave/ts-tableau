@@ -2318,43 +2318,43 @@ background/border/box-shadow back to neutral values (so that a host
 page's own table theme, or an earlier `bg()`/`lines()`/shading rule,
 doesn't leak through). See the `.gradient` example above.
 
-You can override colors using CSS variables:
+You can override colors using CSS variables. These are the defaults:
 
 ~~~ css
 :root {
   --tb-hue: 240deg;
   --tb-sat: 29%;
 
-  --tb-border-color: hsl(var(--tb-hue) var(--tb-sat) 55%);
-  --tb-cell-border-color: hsl(var(--tb-hue) var(--tb-sat) 55%);
-  --tb-line-color: hsl(var(--tb-hue) var(--tb-sat) 80%);
-  --tb-header-bg: hsl(var(--tb-hue) var(--tb-sat) 60%);
+  --tb-border-color: light-dark(hsl(var(--tb-hue) var(--tb-sat) 55%), hsl(var(--tb-hue) var(--tb-sat) 50%));
+  --tb-cell-border-color: light-dark(hsl(var(--tb-hue) var(--tb-sat) 55%), hsl(var(--tb-hue) var(--tb-sat) 50%));
+  --tb-line-color: light-dark(hsl(var(--tb-hue) var(--tb-sat) 80%), hsl(var(--tb-hue) var(--tb-sat) 50%));
+  --tb-header-bg: light-dark(hsl(var(--tb-hue) var(--tb-sat) 60%), hsl(var(--tb-hue) var(--tb-sat) 30%));
   --tb-header-fg: #fff;
   --tb-footer-bg: var(--tb-header-bg);
   --tb-footer-fg: var(--tb-header-fg);
-  --tb-caption-bg: hsl(var(--tb-hue) var(--tb-sat) 98%);
+  --tb-caption-bg: light-dark(hsl(var(--tb-hue) var(--tb-sat) 98%), hsl(var(--tb-hue) var(--tb-sat) 23%));
   --tb-caption-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
 
-  --tb-shade1-bg: hsl(60deg, 66%, 84%);
-  --tb-shade2-bg: hsl(95deg, 61%, 79%);
-  --tb-shade3-bg: hsl(130deg, 61%, 79%);
-  --tb-shade4-bg: hsl(165deg, 61%, 79%);
-  --tb-shade5-bg: hsl(200deg, 61%, 79%);
-  --tb-shade6-bg: hsl(235deg, 61%, 79%);
-  --tb-shade7-bg: hsl(270deg, 61%, 79%);
-  --tb-shade8-bg: hsl(305deg, 61%, 79%);
-  --tb-shade9-bg: hsl(340deg, 61%, 79%);
+  --tb-shade1-bg: light-dark(oklch(0.83 0.110 55), oklch(0.490 0.20 55));
+  --tb-shade2-bg: light-dark(oklch(0.83 0.120 90), oklch(0.532 0.17 90));
+  --tb-shade3-bg: light-dark(oklch(0.83 0.120 125), oklch(0.525 0.19 125));
+  --tb-shade4-bg: light-dark(oklch(0.83 0.120 165), oklch(0.497 0.17 165));
+  --tb-shade5-bg: light-dark(oklch(0.83 0.120 210), oklch(0.504 0.15 210));
+  --tb-shade6-bg: light-dark(oklch(0.83 0.086 255), oklch(0.476 0.18 255));
+  --tb-shade7-bg: light-dark(oklch(0.83 0.099 300), oklch(0.469 0.21 300));
+  --tb-shade8-bg: light-dark(oklch(0.83 0.119 345), oklch(0.476 0.22 345));
+  --tb-shade9-bg: light-dark(oklch(0.83 0.095 15), oklch(0.455 0.22 15));
   --tb-shade-bg:  var(--tb-shade1-bg);
 
-  --tb-shade1-fg: hsl(60deg, 66%, 28%);
-  --tb-shade2-fg: hsl(95deg, 61%, 32%);
-  --tb-shade3-fg: hsl(130deg, 61%, 33%);
-  --tb-shade4-fg: hsl(165deg, 61%, 32%);
-  --tb-shade5-fg: hsl(200deg, 61%, 39%);
-  --tb-shade6-fg: hsl(235deg, 61%, 39%);
-  --tb-shade7-fg: hsl(270deg, 61%, 39%);
-  --tb-shade8-fg: hsl(305deg, 61%, 39%);
-  --tb-shade9-fg: hsl(340deg, 61%, 39%);
+  --tb-shade1-fg: light-dark(oklch(0.53 0.131 55), oklch(0.70 0.20 55));
+  --tb-shade2-fg: light-dark(oklch(0.53 0.108 90), oklch(0.76 0.17 90));
+  --tb-shade3-fg: light-dark(oklch(0.53 0.133 125), oklch(0.75 0.19 125));
+  --tb-shade4-fg: light-dark(oklch(0.53 0.111 165), oklch(0.71 0.17 165));
+  --tb-shade5-fg: light-dark(oklch(0.53 0.091 210), oklch(0.72 0.15 210));
+  --tb-shade6-fg: light-dark(oklch(0.53 0.174 255), oklch(0.68 0.18 255));
+  --tb-shade7-fg: light-dark(oklch(0.53 0.210 300), oklch(0.67 0.21 300));
+  --tb-shade8-fg: light-dark(oklch(0.53 0.220 345), oklch(0.68 0.22 345));
+  --tb-shade9-fg: light-dark(oklch(0.53 0.211 15), oklch(0.67 0.22 15));
   --tb-shade-fg:  var(--tb-shade1-fg);
 
   --tb-line-width-thin: 0.5px;
@@ -2371,26 +2371,32 @@ re-themes the whole table consistently. `--tb-shade1-bg` through
 `bg(shade1)`...`bg(shade9)` resolve to. The `--tb-line-width-*`
 variables are the four line weights.
 
-Tableau also ships dark-mode values, applied automatically via
-`prefers-color-scheme` -- no extra class or data attribute needed:
+Each color is a `light-dark(light, dark)` pair, so it follows the page's
+`color-scheme`. By default that's the reader's system setting; a page
+with its own light/dark toggle only needs to set `color-scheme` on
+`<html>` -- no extra class or data attribute:
 
 ~~~ css
-@media (prefers-color-scheme: dark) {
-  :root {
-    --tb-border-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
-    --tb-cell-border-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
-    --tb-line-color: hsl(var(--tb-hue) var(--tb-sat) 50%);
-    --tb-header-bg: hsl(var(--tb-hue) var(--tb-sat) 30%);
-    --tb-caption-bg: hsl(var(--tb-hue) var(--tb-sat) 23%);
-
-        :       :
-  }
-}
+html.dark { color-scheme: dark; }
 ~~~
 
-Overriding these variables inside a `@media (prefers-color-scheme: dark)`
-block of your own (after `tableau.css` is loaded) re-themes dark mode the
-same way.
+The shades are written in `oklch()`: the same nine hues in both modes,
+spread round the color wheel so neighboring shades stay distinct --
+pastel in light mode, deeper in dark. A cell shaded with
+`bg(shadeN)` gets black text in light mode and white text in dark mode,
+which reads at 5:1 or better on every shade; an explicit `fg()` still
+wins, and header and footer cells keep their own colors. Backgrounds
+given as hex or CSS color names don't change between modes, so their
+text is left alone.
+
+An override with a single value applies in both modes; give it both to
+keep them apart:
+
+~~~ css
+:root {
+  --tb-header-bg: light-dark(hsl(200deg 40% 60%), hsl(200deg 40% 25%));
+}
+~~~
 
 The table caption renders below the table by default (`caption-side:
 bottom` is already set on `table.tableau`). To put it back above the

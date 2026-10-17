@@ -1,4 +1,11 @@
 unreleased
+           * new shades: the same nine hues in light and dark mode, spread
+             round the color wheel so neighbouring shades stay distinct.
+             shade1 is now orange and shade2 yellow
+           * text on a bg(shadeN) cell is black in light mode and white in
+             dark mode, unless the cell sets fg()
+           * tableau.css colors follow the page's color-scheme, not just the
+             system setting, so a host's dark-mode toggle switches them too
            * line() takes a weight (thin, default, thick, xthick), a style
              (solid, dashed, dotted, double, groove, ridge, inset, outset)
              and a shade, e.g. line(b, shade4, dotted, thick). A line()
@@ -12,7 +19,6 @@ unreleased
            * playground: the dev server serves ?example= URLs
            * docs: the guide's APA example no longer merges the t, p and d
              headings into one cell
-
 
 v0.2.2     2026-10-06
            * fix: lines(x) now draws a box round the cell (its CSS rule
