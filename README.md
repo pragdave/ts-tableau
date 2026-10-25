@@ -15,10 +15,7 @@ or read the [guide](https://pragdave.github.io/ts-tableau/).
 
 A header, a footer, and rules between the rows:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-1b11cfc1565b-dark.png">
-  <img alt="Table" src="README_ASSETS/generated/table-1b11cfc1565b-light.png" width="191">
-</picture>
+<a href="README_ASSETS/generated/table-1b11cfc1565b-light.png#gh-light-mode-only"><img alt="Table" src="README_ASSETS/generated/table-1b11cfc1565b-light.png" width="191"></a><a href="README_ASSETS/generated/table-1b11cfc1565b-dark.png#gh-dark-mode-only"><img alt="Table" src="README_ASSETS/generated/table-1b11cfc1565b-dark.png" width="191"></a>
 
 <details open>
 <summary>Source</summary>
@@ -40,10 +37,7 @@ hlines
 Selectors can be dynamic. `$tr` is the row being styled, so `c$tr` picks
 out the diagonal, and `c2-$tr~1` everything to its left:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-82c9238d222a-dark.png">
-  <img alt="Times table" src="README_ASSETS/generated/table-82c9238d222a-light.png" width="191">
-</picture>
+<a href="README_ASSETS/generated/table-82c9238d222a-light.png#gh-light-mode-only"><img alt="Times table" src="README_ASSETS/generated/table-82c9238d222a-light.png" width="191"></a><a href="README_ASSETS/generated/table-82c9238d222a-dark.png#gh-dark-mode-only"><img alt="Times table" src="README_ASSETS/generated/table-82c9238d222a-dark.png" width="191"></a>
 
 <details>
 <summary>Source</summary>
@@ -70,10 +64,7 @@ out the diagonal, and `c2-$tr~1` everything to its left:
 
 Spans across columns and down rows, for a conference programme:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-b190a46fce7a-dark.png">
-  <img alt="DataDocs Conf · Day 1" src="README_ASSETS/generated/table-b190a46fce7a-light.png" width="596">
-</picture>
+<a href="README_ASSETS/generated/table-b190a46fce7a-light.png#gh-light-mode-only"><img alt="DataDocs Conf · Day 1" src="README_ASSETS/generated/table-b190a46fce7a-light.png" width="596"></a><a href="README_ASSETS/generated/table-b190a46fce7a-dark.png#gh-dark-mode-only"><img alt="DataDocs Conf · Day 1" src="README_ASSETS/generated/table-b190a46fce7a-dark.png" width="596"></a>
 
 <details>
 <summary>Source</summary>
@@ -106,10 +97,7 @@ align(cm)
 Two-level column headings, right-aligned figures, and rules where an
 accountant would put them, down to the double rule under the bottom line:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-3af45c2d5f10-dark.png">
-  <img alt="Half-yearly results" src="README_ASSETS/generated/table-3af45c2d5f10-light.png" width="361">
-</picture>
+<a href="README_ASSETS/generated/table-3af45c2d5f10-light.png#gh-light-mode-only"><img alt="Half-yearly results" src="README_ASSETS/generated/table-3af45c2d5f10-light.png" width="361"></a><a href="README_ASSETS/generated/table-3af45c2d5f10-dark.png#gh-dark-mode-only"><img alt="Half-yearly results" src="README_ASSETS/generated/table-3af45c2d5f10-dark.png" width="361"></a>
 
 <details>
 <summary>Source</summary>
@@ -143,10 +131,7 @@ accountant would put them, down to the double rule under the bottom line:
 Group headings that span the whole row, and a shaded column to draw the
 eye:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-861f4348bc84-dark.png">
-  <img alt="Choose a plan" src="README_ASSETS/generated/table-861f4348bc84-light.png" width="402">
-</picture>
+<a href="README_ASSETS/generated/table-861f4348bc84-light.png#gh-light-mode-only"><img alt="Choose a plan" src="README_ASSETS/generated/table-861f4348bc84-light.png" width="402"></a><a href="README_ASSETS/generated/table-861f4348bc84-dark.png#gh-dark-mode-only"><img alt="Choose a plan" src="README_ASSETS/generated/table-861f4348bc84-dark.png" width="402"></a>
 
 <details>
 <summary>Source</summary>
@@ -185,10 +170,7 @@ eye:
 An APA-style results table: grouped headings, and rules only where they
 mean something:
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-cf10434c277c-dark.png">
-  <img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-cf10434c277c-light.png" width="687">
-</picture>
+<a href="README_ASSETS/generated/table-cf10434c277c-light.png#gh-light-mode-only"><img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-cf10434c277c-light.png" width="687"></a><a href="README_ASSETS/generated/table-cf10434c277c-dark.png#gh-dark-mode-only"><img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-cf10434c277c-dark.png" width="687"></a>
 
 <details>
 <summary>Source</summary>

@@ -40,13 +40,21 @@ describe("source sections", () => {
   const render = (fence: string, source = "a|b") =>
     renderReadme(`${fence}\n${source}\n\`\`\`\n`, css, { [imageName(source, css)]: 100 })
 
-  test("a plain tableau fence shows only the picture", () => {
+  test("a tableau fence becomes a light and a dark image, each linked for GitHub's theme switch", () => {
+    const name = imageName("a|b", css)
+    expect(render("```tableau")).toContain([
+      `<a href="README_ASSETS/generated/${name}-light.png#gh-light-mode-only"><img alt="Table" src="README_ASSETS/generated/${name}-light.png" width="100"></a>`,
+      `<a href="README_ASSETS/generated/${name}-dark.png#gh-dark-mode-only"><img alt="Table" src="README_ASSETS/generated/${name}-dark.png" width="100"></a>`,
+    ].join(""))
+  })
+
+  test("a plain tableau fence shows only the images", () => {
     expect(render("```tableau")).not.toContain("<details")
   })
 
-  test("'source' adds a collapsed Source section after the picture", () => {
+  test("'source' adds a collapsed Source section after the images", () => {
     const out = render("```tableau source")
-    expect(out).toMatch(/<\/picture>\n\n<details>\n<summary>Source<\/summary>\n\n```tableau\na\|b\n```\n\n<\/details>/)
+    expect(out).toMatch(/<\/a>\n\n<details>\n<summary>Source<\/summary>\n\n```tableau\na\|b\n```\n\n<\/details>/)
   })
 
   test("'source-open' starts it open", () => {

@@ -69,13 +69,16 @@ function escapeAttribute(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
 }
 
-function picture(name: string, width: number, alt: string): string {
-  return [
-    "<picture>",
-    `  <source media="(prefers-color-scheme: dark)" srcset="${IMAGE_DIR}/${name}-dark.png">`,
-    `  <img alt="${escapeAttribute(alt)}" src="${IMAGE_DIR}/${name}-light.png" width="${width}">`,
-    "</picture>",
-  ].join("\n")
+// GitHub's theme setting can differ from the OS one, which is all a <picture>
+// media query sees. GitHub hides a link whose href ends in #gh-dark-mode-only
+// or #gh-light-mode-only according to its own theme, so each image is wrapped
+// in one.
+function themedImages(name: string, width: number, alt: string): string {
+  const image = (mode: "light" | "dark") => {
+    const src = `${IMAGE_DIR}/${name}-${mode}.png`
+    return `<a href="${src}#gh-${mode}-mode-only"><img alt="${escapeAttribute(alt)}" src="${src}" width="${width}"></a>`
+  }
+  return image("light") + image("dark")
 }
 
 function sourceSection(source: string, display: SourceDisplay): string {
@@ -109,7 +112,7 @@ export function renderReadme(markdown: string, css: string, manifest: Manifest):
       throw new Error(`no rendered image for the table at line ${block.start + 1}; run npm run readme`)
     }
     lines.splice(block.start, block.end - block.start + 1,
-      picture(name, width, altText(block.source)) + sourceSection(block.source, block.showSource))
+      themedImages(name, width, altText(block.source)) + sourceSection(block.source, block.showSource))
   }
   return `${GENERATED_NOTICE}\n\n${lines.join("\n")}`
 }
