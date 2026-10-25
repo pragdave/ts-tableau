@@ -216,6 +216,9 @@ preprocessors:
   remark plugin that renders Tableau fenced code blocks for
   unified/remark-based toolchains (this is what generates the guide
   linked above).
+* [markdown-it-tableau](https://www.npmjs.com/package/markdown-it-tableau)
+  -- a markdown-it plugin that renders Tableau fenced code blocks for
+  markdown-it-based tools such as VitePress, Eleventy, and Marp.
 * [slidev-addon-tableau](https://github.com/pragdave/slidev-addon-tableau)
   -- a [Slidev](https://sli.dev) addon that renders Tableau fenced code
   blocks in presentations.
@@ -230,8 +233,9 @@ add it here.
 
 Most consumers won't call `ts-tableau` directly -- see
 [Preprocessors](#preprocessors) above for pipeline integrations
-(`remark-tableau` for unified/remark-based Markdown pipelines, or
-`pandoc-tableau` for Pandoc/Quarto). To call it yourself:
+(`remark-tableau` for unified/remark-based Markdown pipelines,
+`markdown-it-tableau` for markdown-it, or `pandoc-tableau` for
+Pandoc/Quarto). To call it yourself:
 
 ```js
 import { tableau, generate } from "ts-tableau"
