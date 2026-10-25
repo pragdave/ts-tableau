@@ -1,10 +1,12 @@
-unreleased
+v0.4.0     2026-10-24
            * align(d) lines up a column's numbers on their decimal point,
              including negatives, (accounting) brackets, grouped thousands
              and suffixes such as %. Cells that aren't plain numbers end
              at the point. decimal(,) makes a table use decimal commas
            * integrators: a plain number in an align(d) cell is written
              out directly, with no <tableau-md> marker round it
+           * playground: a decimal alignment example. The APA examples use
+             align(d) and new data
 
 v0.3.0     2026-10-17
            * shade$tr and shade$tc pick a shade by each cell's row or
