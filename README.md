@@ -168,9 +168,9 @@ eye:
 </details>
 
 An APA-style results table: grouped headings, and rules only where they
-mean something:
+mean something (note the vertical alignment on the decimal points):
 
-<a href="README_ASSETS/generated/table-cf10434c277c-light.png#gh-light-mode-only"><img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-cf10434c277c-light.png" width="687"></a><a href="README_ASSETS/generated/table-cf10434c277c-dark.png#gh-dark-mode-only"><img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-cf10434c277c-dark.png" width="687"></a>
+<a href="README_ASSETS/generated/table-3361932bc89d-light.png#gh-light-mode-only"><img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-3361932bc89d-light.png" width="687"></a><a href="README_ASSETS/generated/table-3361932bc89d-dark.png#gh-dark-mode-only"><img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-3361932bc89d-dark.png" width="687"></a>
 
 <details>
 <summary>Source</summary>
@@ -178,9 +178,9 @@ mean something:
 ```tableau
 | Logistic parameter                  | 9-year-olds| | 16-year-olds| | t(40) | _p_ | _d_
 |                                     |   M  |  SD   |   M   | SD   |
-Maximum asymptote, proportion         | .843 | .135  | .877  | .082 | .951 | .347 | 0.302
+Maximum asymptote, proportion         | .843 | .135  | .877  | .082 | .951 | .347 | .302
 Slope, as change in proportion per ms | .01  | .002  | .02   | .002 | 2.65 | .02  | 2.08
-Crossover, in S                       | .759 | .078  | .694  | .042 | 2.87 | .006 | 0.840
+Crossover, in S                       | .759 | .078  | .694  | .042 | 2.87 | .006 | .840
 ===
 # Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target
 small
