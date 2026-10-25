@@ -1,3 +1,8 @@
+v0.4.1     2026-10-25
+           * README: examples follow GitHub's light/dark theme rather than
+             the OS's, so they stay readable when the two differ
+           * README: lists the markdown-it-tableau preprocessor
+
 v0.4.0     2026-10-24
            * align(d) lines up a column's numbers on their decimal point,
              including negatives, (accounting) brackets, grouped thousands

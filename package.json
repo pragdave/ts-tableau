@@ -1,6 +1,6 @@
 {
   "name": "ts-tableau",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A library that simplifies table layout by separating data from layout, for use as a preprocessor for Markdown and similar markup languages.",
   "repository": {
     "type": "git",
