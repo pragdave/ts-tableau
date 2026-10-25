@@ -123,15 +123,15 @@ We'll explain all this in detail later. First, a few more examples:
 
 ~~~ tableau
 | Logistic parameter                  | 9-year-olds| | 16-year-olds| | t(40) | _p_ | _d_
-|                                     |   M  |  SD   |   M    | SD   |      
-Maximum asymptote, proportion         | .843 | .135  | .877   | .082 | 0.951 | .347 | 0.302
-Crossover, in ms                      | 759  |   87  |  694   |   42 | 2.877 | .006 | 0.840
-Slope, as change in proportion per ms | .001 | .0002 | .002   |.0002 | 2.635 | .012 | 2.078
+|                                     |   M  |  SD   |   M   | SD   |
+Maximum asymptote, proportion         | .843 | .135  | .877  | .082 | .951 | .347 | 0.302
+Slope, as change in proportion per ms | .01  | .002  | .02   | .002 | 2.65 | .02  | 2.08
+Crossover, in S                       | .759 | .078  | .694  | .042 | 2.87 | .006 | 0.840
 ===
 # Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target
 small
 [c1] align(l)
-[r3-$r:c2-$c] align(r)
+[r3-$r:c2-$c] align(d)
 [r1:c2-3;r1:c4-5] span
 [r1-2:c1; r1-2:c6,7,8] span
 [r1;r3] line(t)
@@ -1379,10 +1379,11 @@ align  | Y     | Y    |  |  | large  | Y     | Y
 bg     | Y     | Y    |  |  | lines  |       | Y
 boxed  | Y     |      |  |  | normal | Y     | Y
 caption| Y    |      |  |  | small  | Y     | Y
-fg     | Y     | Y    |  |  | span   |       | Y
-footer |       | Y    |  |  | style  | Y     | Y
-header |       | Y    |  |  | vlines | Y     |
-hlines | Y     |      |  |  | width  | Y     | Y
+decimal| Y    |      |  |  | span   |       | Y
+fg     | Y     | Y    |  |  | style  | Y     | Y
+footer |       | Y    |  |  | vlines | Y     |
+header |       | Y    |  |  | width  | Y     | Y
+hlines | Y     |      |  |  |        |       |
  
 ===
 # Tableau Format Specifiers
@@ -1411,15 +1412,15 @@ implicit form, and when it can be used.
 
 ~~~ tableau
 context:  | table and cell
-explicit: | `align(` [lcrj] [tmb] `)`
-implicit: | [lcrj] [tmb]
+explicit: | `align(` [lcrjd] [tmb] `)`
+implicit: | [lcrjd] [tmb]
 ===
 l
 [c1] width(10)
 ~~~
 
-Set horizontal cell alignment (left, center, right, justified) and/or
-vertical cell alignment (top, middle, bottom)
+Set horizontal cell alignment (left, center, right, justified, decimal)
+and/or vertical cell alignment (top, middle, bottom)
 
 ::::columns
 :::column
@@ -1468,6 +1469,56 @@ vlines hlines
 
 
 
+##### Decimal alignment
+
+`d` lines up the numbers in each column on their decimal point. The
+numbers can have signs, currency symbols, thousands separators, accounting
+brackets, and a trailing `%` or footnote mark. A cell that isn't a plain
+number, such as `n/a`, ends where the decimal point would be.
+
+::::columns
+:::column
+~~~
+Item   | Price
+Tea    | 2.5
+Cake   | 12.75
+Water  | 1
+Gift   | n/a
+Refund | (1,234.5)
+Total  | 1,245.125
+===
+hlines
+[r1] header
+[r$r] footer
+[c1] l
+[r2-$r:c2] d
+~~~
+:::
+:::column
+~~~ tableau
+Item   | Price
+Tea    | 2.5
+Cake   | 12.75
+Water  | 1
+Gift   | n/a
+Refund | (1,234.5)
+Total  | 1,245.125
+===
+hlines
+[r1] header
+[r$r] footer
+[c1] l
+[r2-$r:c2] d
+~~~
+:::
+::::
+
+Each column is aligned separately. A cell that spans columns is right
+aligned instead. Use [`decimal`](#decimal-decimal-mark) for numbers
+written with a decimal comma.
+
+
+
 #### `bg`: Background color
 
 ~~~ tableau
@@ -1497,7 +1548,7 @@ blank spacer rows too.
 
 For backgrounds Tableau cannot express directly -- gradients, images,
 animations -- attach a class to the cells instead and write the CSS
-yourself. See [`.style`](#style) below.
+yourself. See [`.style`](#style-attach-a-css-class) below.
 
 ::::columns
 :::column
@@ -1617,6 +1668,51 @@ deer | fawn
 
 The caption renders below the table by default. See [Styling](#styling)
 for how to move it above.
+
+
+
+#### `decimal`: Decimal mark
+
+~~~ tableau
+context:  | table only
+explicit: | `decimal(.)` \| `decimal(,)`
+implicit: | n/a
+===
+l
+[c1] width(10)
+~~~
+
+Set the character that `align(d)` lines numbers up on. The default is a
+point. With `decimal(,)`, points and spaces group the thousands instead.
+
+::::columns
+:::column
+~~~
+Article | Prix
+Thé     | 2,5
+Gâteau  | 1.212,75
+Eau     | 1
+===
+decimal(,)
+[r1] header
+[c1] l
+[r2-$r:c2] d
+~~~
+:::
+:::column
+~~~ tableau
+Article | Prix
+Thé     | 2,5
+Gâteau  | 1.212,75
+Eau     | 1
+===
+decimal(,)
+[r1] header
+[c1] l
+[r2-$r:c2] d
+~~~
+:::
+::::
 
 
 

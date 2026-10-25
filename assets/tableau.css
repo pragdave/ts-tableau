@@ -71,7 +71,20 @@ table.tableau td {
   box-shadow: none;
 }
 
+/*
+ * Registered so that 1ch resolves once, on the table, and cells inherit
+ * the length. A footer's smaller font would otherwise give its align(d)
+ * fraction box a narrower width than the body's, shifting its decimal mark.
+ */
+@property --tb-ch {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 table.tableau {
+  --tb-ch: 1ch;
+
   /* Set here rather than on :root so a nested table doesn't inherit the
      outer table's boxed()/hlines()/vlines() styles, which arrive inline. */
   --tb-boxed-width: var(--tb-line-width-default);
@@ -137,6 +150,10 @@ table.tableau {
     text-align: justify;
     text-justify: auto;
   }
+  &.halign-d td {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
 
   &.valign-t td {
     vertical-align: top;
@@ -178,6 +195,10 @@ table.tableau tr td, table.tableau tr th {
     text-align: justify;
     text-justify: auto;
   }
+  &.halign-d {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
 
   &.valign-t {
     vertical-align: top;
@@ -189,6 +210,18 @@ table.tableau tr td, table.tableau tr th {
 
   &.valign-b {
     vertical-align: bottom;
+  }
+
+  &.tb-num {
+    white-space: nowrap;
+  }
+  & .tb-frac {
+    display: inline-block;
+    width: calc(var(--tb-frac) * var(--tb-ch));
+    text-align: left;
+  }
+  &.tb-nonnum {
+    padding-right: calc(0.5rem + var(--tb-frac) * var(--tb-ch));
   }
 
   &.tb-header {

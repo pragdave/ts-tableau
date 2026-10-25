@@ -6,6 +6,10 @@ export class FormatBoxed {
 export class FormatCaption {
   constructor(public text: string) { }
 }
+export type DecimalMark = "." | ","
+export class FormatDecimal {
+  constructor(public mark: DecimalMark) { }
+}
 export class FormatFooter { }
 export class FormatHeader { }
 export class FormatHlines {

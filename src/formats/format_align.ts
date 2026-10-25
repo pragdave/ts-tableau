@@ -1,6 +1,6 @@
 // The alignment within cells
 
-export type HALIGN = ("l" | "c" | "r" | "j")
+export type HALIGN = ("l" | "c" | "r" | "j" | "d")
 export type VALIGN = ("t" | "m" | "b")
 
 export class FormatAlign {

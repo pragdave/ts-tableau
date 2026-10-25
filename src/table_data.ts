@@ -9,6 +9,7 @@ import {
   FormatBg,
   FormatBoxed,
   FormatCaption,
+  FormatDecimal,
   FormatFg,
   FormatFontsize,
   FormatFooter,
@@ -23,6 +24,7 @@ import {
   HALIGN,
   VALIGN,
 } from "./formats";
+import type { DecimalMark } from "./formats";
 
 import { DynamicShadeColor } from "./formats/format_colors"
 import type { ColorRepresentations } from "./formats/format_colors"
@@ -32,6 +34,7 @@ type GlobalAttributes = {
   boxed: boolean,
   boxed_style: LineStyle,
   caption: string | null,
+  decimal_mark: DecimalMark,
   halign: HALIGN,
   hlines: boolean,
   hlines_style: LineStyle,
@@ -52,6 +55,7 @@ export class TableData {
     boxed: false,
     boxed_style: {},
     caption: null,
+    decimal_mark: ".",
     halign: "c",
     hlines: false,
     hlines_style: {},
@@ -109,6 +113,10 @@ export class TableData {
 
       case FormatCaption:
         this.global_attr.caption = (format as FormatCaption).text
+        break
+
+      case FormatDecimal:
+        this.global_attr.decimal_mark = (format as FormatDecimal).mark
         break
 
       case FormatHlines:

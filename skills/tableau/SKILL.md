@@ -116,8 +116,9 @@ Rows and columns are numbered from 1. Some useful combinations:
 | `header` / `head` | cells | header cells (usually `[r1]` or `[c1]`) |
 | `footer` / `foot` | cells | footer cells (usually `[r$r]`) |
 | `span` | cells | merge the selected block into one cell (content from its top-left cell) |
-| `align(` `l c r j` + `t m b` `)` | both | horizontal and/or vertical alignment |
-| `l` `c` `r` `j` `t` `m` `b`, `lt`, `cm`… | both | shorthand for `align(…)` |
+| `align(` `l c r j d` + `t m b` `)` | both | horizontal and/or vertical alignment; `d` lines numbers up on the decimal point |
+| `l` `c` `r` `j` `d` `t` `m` `b`, `lt`, `cm`… | both | shorthand for `align(…)` |
+| `decimal(,)` | table | `d` aligns on a decimal comma; points group thousands |
 | `lines(` `t b l r x` `)` / `line(…)` | cells | rules on the top/bottom/left/right of each cell; `x` boxes it |
 | `hlines` / `vlines` | table | rules between every row / column |
 | `boxed` / `box` | table | a box round the whole table |
@@ -177,12 +178,13 @@ errors.
 | Parameter | 9-year-olds | | 16-year-olds | | p
 |           | M  | SD | M  | SD |
 Asymptote   | .843 | .135 | .877 | .082 | .347
-Crossover   | 759  | 87   | 694  | 42   | .006
+Slope       | .01  | .002 | .02  | .002 | .02
+Crossover   | .759 | .078 | .694 | .042 | .006
 ===
 # Curve-fitting results
 small
 [c1] align(l)
-[r3-$r:c2-$c] align(r)
+[r3-$r:c2-$c] align(d)
 [r1:c2-3;r1:c4-5] span
 [r1-2:c1,6] span
 [r1;r3] line(t)

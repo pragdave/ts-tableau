@@ -16,8 +16,8 @@ or read the [guide](https://pragdave.github.io/ts-tableau/).
 A header, a footer, and rules between the rows:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-b4347cd9d976-dark.png">
-  <img alt="Table" src="README_ASSETS/generated/table-b4347cd9d976-light.png" width="191">
+  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-1b11cfc1565b-dark.png">
+  <img alt="Table" src="README_ASSETS/generated/table-1b11cfc1565b-light.png" width="191">
 </picture>
 
 <details open>
@@ -41,8 +41,8 @@ Selectors can be dynamic. `$tr` is the row being styled, so `c$tr` picks
 out the diagonal, and `c2-$tr~1` everything to its left:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-1fa40725b36e-dark.png">
-  <img alt="Times table" src="README_ASSETS/generated/table-1fa40725b36e-light.png" width="191">
+  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-82c9238d222a-dark.png">
+  <img alt="Times table" src="README_ASSETS/generated/table-82c9238d222a-light.png" width="191">
 </picture>
 
 <details>
@@ -71,8 +71,8 @@ out the diagonal, and `c2-$tr~1` everything to its left:
 Spans across columns and down rows, for a conference programme:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-036bbc116d8c-dark.png">
-  <img alt="DataDocs Conf · Day 1" src="README_ASSETS/generated/table-036bbc116d8c-light.png" width="596">
+  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-b190a46fce7a-dark.png">
+  <img alt="DataDocs Conf · Day 1" src="README_ASSETS/generated/table-b190a46fce7a-light.png" width="596">
 </picture>
 
 <details>
@@ -107,8 +107,8 @@ Two-level column headings, right-aligned figures, and rules where an
 accountant would put them, down to the double rule under the bottom line:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-c8c05d9f1c50-dark.png">
-  <img alt="Half-yearly results" src="README_ASSETS/generated/table-c8c05d9f1c50-light.png" width="361">
+  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-3af45c2d5f10-dark.png">
+  <img alt="Half-yearly results" src="README_ASSETS/generated/table-3af45c2d5f10-light.png" width="361">
 </picture>
 
 <details>
@@ -144,8 +144,8 @@ Group headings that span the whole row, and a shaded column to draw the
 eye:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-86a9be04b035-dark.png">
-  <img alt="Choose a plan" src="README_ASSETS/generated/table-86a9be04b035-light.png" width="402">
+  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-861f4348bc84-dark.png">
+  <img alt="Choose a plan" src="README_ASSETS/generated/table-861f4348bc84-light.png" width="402">
 </picture>
 
 <details>
@@ -186,8 +186,8 @@ An APA-style results table: grouped headings, and rules only where they
 mean something:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-3526e1d9af21-dark.png">
-  <img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-3526e1d9af21-light.png" width="633">
+  <source media="(prefers-color-scheme: dark)" srcset="README_ASSETS/generated/table-cf10434c277c-dark.png">
+  <img alt="Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target" src="README_ASSETS/generated/table-cf10434c277c-light.png" width="687">
 </picture>
 
 <details>
@@ -195,15 +195,15 @@ mean something:
 
 ```tableau
 | Logistic parameter                  | 9-year-olds| | 16-year-olds| | t(40) | _p_ | _d_
-|                                     |   M  |  SD   |   M    | SD   |
-Maximum asymptote, proportion         | .843 | .135  | .877   | .082 | 0.951 | .347 | 0.302
-Crossover, in ms                      | 759  |   87  |  694   |   42 | 2.877 | .006 | 0.840
-Slope, as change in proportion per ms | .001 | .0002 | .002   |.0002 | 2.635 | .012 | 2.078
+|                                     |   M  |  SD   |   M   | SD   |
+Maximum asymptote, proportion         | .843 | .135  | .877  | .082 | .951 | .347 | 0.302
+Slope, as change in proportion per ms | .01  | .002  | .02   | .002 | 2.65 | .02  | 2.08
+Crossover, in S                       | .759 | .078  | .694  | .042 | 2.87 | .006 | 0.840
 ===
 # Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target
 small
 [c1] align(l)
-[r3-$r:c2-$c] align(r)
+[r3-$r:c2-$c] align(d)
 
 -- grouped column headings
 [r1:c2-3;r1:c4-5] span
@@ -307,6 +307,11 @@ rendered output.
 `<tableau-md>` is a valid custom-element name and is otherwise inert --
 plain HTML viewers will just show its (unescaped, unrendered) text
 content. An empty cell produces an empty marker, `<tableau-md></tableau-md>`.
+
+The one exception is a cell aligned with `align(d)` whose content is a
+plain number. Tableau splits the number at its decimal mark itself and
+writes it out with no marker, as in
+`2<span class="tb-frac">.5</span>`, so there is nothing to render.
 
 ### Styling in Host Environments
 

@@ -1,6 +1,7 @@
 import { Cell } from "../cell"
 import { Row } from "../row"
 import { TableData } from "../table_data"
+import { split_number, fraction_width } from "../decimal"
 import {
   FormatAlign,
   FormatLines,
@@ -14,6 +15,7 @@ import {
   LineStyle,
   Side,
 } from "../formats"
+import type { DecimalMark, HALIGN } from "../formats"
 
 export function generate(table: TableData): string[] {
   return do_table(table)
@@ -24,8 +26,9 @@ function do_table(table: TableData): string[] {
   if (table.global_attr.caption !== null) {
     result.push(`<caption><tableau-md>${escape_markdown(table.global_attr.caption)}</tableau-md></caption>`)
   }
+  const fraction_widths = decimal_fraction_widths(table)
   table.rows.forEach((row) => {
-    result = result.concat(do_row(row))
+    result = result.concat(do_row(row, table, fraction_widths))
   })
 
   result.push("</table>")
@@ -33,11 +36,14 @@ function do_table(table: TableData): string[] {
   return result
 }
 
-function do_row(row: Row): string {
+function do_row(row: Row, table: TableData, fraction_widths: Map<number, number>): string {
   const result = ["<tr>"]
-  row.cells.forEach((cell) => {
+  row.cells.forEach((cell, col) => {
     if (!cell.hidden) {
-      result.push(do_cell(cell, row.is_empty))
+      const decimal = is_decimal_aligned(cell, table)
+        ? { mark: table.global_attr.decimal_mark, width: fraction_widths.get(col)! }
+        : null
+      result.push(do_cell(cell, row.is_empty, decimal))
     }
   })
   result.push("</tr>")
@@ -104,11 +110,51 @@ function add_classes(table: TableData): string {
 // invisible, but occupying a full line box like any other cell's text.
 const FULL_HEIGHT_PLACEHOLDER = " "
 
-function do_cell(cell: Cell, force_full_height = false): string {
-  const tag = (cell.header || cell.footer) ? "th" : "td"
+type DecimalCell = { mark: DecimalMark, width: number }
+
+function do_cell(cell: Cell, force_full_height = false, decimal: DecimalCell | null = null): string {
+  const tag = cell_tag(cell)
+  const number = decimal && split_number(cell.content, decimal.mark)
+  const opener = decimal
+    ? cell_opener(cell, [number ? "tb-num" : "tb-nonnum"], [`--tb-frac: ${decimal.width}`])
+    : cell_opener(cell)
+
+  // No <tableau-md>: a plain number has no Markdown, and a renderer's
+  // block-level output would separate the number from its fraction box.
+  if (number) {
+    return `<${tag}${opener}>${number.whole}<span class="tb-frac">${number.fraction}</span></${tag}>`
+  }
   const content =
     force_full_height && cell.content === "" ? FULL_HEIGHT_PLACEHOLDER : escape_markdown(cell.content)
-  return `<${tag}${cell_opener(cell)}><tableau-md>${content}</tableau-md></${tag}>`
+  return `<${tag}${opener}><tableau-md>${content}</tableau-md></${tag}>`
+}
+
+function cell_tag(cell: Cell): "th" | "td" {
+  return (cell.header || cell.footer) ? "th" : "td"
+}
+
+// A cell spanning columns belongs to no single column, so it isn't aligned.
+function is_decimal_aligned(cell: Cell, table: TableData): boolean {
+  return !cell.hidden && cell.col_span === 1 && effective_halign(cell, table) === "d"
+}
+
+// tableau.css applies the table-level alignment to td only.
+function effective_halign(cell: Cell, table: TableData): HALIGN | null {
+  if (cell.align) return cell.align.halign
+  return cell_tag(cell) === "td" ? table.global_attr.halign : null
+}
+
+function decimal_fraction_widths(table: TableData): Map<number, number> {
+  const widths = new Map<number, number>()
+  for (const row of table.rows) {
+    row.cells.forEach((cell, col) => {
+      if (!is_decimal_aligned(cell, table)) return
+      const number = split_number(cell.content, table.global_attr.decimal_mark)
+      const width = number ? fraction_width(number) : 0
+      widths.set(col, Math.max(widths.get(col) ?? 0, width))
+    })
+  }
+  return widths
 }
 
 // cell.content is deferred Markdown source, not HTML -- ts-tableau
@@ -122,9 +168,9 @@ function escape_markdown(content: string): string {
     .replace(/>/g, "&gt;")
 }
 
-function cell_opener(cell: Cell): string {
-  const classes = do_cell_classes(cell)
-  const styles = do_cell_styles(cell)
+function cell_opener(cell: Cell, extra_classes: string[] = [], extra_styles: string[] = []): string {
+  const classes = [...do_cell_classes(cell), ...extra_classes]
+  const styles = [...do_cell_styles(cell), ...extra_styles]
   const cls = classes.length == 0 ? "" : ` class="${classes.join(" ")}"`
   const sty = styles.length == 0 ? "" : ` style="${styles.join("; ")}"`
   const rowspan = cell.row_span > 1 ? ` rowspan="${cell.row_span}"` : ""

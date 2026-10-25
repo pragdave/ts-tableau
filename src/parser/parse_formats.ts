@@ -3,6 +3,7 @@ import {
   FormatAlign,
   FormatBg,
   FormatBoxed,
+  FormatDecimal,
   FormatFg,
   FormatFontsize,
   FormatFooter,
@@ -37,7 +38,8 @@ import type { Formats, LineStyle, LineWeight, LineStyleName } from "../formats"
 // --                              Global     Selector
 // --     fg(color)                   Y          Y
 // --     bg(color)                   Y          Y
-// --     align([lcrj][tmb])          Y          Y
+// --     align([lcrjd][tmb])         Y          Y
+// --     decimal(. or ,)             Y          N
 // --     width(n)                    Y          Y 
 // --     lines(sides, line style)    N          Y
 // --     style(a)                    Y          Y
@@ -73,6 +75,7 @@ function parse_global_format(src: StringScanner): Formats | null {
     align(src) ||
     bg(src) ||
     boxed(src) ||
+    decimal(src) ||
     fclass(src) ||
     fg(src) ||
     font_size(src) ||
@@ -149,24 +152,24 @@ function color(src: StringScanner): ColorRepresentations | null {
 }
 
 // --------------------------------------------------------------------------------
-// --     align([lcrj][tmb])   l c r j t m b
+// --     align([lcrjd][tmb])   l c r j d t m b
 function align(src: StringScanner): FormatAlign | null {
   function align_helper(spec: string) {
     let sub = new StringScanner(spec)
-    if (sub.scan(/([lcrj])?,?([tmb])?/)) {
+    if (sub.scan(/([lcrjd])?,?([tmb])?/)) {
       const h = (sub.getCapture(0) || "c") as HALIGN
       const v = (sub.getCapture(1) || "m") as VALIGN
       return new FormatAlign(h, v)
     }
     else {
-      throw `Expecting alignment specifier ([lcrj][tmb]), got ${sub.peek(10)}`
+      throw `Expecting alignment specifier ([lcrjd][tmb]), got ${sub.peek(10)}`
     }
 
   }
   if (src.scan(/align\((.*?)\)/)) {
     return align_helper(src.getCapture(0))
   }
-  else if (src.scan(/[lcrjtmb]+\b/)) {
+  else if (src.scan(/[lcrjdtmb]+\b/)) {
     return align_helper(src.getMatch())
   }
   else {
@@ -211,6 +214,17 @@ function boxed(src: StringScanner): FormatBoxed | null {
   if (src.scan(/box(ed)?\b(?:\(([^)]*)\))?/))
     return new FormatBoxed(table_line_style(src.getCapture(1), "boxed()"));
   return null
+}
+
+// --------------------------------------------------------------------------------
+// --     decimal(.) or decimal(,): the mark that align(d) lines up on
+function decimal(src: StringScanner): FormatDecimal | null {
+  if (!src.scan(/decimal\(([^)]*)\)/))
+    return null
+  const mark = src.getCapture(0).trim()
+  if (mark !== "." && mark !== ",")
+    throw new Error(`decimal() expects '.' or ',': got '${mark}'`)
+  return new FormatDecimal(mark)
 }
 
 // --------------------------------------------------------------------------------

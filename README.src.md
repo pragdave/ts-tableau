@@ -135,15 +135,15 @@ mean something:
 
 ```tableau source
 | Logistic parameter                  | 9-year-olds| | 16-year-olds| | t(40) | _p_ | _d_
-|                                     |   M  |  SD   |   M    | SD   |
-Maximum asymptote, proportion         | .843 | .135  | .877   | .082 | 0.951 | .347 | 0.302
-Crossover, in ms                      | 759  |   87  |  694   |   42 | 2.877 | .006 | 0.840
-Slope, as change in proportion per ms | .001 | .0002 | .002   |.0002 | 2.635 | .012 | 2.078
+|                                     |   M  |  SD   |   M   | SD   |
+Maximum asymptote, proportion         | .843 | .135  | .877  | .082 | .951 | .347 | 0.302
+Slope, as change in proportion per ms | .01  | .002  | .02   | .002 | 2.65 | .02  | 2.08
+Crossover, in S                       | .759 | .078  | .694  | .042 | 2.87 | .006 | 0.840
 ===
 # Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target
 small
 [c1] align(l)
-[r3-$r:c2-$c] align(r)
+[r3-$r:c2-$c] align(d)
 
 -- grouped column headings
 [r1:c2-3;r1:c4-5] span
@@ -245,6 +245,11 @@ rendered output.
 `<tableau-md>` is a valid custom-element name and is otherwise inert --
 plain HTML viewers will just show its (unescaped, unrendered) text
 content. An empty cell produces an empty marker, `<tableau-md></tableau-md>`.
+
+The one exception is a cell aligned with `align(d)` whose content is a
+plain number. Tableau splits the number at its decimal mark itself and
+writes it out with no marker, as in
+`2<span class="tb-frac">.5</span>`, so there is nothing to render.
 
 ### Styling in Host Environments
 

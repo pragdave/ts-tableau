@@ -47,11 +47,13 @@ function test_align(parser: ParseFunction) {
     ["l", "l", "m"],
     ["r", "r", "m"],
     ["j", "j", "m"],
+    ["d", "d", "m"],
     ["t", "c", "t"],
     ["m", "c", "m"],
     ["b", "c", "b"],
     ["lt", "l", "t"],
     ["jb", "j", "b"],
+    ["db", "d", "b"],
   ].forEach(([spec, h, v]) => {
     wrap_align_test(parser, spec, h, v)
   })

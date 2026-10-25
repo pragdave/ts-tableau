@@ -1,3 +1,11 @@
+unreleased
+           * align(d) lines up a column's numbers on their decimal point,
+             including negatives, (accounting) brackets, grouped thousands
+             and suffixes such as %. Cells that aren't plain numbers end
+             at the point. decimal(,) makes a table use decimal commas
+           * integrators: a plain number in an align(d) cell is written
+             out directly, with no <tableau-md> marker round it
+
 v0.3.0     2026-10-17
            * shade$tr and shade$tc pick a shade by each cell's row or
              column number, wrapping after shade9: [c1] bg(shade$tr)

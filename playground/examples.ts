@@ -179,15 +179,15 @@ align(rt)
     label: "APA-style results",
     group: "Showcase",
     source: `| Logistic parameter                  | 9-year-olds| | 16-year-olds| | t(40) | _p_ | _d_
-|                                     |   M  |  SD   |   M    | SD   |
-Maximum asymptote, proportion         | .843 | .135  | .877   | .082 | 0.951 | .347 | 0.302
-Crossover, in ms                      | 759  |   87  |  694   |   42 | 2.877 | .006 | 0.840
-Slope, as change in proportion per ms | .001 | .0002 | .002   |.0002 | 2.635 | .012 | 2.078
+|                                     |   M  |  SD   |   M   | SD   |
+Maximum asymptote, proportion         | .843 | .135  | .877  | .082 | .951 | .347 | 0.302
+Slope, as change in proportion per ms | .01  | .002  | .02   | .002 | 2.65 | .02  | 2.08
+Crossover, in S                       | .759 | .078  | .694  | .042 | 2.87 | .006 | 0.840
 ===
 # Results of Curve-Fitting Analysis Examining the Time Course of Fixations to the Target
 small
 [c1] align(l)
-[r3-$r:c2-$c] align(r)
+[r3-$r:c2-$c] align(d)
 
 -- grouped column headings
 [r1:c2-3;r1:c4-5] span
@@ -359,6 +359,28 @@ Ink         | 12  | 0.80
 [r1] header
 [c1] align(l)
 [c2-3] align(r)`,
+  },
+
+  {
+    key: "decimal",
+    label: "Decimal alignment",
+    group: "Features",
+    source: `Item     | Price
+Tea      | 2.5
+Cake     | 12.75
+Water    | 1
+Gift     | n/a
+Discount | 7.25%
+Refund   | (1,234.5)
+Total    | 1,245.125
+===
+hlines
+[r1] header
+[r$r] footer
+[c1] l
+
+-- line up on the point; decimal(,) for 1.234,5
+[r2-$r:c2] d`,
   },
 
   {
